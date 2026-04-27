@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qbscreen"
+version = "0.1.0"
+description = "Quantum-active site screening in brain proteins for radical pair mechanism competence"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Hikaru Wakaura", email = "h.wakaura@deeptell.jp"},
+]
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+keywords = [
+    "quantum biology",
+    "radical pair mechanism",
+    "spin chemistry",
+    "brain proteins",
+    "cryptochrome",
+    "magnetic field effect",
+    "decoherence",
+    "nuclear spin",
+]
+
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "matplotlib>=3.7",
+    "biopython>=1.80",
+]
+
+[project.optional-dependencies]
+dft = ["pyscf>=2.4"]
+all = ["pyscf>=2.4"]
+test = ["pytest>=7.0", "pytest-timeout>=2.0"]
+
+[project.urls]
+Homepage = "https://github.com/hikaruwakaura/qbscreen"
+Documentation = "https://github.com/hikaruwakaura/qbscreen#readme"
+Repository = "https://github.com/hikaruwakaura/qbscreen"
+Issues = "https://github.com/hikaruwakaura/qbscreen/issues"
+
+[project.scripts]
+qbscreen = "qbscreen.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["qbscreen*"]
+
+[tool.pytest.ini_options]
+testpaths = ["qbscreen/tests"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "dft: requires pyscf installation",
+    "xtb: requires xtb binary",
+]

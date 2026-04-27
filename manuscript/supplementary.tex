@@ -1,0 +1,367 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper, margin=2.5cm]{geometry}
+\usepackage{mathtools}
+\usepackage{times}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{microtype}
+
+\title{\textbf{Supplementary Information}\\[0.5em]
+Systematic screening of brain neurotransmitter enzymes for radical pair mechanism competence identifies candidates for magnetic field sensitivity}
+
+\date{}
+
+\begin{document}
+\maketitle
+% =====================================================================
+% SUPPLEMENTARY INFORMATION
+% =====================================================================
+\clearpage
+\setcounter{equation}{0}
+\setcounter{figure}{0}
+\setcounter{table}{0}
+\renewcommand{\theequation}{S\arabic{equation}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+
+\begin{center}
+{\LARGE\bfseries Supplementary Information}
+\end{center}
+\vspace{1em}
+
+
+
+\newpage
+
+% =====================================================================
+\section{Derivation of key equations}
+% =====================================================================
+
+\subsection{Spin dephasing $T_2^*$ from HFC distribution (Anderson--Weiss)}
+
+For an electron spin coupled to $N$ nuclear spins with isotropic hyperfine coupling constants $A_i$ and nuclear spin quantum numbers $I_i$, the inhomogeneous transverse relaxation rate in the Anderson--Weiss model is\cite{Anderson1954}:
+\begin{equation}
+\frac{1}{T_2^*} = \sqrt{\sum_{i=1}^{N} \frac{A_i^2\, I_i(I_i+1)}{3}}
+\label{eq:T2star}
+\end{equation}
+where $A_i$ is in angular frequency units (rad/s). This arises from the second moment of the HFC distribution:
+\begin{equation}
+M_2 = \sum_i A_i^2\, I_i(I_i+1)/3
+\end{equation}
+In the rigid-lattice (static) limit, $1/T_2^* = \sqrt{M_2}$. For MAO-A with $A(^{31}\mathrm{P}) = 200$~MHz and two $^{31}$P nuclei ($I = 1/2$):
+\begin{align}
+M_2 &= 2 \times (200 \times 2\pi)^2 \times \frac{1}{2}\times\frac{3}{2}\times\frac{1}{3} \notag\\
+    &= 2 \times (1.257 \times 10^9)^2 \times 0.25 = 7.90 \times 10^{17}~\mathrm{rad}^2/\mathrm{s}^2 \notag\\
+T_2^* &= 1/\sqrt{M_2} = 1.12~\mathrm{ns}
+\end{align}
+
+\subsection{HFC secular modulation $T_2^A$}
+
+The homogeneous contribution from secular (non-oscillatory) HFC modulation by molecular tumbling is\cite{Abragam1961}:
+\begin{equation}
+\frac{1}{T_2^A} = \frac{1}{12}\sum_{i} A_i^2\, I_i(I_i + 1)\,\tau_c
+\label{eq:T2A}
+\end{equation}
+where $\tau_c$ is the rotational correlation time. This term is \emph{independent} of external magnetic field $B_0$, unlike the $g$-anisotropy contribution. For MAO-A with $\tau_c = 10$~ns:
+\begin{equation}
+T_2^A = \left[\frac{1}{12} \times 2 \times (200 \times 2\pi \times 10^6)^2 \times 0.75 \times 10^{-8}\right]^{-1} = 0.50~\mathrm{ns}
+\end{equation}
+
+\subsection{$g$-anisotropy relaxation $T_2^g$}
+
+The transverse relaxation from modulation of the $g$-tensor anisotropy by molecular rotation is\cite{Atkins1972}:
+\begin{equation}
+\frac{1}{T_2^g} = \frac{1}{5}(\Delta g)^2\,\omega_0^2\,\tau_c
+\label{eq:T2g}
+\end{equation}
+where $\Delta g = \xi_\mathrm{SOC}/\Delta E$ is the $g$-shift from spin--orbit coupling and $\omega_0 = g\mu_B B_0/\hbar$ is the electron Larmor frequency. This term scales as $\omega_0^2 \propto B_0^2$, which is the key physics underlying the Earth-field advantage:
+\begin{equation}
+\frac{T_2^g(\mathrm{Earth})}{T_2^g(\mathrm{X\text{-}band})} = \left(\frac{B_\mathrm{X}}{B_\mathrm{Earth}}\right)^2 = \left(\frac{0.34~\mathrm{T}}{50~\mu\mathrm{T}}\right)^2 = 4.6 \times 10^7
+\end{equation}
+At Earth's field, $T_2^g \rightarrow \infty$ for all organic radicals, and this channel effectively vanishes.
+
+\subsection{Total electron $T_2^e$}
+
+The five relaxation channels combine as independent rates:
+\begin{equation}
+\frac{1}{T_2^e} = \frac{1}{T_2^*} + \frac{1}{T_2^\mathrm{dd}} + \frac{1}{T_2^g} + \frac{1}{T_2^A} + \frac{1}{T_2^\mathrm{SOC}}
+\label{eq:T2e_total}
+\end{equation}
+
+\subsection{Paramagnetic relaxation enhancement (PRE)}
+
+The Solomon--Bloembergen PRE for a nuclear spin at distance $r$ from a paramagnetic electron is\cite{Solomon1955,Bloembergen1957}:
+\begin{align}
+\frac{1}{T_{1,\mathrm{PRE}}} &= \frac{2}{15}\left(\frac{\mu_0}{4\pi}\right)^2 \frac{\gamma_I^2 g^2 \mu_B^2 S(S+1)}{r^6} \left[\frac{3\tau_c}{1+\omega_I^2\tau_c^2} + \frac{7\tau_c}{1+\omega_S^2\tau_c^2}\right] \label{eq:PRE_T1}\\[6pt]
+\frac{1}{T_{2,\mathrm{PRE}}} &= \frac{1}{15}\left(\frac{\mu_0}{4\pi}\right)^2 \frac{\gamma_I^2 g^2 \mu_B^2 S(S+1)}{r^6} \left[4\tau_c + \frac{3\tau_c}{1+\omega_I^2\tau_c^2} + \frac{13\tau_c}{1+\omega_S^2\tau_c^2}\right] \label{eq:PRE_T2}
+\end{align}
+The $r^{-6}$ dependence creates the critical PLP/FAD dichotomy:
+\begin{equation}
+\frac{T_{2,\mathrm{PRE}}(\mathrm{FAD},\,r=7~\text{\AA})}{T_{2,\mathrm{PRE}}(\mathrm{PLP},\,r=3.5~\text{\AA})} = \left(\frac{7}{3.5}\right)^6 = 64
+\end{equation}
+
+\subsection{Cross-relaxation rates (Solomon equation)}
+
+For a coupled $e^-$--$^{31}$P spin pair, the Solomon cross-relaxation rates are\cite{Solomon1955}:
+\begin{align}
+W_0 &= \frac{1}{20}\,d^2\,6J(\omega_S - \omega_I) \label{eq:W0}\\
+W_2 &= \frac{3}{10}\,d^2\,J(\omega_S + \omega_I) \label{eq:W2}
+\end{align}
+where $d^2 = (\mu_0/4\pi)^2 \gamma_I^2 g^2 \mu_B^2 \hbar^2 / r^6$ and $J(\omega) = \tau_c/(1 + \omega^2\tau_c^2)$ is the spectral density function. At Earth's field, $\omega_S\tau_c = 0.088 \ll 1$ (extreme narrowing), so $J(\omega_S) \approx \tau_c$, giving:
+\begin{equation}
+\frac{W_0(\mathrm{Earth})}{W_0(\mathrm{X\text{-}band})} \approx \frac{\tau_c}{[\tau_c/(1 + \omega_S^2\tau_c^2)]_\mathrm{X}} = 1 + \omega_{S,\mathrm{X}}^2\tau_c^2 \approx 3.5 \times 10^5
+\end{equation}
+
+\subsection{Singlet yield (Green's function method)}
+
+For a radical pair with Hamiltonian $\hat{H}$, the time-integrated singlet yield with exponential recombination (rate $k$) is\cite{Haberkorn1976}:
+\begin{equation}
+\Phi_S = k\int_0^\infty \mathrm{Tr}[\hat{P}_S\,\hat{\rho}(t)]\,e^{-kt}\,dt
+\end{equation}
+where $\hat{P}_S = \frac{1}{4}\hat{\mathbb{1}} - \mathbf{S}_1 \cdot \mathbf{S}_2$ is the singlet projection operator and $\hat{\rho}(t) = e^{-i\hat{H}t}\hat{\rho}_0\,e^{i\hat{H}t}$. Diagonalising $\hat{H} = \hat{V}\hat{\Lambda}\hat{V}^\dagger$ with eigenvalues $\{E_m\}$:
+\begin{align}
+\hat{\rho}(t) &= \hat{V}\,e^{-i\hat{\Lambda}t}\,\hat{V}^\dagger\,\hat{\rho}_0\,\hat{V}\,e^{i\hat{\Lambda}t}\,\hat{V}^\dagger \\
+\Phi_S &= k\sum_{m,n} [\tilde{P}_S]_{mn}\,[\tilde{\rho}_0]_{nm} \int_0^\infty e^{-i(E_m-E_n)t}\,e^{-kt}\,dt \\
+&= k\sum_{m,n} \frac{[\tilde{P}_S]_{mn}\,[\tilde{\rho}_0]_{nm}}{k + i(E_m - E_n)} \label{eq:SPhiS}
+\end{align}
+where $\tilde{O} = \hat{V}^\dagger\hat{O}\hat{V}$ denotes the operator in the energy eigenbasis. This is the expression used in Sim~1, avoiding the need for time-stepping propagation.
+
+\subsection{RPM quality metric $Q_\mathrm{RPM}$}
+
+The composite quality metric combines all RPM-relevant parameters:
+\begin{equation}
+Q_\mathrm{RPM} = f_\mathrm{osc} \times T_2^e(\mathrm{ns}) \times n_\mathrm{P} \times \frac{T_2(^{31}\mathrm{P})}{1~\mu\mathrm{s}} \times \left(\frac{100~\mathrm{cm}^{-1}}{\xi_\mathrm{SOC}}\right)^2
+\label{eq:SQ}
+\end{equation}
+The physical rationale for each factor:
+\begin{itemize}
+\item $f_\mathrm{osc}$: proxy for electronic coupling strength at the radical site. For photochemical enzymes (CRY), this directly reflects RP generation probability; for dark enzymes (MAO-A), it serves as an approximate indicator of the cofactor's capacity for electron transfer, though the correspondence is indirect
+\item $T_2^e$: time window for S-T mixing (spin evolution must occur before dephasing)
+\item $n_\mathrm{P}$: number of HFC-active $^{31}$P nuclei (S-T mixing drivers)
+\item $T_2(^{31}\mathrm{P})$: nuclear spin coherence (magnetic field information is encoded here)
+\item $1/\xi^2$: penalty for strong SOC (destroys spin correlation via $T_2$ and ISC)
+\end{itemize}
+
+\subsection{Coupled $e^-$--$^{31}$P mixing angle}
+
+The zero-quantum transition dipole moment depends on the state mixing between $|\alpha_e\beta_n\rangle$ and $|\beta_e\alpha_n\rangle$. The mixing Hamiltonian in the \{$|\alpha_e\beta_n\rangle$, $|\beta_e\alpha_n\rangle$\} subspace is:
+\begin{equation}
+H_\mathrm{ZQ} = \begin{pmatrix} \omega_S/2 - \omega_I/2 & A/2 \\ A/2 & -\omega_S/2 + \omega_I/2 \end{pmatrix}
+\end{equation}
+The mixing angle $\theta$ satisfies:
+\begin{equation}
+\tan(2\theta) = \frac{A}{\omega_S - \omega_I}
+\end{equation}
+At Earth's field, $A = 200$~MHz $\gg$ $\omega_S = 1.4$~MHz, so $\tan(2\theta) \approx 143$ and $\theta \rightarrow \pi/4$. The forbidden ZQ transition dipole moment is:
+\begin{equation}
+\mu_\mathrm{ZQ} = \sin(\theta)\,g\mu_B\sqrt{S(S+1)} = \frac{1}{\sqrt{2}} \times 1.734~\mu_B = 1.226~\mu_B
+\end{equation}
+which is 70.7\% of the allowed EPR TDM ($1.734~\mu_B$). This near-unity ratio is the defining feature of the strong-coupling regime and is essential for efficient $^{31}$P-driven S-T interconversion at geomagnetic field strengths.
+
+% =====================================================================
+\section{Quantum reservoir computing: loss function and readout}
+% =====================================================================
+
+As a speculative extension---not a claim of this paper---we note that the multi-spin radical pair system could in principle function as a quantum reservoir for computation, analogous to proposals in condensed-matter spin systems. We include the following formalism for completeness; experimental validation is beyond the scope of this work.
+
+The QRC readout uses Ridge regression with loss function:
+\begin{equation}
+\mathcal{L}(W) = \|XW - y\|_2^2 + \alpha\|W\|_2^2
+\label{eq:ridge}
+\end{equation}
+where $X \in \mathbb{R}^{N_\mathrm{train} \times d}$ is the feature matrix (reservoir observables), $y \in \{0,1\}^{N_\mathrm{train}}$ is the label vector, $W \in \mathbb{R}^d$ is the weight vector, and $\alpha = 1.0$ is the regularisation parameter. The closed-form solution is:
+\begin{equation}
+W^* = (X^T X + \alpha I)^{-1} X^T y
+\end{equation}
+Classification threshold: $\hat{y} = \mathbb{1}[XW > 0.5]$.
+
+% =====================================================================
+\section{Extended Data: Computed vs experimental values}
+% =====================================================================
+
+\begin{table}[htbp]
+\centering
+\caption{Comparison of computed parameters with experimental values where available.}
+\label{tab:validation}
+\small
+\begin{tabular}{@{}llccc@{}}
+\toprule
+Parameter & System & This work & Experimental & Ref. \\
+\midrule
+$A(^{31}\mathrm{P})$ & FAD semiquinone & 200 MHz (input) & 180--220 MHz & \cite{Weber1998} \\
+$T_2^*(^{31}\mathrm{P})$ & FADH$^\bullet$ & 1.1 ns & $\sim$1 ns & \cite{Weber1998} \\
+$f_\mathrm{osc}$ (S$_0\to$S$_1$) & FAD & 0.50 & 0.23--0.30 & \cite{Islam2003} \\
+$\lambda_\mathrm{abs}$ (S$_0\to$S$_1$) & FAD & 450 nm$^\dagger$ & 450 nm & \cite{Islam2003} \\
+$\xi_\mathrm{SOC}$ & Organic radical & 63--79 cm$^{-1}$ & 40--80 cm$^{-1}$ & \cite{Marian2012} \\
+$T_1^e$ & Flavin radical & $\sim$100 $\mu$s & 10--500 $\mu$s & \cite{Weber1998} \\
+MFE (flavoenzyme) & Various & $-4.4\%$ (peak) & 1--15\% & \cite{Maeda2012} \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize $^\dagger$Literature value used for Strickler--Berg calculation; xTB gap (1.25 eV $\approx$ 990 nm) underestimates.}
+\end{tabular}
+\end{table}
+
+% =====================================================================
+\section{Spin Hamiltonian for RPM simulation}
+% =====================================================================
+
+The full spin Hamiltonian for the 8-spin radical pair simulation (Sim~1) is:
+\begin{equation}
+\hat{H} = \underbrace{J\,\mathbf{S}_1 \cdot \mathbf{S}_2}_{\text{exchange}} + \underbrace{\sum_{i \in \mathrm{rad1}} A_i\,\mathbf{S}_1 \cdot \mathbf{I}_i}_{\text{HFC (radical 1)}} + \underbrace{\sum_{j \in \mathrm{rad2}} A_j\,\mathbf{S}_2 \cdot \mathbf{I}_j}_{\text{HFC (radical 2)}} + \underbrace{g\mu_B B\,(\hat{S}_{1z} + \hat{S}_{2z})}_{\text{electron Zeeman}} + \underbrace{\sum_k \gamma_k B\,\hat{I}_{kz}}_{\text{nuclear Zeeman}}
+\end{equation}
+
+Spin assignment for the 8-spin system:
+
+\begin{center}
+\begin{tabular}{cllll}
+\toprule
+Index & Spin & Type & $A$ (MHz) & Assignment \\
+\midrule
+0 & $S_1$ & electron & --- & FADH$^\bullet$ radical \\
+1 & $S_2$ & electron & --- & Substrate amine radical \\
+2 & $I_1$ & $^{31}$P & 200 & FAD FMN-phosphate (proximal) \\
+3 & $I_2$ & $^{31}$P & 2 & FAD AMP-phosphate (remote) \\
+4 & $I_3$ & $^1$H & 2.7 & Isoalloxazine H \\
+5 & $I_4$ & $^1$H & 2.7 & Isoalloxazine H \\
+6 & $I_5$ & $^1$H & 5.0 & Substrate H \\
+7 & $I_6$ & $^1$H & 5.0 & Substrate H \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Hilbert space dimension: $2^8 = 256$. Exchange coupling: $J = 0$ (separated radical pair). Recombination rate: $k = 1$~MHz (spin-selective singlet recombination).
+
+
+
+% =====================================================================
+\newpage
+\section{Thermodynamic energy budget of the three-layer model}
+% =====================================================================
+
+A critical test of the three-layer quantum--classical hierarchy is whether the energy budget is self-consistent at each layer and across layer interfaces. We examine five specific questions below, identifying the energy sources, the role of magnetic fields, and the assumptions required.
+
+\subsection{Energy scales across the hierarchy}
+
+Table~\ref{tab:energy_budget} summarises the energy scales relevant to each layer and interface. The hierarchy spans 14 orders of magnitude, from the $^{31}$P nuclear Zeeman splitting (3.56~peV) to covalent bond energies ($\sim$4~eV).
+
+\begin{table}[h]
+\centering
+\caption{Energy scales in the three-layer hierarchy (310~K, $B = 50~\si{\micro\tesla}$).}
+\label{tab:energy_budget}
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+Quantity & Value & Layer & Role \\
+\midrule
+$^{31}$P Zeeman splitting & 3.56 peV (862 Hz) & L1 & Nuclear spin state energy \\
+$^{31}$P--$^{31}$P dipolar & 41 feV (0.01 MHz) & L1 & Spin--spin coupling \\
+HFC ($A_{^{31}\mathrm{P}}$) & 0.83 $\mu$eV (200 MHz) & L1$\leftrightarrow$L2 & Nuclear--electron coupling \\
+Electron Zeeman & 5.79 neV (1.40 MHz) & L2 & S--T$_0$ degeneracy lifting \\
+Exchange coupling $J$ & 0--0.41 $\mu$eV (0--100 MHz) & L2 & S--T gap \\
+SOC & 7.81 meV (63 cm$^{-1}$) & L2 & ISC driving force \\
+$k_BT$ (310 K) & 26.7 meV & All & Thermal noise floor \\
+5-HT oxidation & $\sim$0.8 eV & L2$\to$L3 & Chemical energy source \\
+MFE modulation & 2.4 meV (0.3\% of 0.8 eV) & L2$\to$L3 & Redirected chemical energy \\
+C--H bond & $\sim$4 eV & L3 & Covalent bond scale \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Q1: Radical pair generation energy}
+
+The radical pair (RP) is generated either by photoexcitation of FAD (2.76~eV, 450~nm) followed by electron transfer, or by single-electron transfer (SET) during substrate oxidation ($\sim$0.8~eV)\cite{Edmondson2004}. Both pathways provide energy far exceeding $k_BT = 26.7$~meV, ensuring that RP formation is thermodynamically spontaneous. No external energy input beyond the substrate is required.
+
+\subsection{Q2: Energetics of singlet--triplet mixing}
+
+In the radical pair state with $J \approx 0$, the singlet $|S\rangle$ and triplet $|T_0\rangle$ states are nearly degenerate, separated by only $2J \lesssim 5.8$~neV at Earth's field. The hyperfine-driven S--T$_0$ mixing is a \emph{coherent quantum process} that transfers angular momentum between electron and nuclear spins without net energy exchange\cite{Steiner1989,Hore2016}:
+
+\begin{equation}
+|S\rangle \xleftrightarrow[\text{HFC}]{} |T_0\rangle \quad \text{(iso-energetic, } \Delta E \lesssim 5.8\text{ neV)}
+\label{eq:ST_isoenergetic}
+\end{equation}
+
+This is analogous to Rabi oscillations between degenerate states driven by an internal coupling, and incurs no thermodynamic cost. The HFC energy (0.83~$\mu$eV) represents the coupling matrix element, not an energy that must be supplied externally.
+
+\subsection{Q3: Nuclear spin polarisation---the CIDNP mechanism}
+
+The thermal equilibrium polarisation of $^{31}$P at Earth's field is negligibly small:
+\begin{equation}
+P_\mathrm{eq} = \tanh\!\left(\frac{g_I \mu_N B}{2k_BT}\right) = 6.7 \times 10^{-11}
+\label{eq:thermal_pol}
+\end{equation}
+This would appear to preclude nuclear spins from carrying useful information. However, the radical pair mechanism generates \emph{non-equilibrium} nuclear spin polarisation via CIDNP (Chemically Induced Dynamic Nuclear Polarisation)\cite{Closs1969,Kaptein1969}. In CIDNP, the spin-selective recombination of radical pairs produces product molecules whose $^{31}$P nuclear spins are polarised far beyond the thermal equilibrium value. The CIDNP enhancement factor is:
+\begin{equation}
+\epsilon_\mathrm{CIDNP} = \frac{P_\mathrm{CIDNP}}{P_\mathrm{eq}} \sim \frac{A}{g_I\mu_N B / \hbar} \sim \frac{200~\text{MHz}}{862~\text{Hz}} \sim 2.3 \times 10^5
+\label{eq:cidnp}
+\end{equation}
+
+This $\sim$10$^5$-fold enhancement has been experimentally observed in flavin photochemistry\cite{Tsentalovich2002}: photo-CIDNP of FMN produces $^{31}$P polarisation enhancements of $10^3$--$10^5$ over thermal equilibrium. The energy for this non-equilibrium polarisation comes from the chemical energy of the RP recombination reaction ($\sim$0.8~eV), not from the nuclear spin system itself. The polarisation decays with the nuclear $T_1$ ($\sim$4.6~s), providing a millisecond--second timescale quantum memory that is continuously refreshed by ongoing enzymatic turnover.
+
+\textbf{Assumption:} MAO-A generates CIDNP during catalytic turnover. This is plausible because (a) MAO-A is a flavoprotein, (b) flavoproteins are known CIDNP sources\cite{Tsentalovich2002}, and (c) the SET mechanism in MAO involves radical pair intermediates\cite{Edmondson2004}. However, direct observation of CIDNP in MAO-A has not been reported and represents a key experimental prediction.
+
+\subsection{Q4: Magnetic field as catalyst---no thermodynamic violation}
+
+The apparent ``energy amplification'' in the MFE is striking: a magnetic field perturbation of 5.8~neV (electron Zeeman at 50~$\mu$T) produces a 2.4~meV change in product energy partitioning, an amplification factor of $\sim$4$\times$10$^5$. This does \emph{not} violate the first or second law of thermodynamics because the magnetic field performs no work:
+
+\begin{enumerate}
+\item The Lorentz force $\mathbf{F} = q\mathbf{v} \times \mathbf{B}$ is perpendicular to the velocity; $\mathbf{F} \cdot \mathbf{v} = 0$.
+\item The magnetic field shifts the S--T$_0$ degeneracy by $\Delta E = g\mu_B B$, changing the \emph{rate} of S-T mixing but not the total energy of the system.
+\item The chemical energy (0.8~eV per turnover) is provided entirely by 5-HT oxidation. The MFE changes how this energy is \emph{partitioned} between singlet products (channel A) and triplet products (channel B), but the total energy released is:
+\end{enumerate}
+\begin{equation}
+\Delta G_\mathrm{total} = \Phi_S(B) \cdot \Delta G_S + [1 - \Phi_S(B)] \cdot \Delta G_T \approx \text{const.}
+\label{eq:energy_conserve}
+\end{equation}
+provided $\Delta G_S \approx \Delta G_T$ (both channels release similar energy). Even when $\Delta G_S \neq \Delta G_T$, the energy difference is drawn from the substrate, not from the magnetic field. The magnetic field acts as a \emph{catalyst}: it modifies the reaction pathway without contributing energy.
+
+This is precisely the mechanism established by Steiner and Ulrich\cite{Steiner1989}: magnetic field effects on chemical reactions are kinetic (rate) effects, not thermodynamic (equilibrium) effects.
+
+\subsection{Q5: Information flow without energy flow}
+
+The three-layer cascade is thermodynamically consistent because each layer has its own energy source:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Layer transition & Information carrier & Energy source \\
+\midrule
+L1 $\to$ L2 & $^{31}$P spin state $\to$ S-T mixing rate & HFC (intrinsic molecular property) \\
+L2 $\to$ L3 & $\Phi_S(B) \to k_\mathrm{cat}$ modulation & 5-HT oxidation (0.8 eV/turnover) \\
+L3 $\to$ neural & {[5-HT]} $\to$ receptor binding & ATP-driven synaptic machinery \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The spin system functions as an \emph{information channel}, not an energy channel. Information flows from nuclear spin states (Layer~1) through radical pair dynamics (Layer~2) to chemical concentrations (Layer~3), but the energy at each stage comes from local chemical sources. This is analogous to a transistor: a small gate voltage (information) controls a large drain current (energy from the power supply). In our system, the nuclear spin state (information) modulates the radical pair branching ratio (gate), which redirects chemical energy from 5-HT oxidation (power supply) between product channels.
+
+\subsection{Risk assessment of thermodynamic assumptions}
+
+\begin{table}[h]
+\centering
+\caption{Risk assessment of energy budget assumptions.}
+\label{tab:risk}
+\small
+\begin{tabular}{@{}llp{7cm}@{}}
+\toprule
+Assumption & Risk level & Assessment \\
+\midrule
+$J = 0$ (separated RP) & \textbf{MODERATE} & Valid for CRY Trp chain ($r > 10$~\AA). Unknown for MAO-A active site ($r \sim 3$--4~\AA). If $|J| > A$ (200~MHz), MFE vanishes entirely. Testable by transient EPR. \\
+$A(^{31}\mathrm{P}) = 200$~MHz & LOW & Experimental value for free flavin semiquinone. Protein environment may shift by $\pm 50$\%, but strong-coupling condition ($A \gg \omega_S$) holds for $A > 20$~MHz. \\
+$k = 1$~MHz (RP lifetime) & \textbf{MODERATE} & If RP recombines in $<$10~ns ($k > 100$~MHz), MFE decreases 100-fold. RP lifetime in MAO-A unknown; must be measured. \\
+CIDNP generates polarisation & LOW & Well-established in flavoprotein photochemistry\cite{Tsentalovich2002}. Expected but not directly observed in MAO-A catalysis. \\
+$B$ does no work & NONE & Fundamental physics: $\mathbf{F} \cdot \mathbf{v} = 0$ for magnetic Lorentz force\cite{Steiner1989}. \\
+Spin = information, not energy & NONE & Thermodynamically rigorous: spin selectivity partitions existing chemical energy. \\
+0.3\% rate change is detectable & \textbf{HIGH} & $\sim$nM 5-HT concentration change over $\sim$10$^{10}$ molecules. Whether this exceeds neural detection threshold is unknown. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+In summary, the energy budget of the three-layer model is thermodynamically self-consistent. The magnetic field acts as a catalyst that redirects chemical energy between product channels via spin-selective radical pair chemistry; no energy is ``created'' or drawn from the field itself. The two moderate-risk assumptions ($J = 0$ and RP lifetime) and one high-risk assumption (neural detection threshold) are all experimentally testable and represent the critical unknowns for validating the model.
+
+
+
+\end{document}

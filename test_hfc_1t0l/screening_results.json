@@ -1,0 +1,1762 @@
+[
+  {
+    "site_id": "chromophore_000",
+    "site_type": "chromophore",
+    "residues": [
+      "NAP"
+    ],
+    "n_atoms": 78,
+    "charge": 0,
+    "multiplicity": 1,
+    "homo_lumo_gap_eV": 1.801049221104,
+    "ground_dipole_D": 315.319,
+    "ip_eV": 0.0,
+    "ea_eV": 0.0,
+    "estimated_electronic_tdm_D": 9.23530260520184,
+    "oscillator_strength": 0.5825094107748306,
+    "max_vib_tdm_D": 0.0,
+    "max_vib_freq_cm": 0.0,
+    "vib_modes": [],
+    "nuclear_spin_inventory": [
+      {
+        "element": "P",
+        "mass_number": 31,
+        "spin_I": 0.5,
+        "abundance": 1.0,
+        "gamma_MHz_T": 17.235,
+        "mu_nuclear_magneton": 1.1317,
+        "total_atoms": 3,
+        "expected_active": 3.0
+      },
+      {
+        "element": "O",
+        "mass_number": 17,
+        "spin_I": 2.5,
+        "abundance": 0.0004,
+        "gamma_MHz_T": -5.774,
+        "mu_nuclear_magneton": -1.8938,
+        "total_atoms": 17,
+        "expected_active": 0.01
+      },
+      {
+        "element": "C",
+        "mass_number": 13,
+        "spin_I": 0.5,
+        "abundance": 0.0107,
+        "gamma_MHz_T": 10.708,
+        "mu_nuclear_magneton": 0.7024,
+        "total_atoms": 21,
+        "expected_active": 0.22
+      },
+      {
+        "element": "N",
+        "mass_number": 14,
+        "spin_I": 1.0,
+        "abundance": 0.9963,
+        "gamma_MHz_T": 3.077,
+        "mu_nuclear_magneton": 0.4038,
+        "total_atoms": 7,
+        "expected_active": 6.97
+      },
+      {
+        "element": "N",
+        "mass_number": 15,
+        "spin_I": 0.5,
+        "abundance": 0.0036,
+        "gamma_MHz_T": -4.316,
+        "mu_nuclear_magneton": -0.2832,
+        "total_atoms": 7,
+        "expected_active": 0.03
+      },
+      {
+        "element": "H",
+        "mass_number": 1,
+        "spin_I": 0.5,
+        "abundance": 0.9999,
+        "gamma_MHz_T": 42.577,
+        "mu_nuclear_magneton": 2.7928,
+        "total_atoms": 30,
+        "expected_active": 30.0
+      }
+    ],
+    "total_magnetic_nuclei": 85,
+    "dominant_spin_nuclei": "1H(I=0.5)",
+    "singlet_triplet_gap_eV": 1.9855257882664201,
+    "radical_cation_ip_eV": 11.10101961203622,
+    "radical_anion_ea_eV": 5.408126427631795,
+    "somo_energy_eV": -12.86577847,
+    "estimated_hfc_MHz": [
+      {
+        "atom_idx": 0,
+        "element": "³¹P",
+        "A_iso_MHz": 100.0,
+        "hfc_class": "direct_bond",
+        "r_eP_A": 3.9
+      },
+      {
+        "atom_idx": 12,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 14,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 17,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 18,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 20,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 23,
+        "element": "³¹P",
+        "A_iso_MHz": 100.0,
+        "hfc_class": "direct_bond",
+        "r_eP_A": 4.3
+      },
+      {
+        "atom_idx": 35,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 40,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 44,
+        "element": "³¹P",
+        "A_iso_MHz": 1.0,
+        "hfc_class": "NADPH_AMP_P",
+        "r_eP_A": 5.2
+      },
+      {
+        "atom_idx": 48,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 49,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 50,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 51,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 52,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 53,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 54,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 55,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 56,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 57,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 58,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 59,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 60,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 61,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 62,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 63,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 64,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 65,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 66,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 67,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 68,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 69,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 70,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 71,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 72,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 73,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 74,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 75,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 76,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 77,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      }
+    ],
+    "max_hfc_MHz": 100.0,
+    "effective_soc_cm": 78.36958381072766,
+    "soc_classification": "moderate",
+    "embedding_method": "vacuum",
+    "n_mm_atoms": 0,
+    "mm_cutoff_A": 0.0,
+    "oniom_total_energy_Eh": 0.0,
+    "n_frames": 1,
+    "homo_lumo_gap_std": 0.0,
+    "estimated_electronic_tdm_std": 0.0,
+    "singlet_triplet_gap_std": 0.0,
+    "max_hfc_std": 0.0,
+    "vacuum_homo_lumo_gap_eV": 1.801049221104,
+    "vacuum_ground_dipole_D": 315.319,
+    "embedding_shift_gap_eV": 0.0,
+    "embedding_shift_dipole_D": 0.0,
+    "T2_star_spin_ns": 2.1900013541926207,
+    "k_isc_per_s": 0.0,
+    "tau_isc_ns": 0.0,
+    "tau_rad_ns": 1441220504.8329053,
+    "tau_vib_fastest_ps": 0.0,
+    "T2_el_fs": 0.0,
+    "k_et_per_s": 0.0,
+    "T1e_spin_lattice_us": 2.541865591058445,
+    "lambda_reorg_eV": 0.1,
+    "coherence_bottleneck": "T₂*(spin/HFC)",
+    "coherence_class": "partial",
+    "zeeman_electron_earth_MHz": 0.0014018738029668374,
+    "zeeman_electron_xband_GHz": 0.009532741860174497,
+    "zeeman_P31_earth_Hz": 861.75,
+    "zeeman_P31_xband_kHz": 5859.900000000001,
+    "magnetic_tdm_electron_muB": 1.7340593840659622,
+    "magnetic_tdm_P31_muN": 0.9800809494628491,
+    "electric_tdm_spin_D": 0.045194926984655874,
+    "T2_dipolar_ns": 71.02364160419063,
+    "T2_total_ns": 2.124492990756973,
+    "n_P_atoms": 3,
+    "T1_P31_s": 4.2063888077084535,
+    "T2_P31_ms": 40.82390358529166,
+    "T1_H1_s": 0.029719687405500305,
+    "T2_H1_ms": 11.916917053241699,
+    "T1_N14_ms": 0.0007286672681937273,
+    "PRE_T1_P31_ms": 4.945564601186126,
+    "PRE_T2_P31_us": 45.713520455860404,
+    "nuclear_coherence_time_ms": 0.045713520455860406,
+    "T2e_g_aniso_ns": 4.9246746281744045,
+    "T2e_hfc_mod_ns": 1.9632691046750723,
+    "T2e_spin_orbit_ns": 896656258431.4612,
+    "T2e_total_ns": 0.8452269691038875,
+    "coupled_level_energies_MHz": [
+      {
+        "state": "|αα⟩",
+        "E_MHz": 25.7011
+      },
+      {
+        "state": "|αβ⟩",
+        "E_MHz": -24.2998
+      },
+      {
+        "state": "|βα⟩",
+        "E_MHz": -25.7002
+      },
+      {
+        "state": "|ββ⟩",
+        "E_MHz": 24.2989
+      }
+    ],
+    "coupled_EPR_freq_MHz": [
+      {
+        "transition": "|αα⟩→|βα⟩",
+        "freq_MHz": 51.4012
+      },
+      {
+        "transition": "|αβ⟩→|ββ⟩",
+        "freq_MHz": 48.5988
+      }
+    ],
+    "coupled_NMR_freq_MHz": [
+      {
+        "transition": "|αα⟩→|αβ⟩",
+        "freq_MHz": 50.0009
+      },
+      {
+        "transition": "|βα⟩→|ββ⟩",
+        "freq_MHz": 49.9991
+      }
+    ],
+    "coupled_forbidden_freq_MHz": [
+      {
+        "transition": "|αα⟩→|ββ⟩ (DQ)",
+        "freq_MHz": 1.4021
+      },
+      {
+        "transition": "|αβ⟩→|βα⟩ (ZQ)",
+        "freq_MHz": 1.4004
+      }
+    ],
+    "coupled_tdm_EPR_muB": 1.7340593840659622,
+    "coupled_tdm_NMR_muN": 0.9800809494628491,
+    "coupled_tdm_forbidden_muB": 1.2088789891515268,
+    "W0_cross_relax_per_s": 0.09374750600359091,
+    "W2_cross_relax_per_s": 0.0935140314692803,
+    "T1x_cross_relax_us": 5340124.904960107,
+    "coupled_T2_electron_ns": 0.8452218319919228,
+    "coupled_T2_nuclear_us": 45.71298239008452,
+    "brain_P31_T1_s": 0.05231492245803135,
+    "brain_P31_T2_s": 0.052314922145100716,
+    "brain_H1_T1_s": 0.002985609780233359,
+    "brain_H1_T2_s": 0.0029856097241450713,
+    "brain_PRE_P31_T1_ms": 0.009234878780663296,
+    "brain_PRE_P31_T2_ms": 0.009231309221942414,
+    "brain_paramag_T1_s": 20.833333333333332,
+    "brain_water_exchange_ms": 5.0,
+    "brain_O2_T1_s": 50.0,
+    "brain_P31_T2_effective_ms": 0.009229676495630886,
+    "brain_H1_T2_effective_ms": 1.8692009461103898,
+    "brain_nuclear_coherence_regime": "extreme narrowing",
+    "brain_T2e_g_aniso_ns": 221617213.0311413,
+    "brain_T2e_total_ns": 2.1244929703909086,
+    "brain_W0_per_s": 32410.475088728264,
+    "brain_W2_per_s": 32409.861830046284,
+    "brain_T1x_us": 15.427257054419293,
+    "brain_coupled_T2e_ns": 2.1241636027279065,
+    "brain_coupled_T2n_us": 5.064446098623116,
+    "measured_eP_distance_A": 3.9353053126240205,
+    "measured_eP_distances_A": [
+      {
+        "residue": "NAP",
+        "atom_name": "PA",
+        "distance_A": 3.9353053126240205
+      },
+      {
+        "residue": "NAP",
+        "atom_name": "P2B",
+        "distance_A": 4.3186341296977595
+      },
+      {
+        "residue": "NAP",
+        "atom_name": "PN",
+        "distance_A": 5.181479276187749
+      }
+    ],
+    "radical_center_type": "nicotinamide_C4",
+    "calc_success": true,
+    "error_msg": ""
+  },
+  {
+    "site_id": "chromophore_001",
+    "site_type": "chromophore",
+    "residues": [
+      "NAP"
+    ],
+    "n_atoms": 78,
+    "charge": 0,
+    "multiplicity": 1,
+    "homo_lumo_gap_eV": 1.870097340512,
+    "ground_dipole_D": -243.671,
+    "ip_eV": 0.0,
+    "ea_eV": 0.0,
+    "estimated_electronic_tdm_D": 9.23530260520184,
+    "oscillator_strength": 0.6048414930300895,
+    "max_vib_tdm_D": 0.0,
+    "max_vib_freq_cm": 0.0,
+    "vib_modes": [],
+    "nuclear_spin_inventory": [
+      {
+        "element": "P",
+        "mass_number": 31,
+        "spin_I": 0.5,
+        "abundance": 1.0,
+        "gamma_MHz_T": 17.235,
+        "mu_nuclear_magneton": 1.1317,
+        "total_atoms": 3,
+        "expected_active": 3.0
+      },
+      {
+        "element": "O",
+        "mass_number": 17,
+        "spin_I": 2.5,
+        "abundance": 0.0004,
+        "gamma_MHz_T": -5.774,
+        "mu_nuclear_magneton": -1.8938,
+        "total_atoms": 17,
+        "expected_active": 0.01
+      },
+      {
+        "element": "C",
+        "mass_number": 13,
+        "spin_I": 0.5,
+        "abundance": 0.0107,
+        "gamma_MHz_T": 10.708,
+        "mu_nuclear_magneton": 0.7024,
+        "total_atoms": 21,
+        "expected_active": 0.22
+      },
+      {
+        "element": "N",
+        "mass_number": 14,
+        "spin_I": 1.0,
+        "abundance": 0.9963,
+        "gamma_MHz_T": 3.077,
+        "mu_nuclear_magneton": 0.4038,
+        "total_atoms": 7,
+        "expected_active": 6.97
+      },
+      {
+        "element": "N",
+        "mass_number": 15,
+        "spin_I": 0.5,
+        "abundance": 0.0036,
+        "gamma_MHz_T": -4.316,
+        "mu_nuclear_magneton": -0.2832,
+        "total_atoms": 7,
+        "expected_active": 0.03
+      },
+      {
+        "element": "H",
+        "mass_number": 1,
+        "spin_I": 0.5,
+        "abundance": 0.9999,
+        "gamma_MHz_T": 42.577,
+        "mu_nuclear_magneton": 2.7928,
+        "total_atoms": 30,
+        "expected_active": 30.0
+      }
+    ],
+    "total_magnetic_nuclei": 85,
+    "dominant_spin_nuclei": "1H(I=0.5)",
+    "singlet_triplet_gap_eV": 2.0548373057755938,
+    "radical_cation_ip_eV": 11.156014395664243,
+    "radical_anion_ea_eV": 5.422427106788132,
+    "somo_energy_eV": -12.83218969,
+    "estimated_hfc_MHz": [
+      {
+        "atom_idx": 0,
+        "element": "³¹P",
+        "A_iso_MHz": 100.0,
+        "hfc_class": "direct_bond",
+        "r_eP_A": 3.9
+      },
+      {
+        "atom_idx": 12,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 14,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 17,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 18,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 20,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 23,
+        "element": "³¹P",
+        "A_iso_MHz": 100.0,
+        "hfc_class": "direct_bond",
+        "r_eP_A": 4.3
+      },
+      {
+        "atom_idx": 35,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 40,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 44,
+        "element": "³¹P",
+        "A_iso_MHz": 1.0,
+        "hfc_class": "NADPH_AMP_P",
+        "r_eP_A": 5.1
+      },
+      {
+        "atom_idx": 48,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 49,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 50,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 51,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 52,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 53,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 54,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 55,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 56,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 57,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 58,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 59,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 60,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 61,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 62,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 63,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 64,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 65,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 66,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 67,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 68,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 69,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 70,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 71,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 72,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 73,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 74,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 75,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 76,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 77,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      }
+    ],
+    "max_hfc_MHz": 100.0,
+    "effective_soc_cm": 78.36958381072766,
+    "soc_classification": "moderate",
+    "embedding_method": "vacuum",
+    "n_mm_atoms": 0,
+    "mm_cutoff_A": 0.0,
+    "oniom_total_energy_Eh": 0.0,
+    "n_frames": 1,
+    "homo_lumo_gap_std": 0.0,
+    "estimated_electronic_tdm_std": 0.0,
+    "singlet_triplet_gap_std": 0.0,
+    "max_hfc_std": 0.0,
+    "vacuum_homo_lumo_gap_eV": 1.870097340512,
+    "vacuum_ground_dipole_D": -243.671,
+    "embedding_shift_gap_eV": 0.0,
+    "embedding_shift_dipole_D": 0.0,
+    "T2_star_spin_ns": 2.1900013541926207,
+    "k_isc_per_s": 0.0,
+    "tau_isc_ns": 0.0,
+    "tau_rad_ns": 1287403069.2494097,
+    "tau_vib_fastest_ps": 0.0,
+    "T2_el_fs": 0.0,
+    "k_et_per_s": 0.0,
+    "T1e_spin_lattice_us": 2.541865591058445,
+    "lambda_reorg_eV": 0.1,
+    "coherence_bottleneck": "T₂*(spin/HFC)",
+    "coherence_class": "partial",
+    "zeeman_electron_earth_MHz": 0.0014018738029668374,
+    "zeeman_electron_xband_GHz": 0.009532741860174497,
+    "zeeman_P31_earth_Hz": 861.75,
+    "zeeman_P31_xband_kHz": 5859.900000000001,
+    "magnetic_tdm_electron_muB": 1.7340593840659622,
+    "magnetic_tdm_P31_muN": 0.9800809494628491,
+    "electric_tdm_spin_D": 0.04367046129376243,
+    "T2_dipolar_ns": 71.02364160419063,
+    "T2_total_ns": 2.124492990756973,
+    "n_P_atoms": 3,
+    "T1_P31_s": 4.2063888077084535,
+    "T2_P31_ms": 40.82390358529166,
+    "T1_H1_s": 0.029719687405500305,
+    "T2_H1_ms": 11.916917053241699,
+    "T1_N14_ms": 0.0007286672681937273,
+    "PRE_T1_P31_ms": 4.718377665170659,
+    "PRE_T2_P31_us": 43.61355503545998,
+    "nuclear_coherence_time_ms": 0.04361355503545998,
+    "T2e_g_aniso_ns": 5.309514406645766,
+    "T2e_hfc_mod_ns": 1.9632691046750723,
+    "T2e_spin_orbit_ns": 966725658323.4988,
+    "T2e_total_ns": 0.855874056484809,
+    "coupled_level_energies_MHz": [
+      {
+        "state": "|αα⟩",
+        "E_MHz": 25.7011
+      },
+      {
+        "state": "|αβ⟩",
+        "E_MHz": -24.2998
+      },
+      {
+        "state": "|βα⟩",
+        "E_MHz": -25.7002
+      },
+      {
+        "state": "|ββ⟩",
+        "E_MHz": 24.2989
+      }
+    ],
+    "coupled_EPR_freq_MHz": [
+      {
+        "transition": "|αα⟩→|βα⟩",
+        "freq_MHz": 51.4012
+      },
+      {
+        "transition": "|αβ⟩→|ββ⟩",
+        "freq_MHz": 48.5988
+      }
+    ],
+    "coupled_NMR_freq_MHz": [
+      {
+        "transition": "|αα⟩→|αβ⟩",
+        "freq_MHz": 50.0009
+      },
+      {
+        "transition": "|βα⟩→|ββ⟩",
+        "freq_MHz": 49.9991
+      }
+    ],
+    "coupled_forbidden_freq_MHz": [
+      {
+        "transition": "|αα⟩→|ββ⟩ (DQ)",
+        "freq_MHz": 1.4021
+      },
+      {
+        "transition": "|αβ⟩→|βα⟩ (ZQ)",
+        "freq_MHz": 1.4004
+      }
+    ],
+    "coupled_tdm_EPR_muB": 1.7340593840659622,
+    "coupled_tdm_NMR_muN": 0.9800809494628491,
+    "coupled_tdm_forbidden_muB": 1.2088789891515268,
+    "W0_cross_relax_per_s": 0.09826138983388769,
+    "W2_cross_relax_per_s": 0.09801667364665068,
+    "T1x_cross_relax_us": 5094812.850031778,
+    "coupled_T2_electron_ns": 0.8558685355186937,
+    "coupled_T2_nuclear_us": 43.61304168708743,
+    "brain_P31_T1_s": 0.05231492245803135,
+    "brain_P31_T2_s": 0.052314922145100716,
+    "brain_H1_T1_s": 0.002985609780233359,
+    "brain_H1_T2_s": 0.0029856097241450713,
+    "brain_PRE_P31_T1_ms": 0.008810651420626394,
+    "brain_PRE_P31_T2_ms": 0.00880724583855411,
+    "brain_paramag_T1_s": 20.833333333333332,
+    "brain_water_exchange_ms": 5.0,
+    "brain_O2_T1_s": 50.0,
+    "brain_P31_T2_effective_ms": 0.0088057596614695,
+    "brain_H1_T2_effective_ms": 1.8692009461103898,
+    "brain_nuclear_coherence_regime": "extreme narrowing",
+    "brain_T2e_g_aniso_ns": 238935538.72933292,
+    "brain_T2e_total_ns": 2.1244929718670647,
+    "brain_W0_per_s": 33971.01921061289,
+    "brain_W2_per_s": 33970.376423908594,
+    "brain_T1x_us": 14.718567239615155,
+    "brain_coupled_T2e_ns": 2.124147747933451,
+    "brain_coupled_T2n_us": 4.831798042325212,
+    "measured_eP_distance_A": 3.9045821860803827,
+    "measured_eP_distances_A": [
+      {
+        "residue": "NAP",
+        "atom_name": "PA",
+        "distance_A": 3.9045821860803827
+      },
+      {
+        "residue": "NAP",
+        "atom_name": "P2B",
+        "distance_A": 4.298224387367674
+      },
+      {
+        "residue": "NAP",
+        "atom_name": "PN",
+        "distance_A": 5.110212129075672
+      }
+    ],
+    "radical_center_type": "nicotinamide_C4",
+    "calc_success": true,
+    "error_msg": ""
+  },
+  {
+    "site_id": "chromophore_002",
+    "site_type": "chromophore",
+    "residues": [
+      "NAP"
+    ],
+    "n_atoms": 78,
+    "charge": 0,
+    "multiplicity": 1,
+    "homo_lumo_gap_eV": 1.835431824333,
+    "ground_dipole_D": 507.801,
+    "ip_eV": 0.0,
+    "ea_eV": 0.0,
+    "estimated_electronic_tdm_D": 9.23530260520184,
+    "oscillator_strength": 0.5936297009441093,
+    "max_vib_tdm_D": 0.0,
+    "max_vib_freq_cm": 0.0,
+    "vib_modes": [],
+    "nuclear_spin_inventory": [
+      {
+        "element": "P",
+        "mass_number": 31,
+        "spin_I": 0.5,
+        "abundance": 1.0,
+        "gamma_MHz_T": 17.235,
+        "mu_nuclear_magneton": 1.1317,
+        "total_atoms": 3,
+        "expected_active": 3.0
+      },
+      {
+        "element": "O",
+        "mass_number": 17,
+        "spin_I": 2.5,
+        "abundance": 0.0004,
+        "gamma_MHz_T": -5.774,
+        "mu_nuclear_magneton": -1.8938,
+        "total_atoms": 17,
+        "expected_active": 0.01
+      },
+      {
+        "element": "C",
+        "mass_number": 13,
+        "spin_I": 0.5,
+        "abundance": 0.0107,
+        "gamma_MHz_T": 10.708,
+        "mu_nuclear_magneton": 0.7024,
+        "total_atoms": 21,
+        "expected_active": 0.22
+      },
+      {
+        "element": "N",
+        "mass_number": 14,
+        "spin_I": 1.0,
+        "abundance": 0.9963,
+        "gamma_MHz_T": 3.077,
+        "mu_nuclear_magneton": 0.4038,
+        "total_atoms": 7,
+        "expected_active": 6.97
+      },
+      {
+        "element": "N",
+        "mass_number": 15,
+        "spin_I": 0.5,
+        "abundance": 0.0036,
+        "gamma_MHz_T": -4.316,
+        "mu_nuclear_magneton": -0.2832,
+        "total_atoms": 7,
+        "expected_active": 0.03
+      },
+      {
+        "element": "H",
+        "mass_number": 1,
+        "spin_I": 0.5,
+        "abundance": 0.9999,
+        "gamma_MHz_T": 42.577,
+        "mu_nuclear_magneton": 2.7928,
+        "total_atoms": 30,
+        "expected_active": 30.0
+      }
+    ],
+    "total_magnetic_nuclei": 85,
+    "dominant_spin_nuclei": "1H(I=0.5)",
+    "singlet_triplet_gap_eV": 2.0199533794323665,
+    "radical_cation_ip_eV": 11.10801729565994,
+    "radical_anion_ea_eV": 5.390904332571812,
+    "somo_energy_eV": -12.88125205,
+    "estimated_hfc_MHz": [
+      {
+        "atom_idx": 0,
+        "element": "³¹P",
+        "A_iso_MHz": 100.0,
+        "hfc_class": "direct_bond",
+        "r_eP_A": 3.9
+      },
+      {
+        "atom_idx": 12,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 14,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 17,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 18,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 20,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 23,
+        "element": "³¹P",
+        "A_iso_MHz": 100.0,
+        "hfc_class": "direct_bond",
+        "r_eP_A": 4.2
+      },
+      {
+        "atom_idx": 35,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 40,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 44,
+        "element": "³¹P",
+        "A_iso_MHz": 1.0,
+        "hfc_class": "NADPH_AMP_P",
+        "r_eP_A": 5.2
+      },
+      {
+        "atom_idx": 48,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 49,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 50,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 51,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 52,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 53,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 54,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 55,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 56,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 57,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 58,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 59,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 60,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 61,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 62,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 63,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 64,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 65,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 66,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 67,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 68,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 69,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 70,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 71,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 72,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 73,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 74,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 75,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 76,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 77,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      }
+    ],
+    "max_hfc_MHz": 100.0,
+    "effective_soc_cm": 78.36958381072766,
+    "soc_classification": "moderate",
+    "embedding_method": "vacuum",
+    "n_mm_atoms": 0,
+    "mm_cutoff_A": 0.0,
+    "oniom_total_energy_Eh": 0.0,
+    "n_frames": 1,
+    "homo_lumo_gap_std": 0.0,
+    "estimated_electronic_tdm_std": 0.0,
+    "singlet_triplet_gap_std": 0.0,
+    "max_hfc_std": 0.0,
+    "vacuum_homo_lumo_gap_eV": 1.835431824333,
+    "vacuum_ground_dipole_D": 507.801,
+    "embedding_shift_gap_eV": 0.0,
+    "embedding_shift_dipole_D": 0.0,
+    "T2_star_spin_ns": 2.1900013541926207,
+    "k_isc_per_s": 0.0,
+    "tau_isc_ns": 0.0,
+    "tau_rad_ns": 1361734388.85656,
+    "tau_vib_fastest_ps": 0.0,
+    "T2_el_fs": 0.0,
+    "k_et_per_s": 0.0,
+    "T1e_spin_lattice_us": 2.541865591058445,
+    "lambda_reorg_eV": 0.1,
+    "coherence_bottleneck": "T₂*(spin/HFC)",
+    "coherence_class": "partial",
+    "zeeman_electron_earth_MHz": 0.0014018738029668374,
+    "zeeman_electron_xband_GHz": 0.009532741860174497,
+    "zeeman_P31_earth_Hz": 861.75,
+    "zeeman_P31_xband_kHz": 5859.900000000001,
+    "magnetic_tdm_electron_muB": 1.7340593840659622,
+    "magnetic_tdm_P31_muN": 0.9800809494628491,
+    "electric_tdm_spin_D": 0.04442463570722066,
+    "T2_dipolar_ns": 71.02364160419063,
+    "T2_total_ns": 2.124492990756973,
+    "n_P_atoms": 3,
+    "T1_P31_s": 4.2063888077084535,
+    "T2_P31_ms": 40.82390358529166,
+    "T1_H1_s": 0.029719687405500305,
+    "T2_H1_ms": 11.916917053241699,
+    "T1_N14_ms": 0.0007286672681937273,
+    "PRE_T1_P31_ms": 4.912367643732443,
+    "PRE_T2_P31_us": 45.40666978945373,
+    "nuclear_coherence_time_ms": 0.04540666978945373,
+    "T2e_g_aniso_ns": 5.114496591998952,
+    "T2e_hfc_mod_ns": 1.9632691046750723,
+    "T2e_spin_orbit_ns": 931217943152.1686,
+    "T2e_total_ns": 0.8506455807047628,
+    "coupled_level_energies_MHz": [
+      {
+        "state": "|αα⟩",
+        "E_MHz": 25.7011
+      },
+      {
+        "state": "|αβ⟩",
+        "E_MHz": -24.2998
+      },
+      {
+        "state": "|βα⟩",
+        "E_MHz": -25.7002
+      },
+      {
+        "state": "|ββ⟩",
+        "E_MHz": 24.2989
+      }
+    ],
+    "coupled_EPR_freq_MHz": [
+      {
+        "transition": "|αα⟩→|βα⟩",
+        "freq_MHz": 51.4012
+      },
+      {
+        "transition": "|αβ⟩→|ββ⟩",
+        "freq_MHz": 48.5988
+      }
+    ],
+    "coupled_NMR_freq_MHz": [
+      {
+        "transition": "|αα⟩→|αβ⟩",
+        "freq_MHz": 50.0009
+      },
+      {
+        "transition": "|βα⟩→|ββ⟩",
+        "freq_MHz": 49.9991
+      }
+    ],
+    "coupled_forbidden_freq_MHz": [
+      {
+        "transition": "|αα⟩→|ββ⟩ (DQ)",
+        "freq_MHz": 1.4021
+      },
+      {
+        "transition": "|αβ⟩→|βα⟩ (ZQ)",
+        "freq_MHz": 1.4004
+      }
+    ],
+    "coupled_tdm_EPR_muB": 1.7340593840659622,
+    "coupled_tdm_NMR_muN": 0.9800809494628491,
+    "coupled_tdm_forbidden_muB": 1.2088789891515268,
+    "W0_cross_relax_per_s": 0.09438103594147346,
+    "W2_cross_relax_per_s": 0.09414598362537939,
+    "T1x_cross_relax_us": 5304279.473030091,
+    "coupled_T2_electron_ns": 0.8506403423534408,
+    "coupled_T2_nuclear_us": 45.406135335428594,
+    "brain_P31_T1_s": 0.05231492245803135,
+    "brain_P31_T2_s": 0.052314922145100716,
+    "brain_H1_T1_s": 0.002985609780233359,
+    "brain_H1_T2_s": 0.0029856097241450713,
+    "brain_PRE_P31_T1_ms": 0.009172889927479968,
+    "brain_PRE_P31_T2_ms": 0.00916934432931739,
+    "brain_paramag_T1_s": 20.833333333333332,
+    "brain_water_exchange_ms": 5.0,
+    "brain_O2_T1_s": 50.0,
+    "brain_P31_T2_effective_ms": 0.009167733446782244,
+    "brain_H1_T2_effective_ms": 1.8692009461103898,
+    "brain_nuclear_coherence_regime": "extreme narrowing",
+    "brain_T2e_g_aniso_ns": 230159465.62062642,
+    "brain_T2e_total_ns": 2.124492971146785,
+    "brain_W0_per_s": 32629.49964890077,
+    "brain_W2_per_s": 32628.882245919365,
+    "brain_T1x_us": 15.32370204354354,
+    "brain_coupled_T2e_ns": 2.1241613780194735,
+    "brain_coupled_T2n_us": 5.030451152601758,
+    "measured_eP_distance_A": 3.9308903447962003,
+    "measured_eP_distances_A": [
+      {
+        "residue": "NAP",
+        "atom_name": "PA",
+        "distance_A": 3.9308903447962003
+      },
+      {
+        "residue": "NAP",
+        "atom_name": "P2B",
+        "distance_A": 4.230878631165468
+      },
+      {
+        "residue": "NAP",
+        "atom_name": "PN",
+        "distance_A": 5.23232406387189
+      }
+    ],
+    "radical_center_type": "nicotinamide_C4",
+    "calc_success": true,
+    "error_msg": ""
+  },
+  {
+    "site_id": "chromophore_003",
+    "site_type": "chromophore",
+    "residues": [
+      "NAP"
+    ],
+    "n_atoms": 78,
+    "charge": 0,
+    "multiplicity": 1,
+    "homo_lumo_gap_eV": 1.868913024134,
+    "ground_dipole_D": -516.296,
+    "ip_eV": 0.0,
+    "ea_eV": 0.0,
+    "estimated_electronic_tdm_D": 9.23530260520184,
+    "oscillator_strength": 0.6044584521739951,
+    "max_vib_tdm_D": 0.0,
+    "max_vib_freq_cm": 0.0,
+    "vib_modes": [],
+    "nuclear_spin_inventory": [
+      {
+        "element": "P",
+        "mass_number": 31,
+        "spin_I": 0.5,
+        "abundance": 1.0,
+        "gamma_MHz_T": 17.235,
+        "mu_nuclear_magneton": 1.1317,
+        "total_atoms": 3,
+        "expected_active": 3.0
+      },
+      {
+        "element": "O",
+        "mass_number": 17,
+        "spin_I": 2.5,
+        "abundance": 0.0004,
+        "gamma_MHz_T": -5.774,
+        "mu_nuclear_magneton": -1.8938,
+        "total_atoms": 17,
+        "expected_active": 0.01
+      },
+      {
+        "element": "C",
+        "mass_number": 13,
+        "spin_I": 0.5,
+        "abundance": 0.0107,
+        "gamma_MHz_T": 10.708,
+        "mu_nuclear_magneton": 0.7024,
+        "total_atoms": 21,
+        "expected_active": 0.22
+      },
+      {
+        "element": "N",
+        "mass_number": 14,
+        "spin_I": 1.0,
+        "abundance": 0.9963,
+        "gamma_MHz_T": 3.077,
+        "mu_nuclear_magneton": 0.4038,
+        "total_atoms": 7,
+        "expected_active": 6.97
+      },
+      {
+        "element": "N",
+        "mass_number": 15,
+        "spin_I": 0.5,
+        "abundance": 0.0036,
+        "gamma_MHz_T": -4.316,
+        "mu_nuclear_magneton": -0.2832,
+        "total_atoms": 7,
+        "expected_active": 0.03
+      },
+      {
+        "element": "H",
+        "mass_number": 1,
+        "spin_I": 0.5,
+        "abundance": 0.9999,
+        "gamma_MHz_T": 42.577,
+        "mu_nuclear_magneton": 2.7928,
+        "total_atoms": 30,
+        "expected_active": 30.0
+      }
+    ],
+    "total_magnetic_nuclei": 85,
+    "dominant_spin_nuclei": "1H(I=0.5)",
+    "singlet_triplet_gap_eV": 2.049758297965888,
+    "radical_cation_ip_eV": 11.15325216645004,
+    "radical_anion_ea_eV": 5.421292663522428,
+    "somo_energy_eV": -12.81685571,
+    "estimated_hfc_MHz": [
+      {
+        "atom_idx": 0,
+        "element": "³¹P",
+        "A_iso_MHz": 100.0,
+        "hfc_class": "direct_bond",
+        "r_eP_A": 3.9
+      },
+      {
+        "atom_idx": 12,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 14,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 17,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 18,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 20,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 23,
+        "element": "³¹P",
+        "A_iso_MHz": 100.0,
+        "hfc_class": "direct_bond",
+        "r_eP_A": 4.2
+      },
+      {
+        "atom_idx": 35,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 40,
+        "element": "¹⁴N",
+        "A_iso_MHz": 6.43
+      },
+      {
+        "atom_idx": 44,
+        "element": "³¹P",
+        "A_iso_MHz": 1.0,
+        "hfc_class": "NADPH_AMP_P",
+        "r_eP_A": 5.3
+      },
+      {
+        "atom_idx": 48,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 49,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 50,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 51,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 52,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 53,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 54,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 55,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 56,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 57,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 58,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 59,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 60,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 61,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 62,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 63,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 64,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 65,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 66,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 67,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 68,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 69,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 70,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 71,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 72,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 73,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 74,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 75,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 76,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      },
+      {
+        "atom_idx": 77,
+        "element": "¹H",
+        "A_iso_MHz": 3.43
+      }
+    ],
+    "max_hfc_MHz": 100.0,
+    "effective_soc_cm": 78.36958381072766,
+    "soc_classification": "moderate",
+    "embedding_method": "vacuum",
+    "n_mm_atoms": 0,
+    "mm_cutoff_A": 0.0,
+    "oniom_total_energy_Eh": 0.0,
+    "n_frames": 1,
+    "homo_lumo_gap_std": 0.0,
+    "estimated_electronic_tdm_std": 0.0,
+    "singlet_triplet_gap_std": 0.0,
+    "max_hfc_std": 0.0,
+    "vacuum_homo_lumo_gap_eV": 1.868913024134,
+    "vacuum_ground_dipole_D": -516.296,
+    "embedding_shift_gap_eV": 0.0,
+    "embedding_shift_dipole_D": 0.0,
+    "T2_star_spin_ns": 2.1900013541926207,
+    "k_isc_per_s": 0.0,
+    "tau_isc_ns": 0.0,
+    "tau_rad_ns": 1289852073.9555464,
+    "tau_vib_fastest_ps": 0.0,
+    "T2_el_fs": 0.0,
+    "k_et_per_s": 0.0,
+    "T1e_spin_lattice_us": 2.541865591058445,
+    "lambda_reorg_eV": 0.1,
+    "coherence_bottleneck": "T₂*(spin/HFC)",
+    "coherence_class": "partial",
+    "zeeman_electron_earth_MHz": 0.0014018738029668374,
+    "zeeman_electron_xband_GHz": 0.009532741860174497,
+    "zeeman_P31_earth_Hz": 861.75,
+    "zeeman_P31_xband_kHz": 5859.900000000001,
+    "magnetic_tdm_electron_muB": 1.7340593840659622,
+    "magnetic_tdm_P31_muN": 0.9800809494628491,
+    "electric_tdm_spin_D": 0.04377867044904897,
+    "T2_dipolar_ns": 71.02364160419063,
+    "T2_total_ns": 2.124492990756973,
+    "n_P_atoms": 3,
+    "T1_P31_s": 4.2063888077084535,
+    "T2_P31_ms": 40.82390358529166,
+    "T1_H1_s": 0.029719687405500305,
+    "T2_H1_ms": 11.916917053241699,
+    "T1_N14_ms": 0.0007286672681937273,
+    "PRE_T1_P31_ms": 4.810264783956511,
+    "PRE_T2_P31_us": 44.462898643920724,
+    "nuclear_coherence_time_ms": 0.04446289864392072,
+    "T2e_g_aniso_ns": 5.30279159749448,
+    "T2e_hfc_mod_ns": 1.9632691046750723,
+    "T2e_spin_orbit_ns": 965501608136.456,
+    "T2e_total_ns": 0.8556991836302518,
+    "coupled_level_energies_MHz": [
+      {
+        "state": "|αα⟩",
+        "E_MHz": 25.7011
+      },
+      {
+        "state": "|αβ⟩",
+        "E_MHz": -24.2998
+      },
+      {
+        "state": "|βα⟩",
+        "E_MHz": -25.7002
+      },
+      {
+        "state": "|ββ⟩",
+        "E_MHz": 24.2989
+      }
+    ],
+    "coupled_EPR_freq_MHz": [
+      {
+        "transition": "|αα⟩→|βα⟩",
+        "freq_MHz": 51.4012
+      },
+      {
+        "transition": "|αβ⟩→|ββ⟩",
+        "freq_MHz": 48.5988
+      }
+    ],
+    "coupled_NMR_freq_MHz": [
+      {
+        "transition": "|αα⟩→|αβ⟩",
+        "freq_MHz": 50.0009
+      },
+      {
+        "transition": "|βα⟩→|ββ⟩",
+        "freq_MHz": 49.9991
+      }
+    ],
+    "coupled_forbidden_freq_MHz": [
+      {
+        "transition": "|αα⟩→|ββ⟩ (DQ)",
+        "freq_MHz": 1.4021
+      },
+      {
+        "transition": "|αβ⟩→|βα⟩ (ZQ)",
+        "freq_MHz": 1.4004
+      }
+    ],
+    "coupled_tdm_EPR_muB": 1.7340593840659622,
+    "coupled_tdm_NMR_muN": 0.9800809494628491,
+    "coupled_tdm_forbidden_muB": 1.2088789891515268,
+    "W0_cross_relax_per_s": 0.09638437133173722,
+    "W2_cross_relax_per_s": 0.0961443297864119,
+    "T1x_cross_relax_us": 5194030.781864205,
+    "coupled_T2_electron_ns": 0.8556937703393843,
+    "coupled_T2_nuclear_us": 44.462375298446155,
+    "brain_P31_T1_s": 0.05231492245803135,
+    "brain_P31_T2_s": 0.052314922145100716,
+    "brain_H1_T1_s": 0.002985609780233359,
+    "brain_H1_T2_s": 0.0029856097241450713,
+    "brain_PRE_P31_T1_ms": 0.008982232720623616,
+    "brain_PRE_P31_T2_ms": 0.008978760817212383,
+    "brain_paramag_T1_s": 20.833333333333332,
+    "brain_water_exchange_ms": 5.0,
+    "brain_O2_T1_s": 50.0,
+    "brain_P31_T2_effective_ms": 0.00897721619704599,
+    "brain_H1_T2_effective_ms": 1.8692009461103898,
+    "brain_nuclear_coherence_regime": "extreme narrowing",
+    "brain_T2e_g_aniso_ns": 238633002.95989865,
+    "brain_T2e_total_ns": 2.1244929718431163,
+    "brain_W0_per_s": 33322.09462585967,
+    "brain_W2_per_s": 33321.46411785955,
+    "brain_T1x_us": 15.005201085457406,
+    "brain_coupled_T2e_ns": 2.1241543414293678,
+    "brain_coupled_T2n_us": 4.92589394396142,
+    "measured_eP_distance_A": 3.917153729223894,
+    "measured_eP_distances_A": [
+      {
+        "residue": "NAP",
+        "atom_name": "PA",
+        "distance_A": 3.917153729223894
+      },
+      {
+        "residue": "NAP",
+        "atom_name": "P2B",
+        "distance_A": 4.248038473398113
+      },
+      {
+        "residue": "NAP",
+        "atom_name": "PN",
+        "distance_A": 5.280992842923926
+      }
+    ],
+    "radical_center_type": "nicotinamide_C4",
+    "calc_success": true,
+    "error_msg": ""
+  }
+]

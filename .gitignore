@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Environments
+.venv/
+env/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Results (regenerable)
+results_*/
+screening_results*/
+simulation_results/
+dft_results/
+casscf_results/
+qmmm_reaction_scan/
+
+# Temporary
+*.tmp
+.pytest_cache/
+.DS_Store
+
+# LaTeX
+manuscript/**/*.aux
+manuscript/**/*.log
+manuscript/**/*.out
+manuscript/**/*.synctex.gz
+manuscript/**/*.bbl
+manuscript/**/*.blg
+manuscript/**/*.fls
+manuscript/**/*.fdb_latexmk
+
+# Keep PDB files and manuscript PDFs
+!pdb_files/
+!manuscript/**/*.pdf

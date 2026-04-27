@@ -1,0 +1,12 @@
+This submission contains:
+  main.tex          - Combined main text + supplementary information
+  figures/          - All figures (PDF format)
+    fig1_radar.pdf
+    fig2_relaxation.pdf
+    fig3_coupled_levels.pdf
+    fig4_mfe.pdf
+    fig5_three_layer.pdf
+
+Compile with: pdflatex main.tex (twice for references)
+
+No external .bst or .bbl files needed (bibliography is inline).
