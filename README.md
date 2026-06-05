@@ -28,8 +28,8 @@ pip install qbscreen
 ### From source
 
 ```bash
-git clone https://github.com/hikaruwakaura/qbscreen.git
-cd qbscreen
+git clone https://github.com/deeptell-inc/brain_protein_screening.git
+cd brain_protein_screening
 pip install -e .
 ```
 

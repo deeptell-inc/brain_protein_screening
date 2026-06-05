@@ -31,6 +31,32 @@ qmmm_reaction_scan/
 .pytest_cache/
 .DS_Store
 
+# xtb runtime files
+charges
+gfnff_charges
+gfnff_topo
+inner_region.xyz
+xtbout.json
+xtbtopo.mol
+xtbrestart
+xtblast.xyz
+wbo
+*.engrad
+hessian
+g98.out
+vibspectrum
+
+# arXiv tarball (regenerable)
+arxiv_submission.tar.gz
+
+# Local test runs (regenerable)
+test_*/
+test_hfc_*/
+results_hfc_*/
+
+# Editor
+*.bak
+
 # LaTeX
 manuscript/**/*.aux
 manuscript/**/*.log

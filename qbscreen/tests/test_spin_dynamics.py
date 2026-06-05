@@ -40,8 +40,16 @@ class TestSpinOperators:
 class TestMFECalculation:
     """Test MFE calculations reproduce paper values."""
 
-    def test_mao_a_mfe_j0(self):
-        """MAO-A MFE at J=0 should be approximately -4.4% at peak."""
+    def test_mao_a_mfe_j0_coherent_artifact(self):
+        """COHERENT-LIMIT ARTIFACT (documented, not a physical prediction).
+
+        The original manuscript reported ~-4.4% for MAO-A. Peer review showed
+        this is an artifact of (i) omitting electronic decoherence and (ii) using
+        an unphysical microsecond lifetime. This test only documents that the
+        bare coherent-limit calculation reproduces that number; the physically
+        correct result (see test_master_equation.py) is <0.01% once realistic
+        T2e and picosecond lifetime are included.
+        """
         from qbscreen.spin_dynamics import (
             build_rpm_hamiltonian, singlet_projector
         )

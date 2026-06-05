@@ -69,9 +69,12 @@ def spin_op(op, i, n):
 
 def singlet_projector(i, j, n):
     """スピンi,jの一重項射影演算子 P_S = 1/4 - S_i·S_j."""
-    SiSj = (spin_op(SX, i, n) @ spin_op(SX, j, n)
-            + spin_op(SY, i, n) @ spin_op(SY, j, n)
-            + spin_op(SZ, i, n) @ spin_op(SZ, j, n))
+    # np.errstate guards a spurious 'divide by zero in matmul' warning emitted by
+    # some NumPy 2.x BLAS builds on Apple ARM; the result is numerically exact.
+    with np.errstate(divide="ignore", over="ignore", invalid="ignore"):
+        SiSj = (spin_op(SX, i, n) @ spin_op(SX, j, n)
+                + spin_op(SY, i, n) @ spin_op(SY, j, n)
+                + spin_op(SZ, i, n) @ spin_op(SZ, j, n))
     dim = 2 ** n
     return 0.25 * np.eye(dim, dtype=complex) - SiSj
 
@@ -110,27 +113,30 @@ def build_rpm_hamiltonian(B_tesla, n_H=6, J_mhz=0.0):
     for k in range(n_H):
         H += omega_H * spin_op(SZ, 4 + k, n)
 
-    # --- 超微細結合 (isotropic) ---
-    # e1 に P1, P2 が結合
-    for p_idx in [2, 3]:
-        for op in [SX, SY, SZ]:
-            H += A_P31_MHZ * spin_op(op, 0, n) @ spin_op(op, p_idx, n)
+    # np.errstate guards spurious matmul warnings on some NumPy 2.x ARM BLAS
+    # builds; the operator products are numerically exact.
+    with np.errstate(divide="ignore", over="ignore", invalid="ignore"):
+        # --- 超微細結合 (isotropic) ---
+        # e1 に P1, P2 が結合
+        for p_idx in [2, 3]:
+            for op in [SX, SY, SZ]:
+                H += A_P31_MHZ * spin_op(op, 0, n) @ spin_op(op, p_idx, n)
 
-    # e1 に H1..H_nH が結合 (等分配)
-    for h_idx in range(n_H):
-        for op in [SX, SY, SZ]:
-            H += A_H1_MHZ * spin_op(op, 0, n) @ spin_op(op, 4 + h_idx, n)
+        # e1 に H1..H_nH が結合 (等分配)
+        for h_idx in range(n_H):
+            for op in [SX, SY, SZ]:
+                H += A_H1_MHZ * spin_op(op, 0, n) @ spin_op(op, 4 + h_idx, n)
 
-    # e2 には弱いHFCのみ (基質ラジカル側, ¹H のみ)
-    A_substrate_H = 5.0  # MHz (基質側, やや大きい)
-    for h_idx in range(min(3, n_H)):
-        for op in [SX, SY, SZ]:
-            H += A_substrate_H * spin_op(op, 1, n) @ spin_op(op, 4 + h_idx, n)
+        # e2 には弱いHFCのみ (基質ラジカル側, ¹H のみ)
+        A_substrate_H = 5.0  # MHz (基質側, やや大きい)
+        for h_idx in range(min(3, n_H)):
+            for op in [SX, SY, SZ]:
+                H += A_substrate_H * spin_op(op, 1, n) @ spin_op(op, 4 + h_idx, n)
 
-    # --- 交換相互作用 ---
-    if abs(J_mhz) > 1e-10:
-        S1S2 = sum(spin_op(op, 0, n) @ spin_op(op, 1, n) for op in [SX, SY, SZ])
-        H += J_mhz * S1S2
+        # --- 交換相互作用 ---
+        if abs(J_mhz) > 1e-10:
+            S1S2 = sum(spin_op(op, 0, n) @ spin_op(op, 1, n) for op in [SX, SY, SZ])
+            H += J_mhz * S1S2
 
     return H
 

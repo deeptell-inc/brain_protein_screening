@@ -1,0 +1,37 @@
+% Standalone Data Availability Statement
+% Compile: pdflatex data_availability_standalone.tex (twice for refs)
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{times}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\hypersetup{colorlinks=true, urlcolor=blue, citecolor=blue}
+
+\begin{document}
+
+\begin{center}
+{\Large\bfseries Data Availability Statement}\\[0.5em]
+{\small For the manuscript: ``Systematic screening of brain neurotransmitter enzymes
+for radical pair mechanism competence reveals quantitative constraints on
+magnetic field sensitivity''}\\[0.3em]
+{\small Hikaru Wakaura, QIRI (Quantum Integrated Research Institute Inc.)}\\[0.3em]
+{\small \texttt{h.wakaura@deeptell.jp}}
+\end{center}
+
+\vspace{1em}
+\hrule
+\vspace{1em}
+
+% Inline minimal bibliography for standalone version
+\renewcommand{\cite}[1]{[ref]}
+
+\input{data_availability}
+
+\vspace{2em}
+\hrule
+\vspace{1em}
+
+\noindent\textit{This statement follows the Royal Society of Chemistry Data Sharing Policy:
+\url{https://www.rsc.org/publishing/publish-with-us/publish-a-journal-article/data-sharing\#dataavailabilitystatements}}
+
+\end{document}

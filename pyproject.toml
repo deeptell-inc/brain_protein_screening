@@ -49,10 +49,10 @@ all = ["pyscf>=2.4"]
 test = ["pytest>=7.0", "pytest-timeout>=2.0"]
 
 [project.urls]
-Homepage = "https://github.com/hikaruwakaura/qbscreen"
-Documentation = "https://github.com/hikaruwakaura/qbscreen#readme"
-Repository = "https://github.com/hikaruwakaura/qbscreen"
-Issues = "https://github.com/hikaruwakaura/qbscreen/issues"
+Homepage = "https://github.com/deeptell-inc/brain_protein_screening"
+Documentation = "https://github.com/deeptell-inc/brain_protein_screening#readme"
+Repository = "https://github.com/deeptell-inc/brain_protein_screening"
+Issues = "https://github.com/deeptell-inc/brain_protein_screening/issues"
 
 [project.scripts]
 qbscreen = "qbscreen.cli:main"

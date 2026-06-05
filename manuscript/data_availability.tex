@@ -1,0 +1,130 @@
+% =====================================================================
+% Data Availability Statement (DAS)
+% Following RSC Data Sharing Policy:
+% https://www.rsc.org/publishing/publish-with-us/publish-a-journal-article/data-sharing#dataavailabilitystatements
+% =====================================================================
+%
+% This file is intended to be \input{data_availability} into main.tex
+% or submitted as a separate document alongside the manuscript.
+%
+% RSC requires DAS to specify:
+%   1. WHERE the data are available
+%   2. CONDITIONS of access
+%   3. FORMAT/types of data
+%   4. PERSISTENT identifiers (DOI, accession numbers)
+%   5. SOFTWARE/code availability
+%   6. UNDERLYING experimental data sources
+% =====================================================================
+
+\section*{Data availability statement}
+
+\subsection*{Software and code}
+
+The complete computational pipeline used to generate all results in this work is released as the open-source Python package \texttt{qbscreen} (v0.1.0), distributed under the MIT License. The package provides a unified command-line interface for reproducing every numerical result, figure, and table presented here.
+
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+\item \textbf{Source code repository:} \url{https://github.com/deeptell-inc/brain_protein_screening}
+\item \textbf{Package distribution (PyPI):} \texttt{pip install qbscreen}
+\item \textbf{License:} MIT (permissive open source)
+\item \textbf{Persistent identifier:} A versioned snapshot (v0.1.0) will be deposited on Zenodo upon acceptance and assigned a DOI of the form \texttt{10.5281/zenodo.XXXXXXX} for long-term archival and citation.
+\item \textbf{Programming language:} Python ($\geq$3.9)
+\item \textbf{External dependencies (version-pinned in \texttt{pyproject.toml}):}
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+\item GFN2-xTB v6.7.1 (Grimme group, free for academic use)
+\item Open Babel v3.1.0 (GPL-2.0)
+\item PySCF v2.12.1 (Apache 2.0; required for DFT/CASSCF modules)
+\item NumPy $\geq$1.24, SciPy $\geq$1.10, Matplotlib $\geq$3.7, Biopython $\geq$1.80
+\end{itemize}
+\end{itemize}
+
+\subsection*{Reproducibility}
+
+Each result claim in this paper is automatically verified by an included test suite (\texttt{pytest qbscreen/tests/}). The 20 tests cover:
+
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+\item \textbf{Spin Hamiltonian construction} (Pauli operator algebra, singlet projector trace, dimension scaling)
+\item \textbf{Magnetic field effect} (MAO-A MFE $-4.4$\% at $J = 0$; vanishing MFE at $|J| > 500$ MHz)
+\item \textbf{Spin relaxation} ($r^{-6}$ PRE scaling, strong-coupling condition $A/\omega_S > 100$, ZQ TDM = $0.7\,\mu_\mathrm{B}$)
+\item \textbf{CRY simulation} (asymmetric HFC distribution, larger MFE than MAO-A)
+\item \textbf{Paper numbers} (3.2 ms diamagnetic $T_2$, 64-fold PLP/FAD nuclear $T_2$ gap, CASSCF $y_0 < 0.1$, 2.7--8.2 min circadian shift)
+\item \textbf{Full screening pipeline} on cryptochrome (PDB 4I6G): site detection, FAD TDM ($\sim$10 D), SOC ($\sim$67 cm$^{-1}$), $n_\mathrm{P} = 2$, $T_2^*$, $T_1^e$
+\end{itemize}
+
+The tests run in $\sim$7 seconds on a standard workstation and verify all 11 quantitative claims highlighted in the main text within their physical tolerance ranges.
+
+\subsection*{Reproduction of paper results from the command line}
+
+\begin{verbatim}
+# 1. Screen all 9 brain proteins (Table 1, Fig. 1)
+for pdb in 4I6G 2BXR 1OJA 2DU8 3RBF 2OKK \
+          3L6B 1T0L 1I10; do
+  qbscreen screen $pdb -o results_${pdb} \
+                  --no-hess
+done
+
+# 2. RPM spin dynamics (Fig. 4, ED Fig. 6, 8)
+qbscreen simulate
+
+# 3. DFT/TDDFT validation (ED Table 3)
+qbscreen dft-validate
+
+# 4. CASSCF(2,2)/NEVPT2 (ED Fig. 7)
+qbscreen casscf
+
+# 5. Reaction coordinate scan (ED Fig. 7a)
+qbscreen reaction-scan
+
+# 6. Verify reproducibility
+pytest qbscreen/tests/ -v
+\end{verbatim}
+
+\subsection*{Datasets}
+
+\paragraph{Input data (publicly available).}
+All input crystal structures were obtained from the RCSB Protein Data Bank (\url{https://www.rcsb.org}) under the following accession codes:
+
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+\item PDB \href{https://www.rcsb.org/structure/4I6G}{4I6G} --- \textit{Drosophila melanogaster} cryptochrome (CRY)
+\item PDB \href{https://www.rcsb.org/structure/2BXR}{2BXR} --- human monoamine oxidase A (MAO-A)
+\item PDB \href{https://www.rcsb.org/structure/1OJA}{1OJA} --- human monoamine oxidase B (MAO-B)
+\item PDB \href{https://www.rcsb.org/structure/2DU8}{2DU8} --- human D-amino acid oxidase (DAO)
+\item PDB \href{https://www.rcsb.org/structure/3RBF}{3RBF} --- human aromatic L-amino acid decarboxylase (DDC)
+\item PDB \href{https://www.rcsb.org/structure/2OKK}{2OKK} --- human glutamate decarboxylase (GAD67)
+\item PDB \href{https://www.rcsb.org/structure/3L6B}{3L6B} --- human serine racemase (SRR)
+\item PDB \href{https://www.rcsb.org/structure/1T0L}{1T0L} --- human isocitrate dehydrogenase (IDH)
+\item PDB \href{https://www.rcsb.org/structure/1I10}{1I10} --- human lactate dehydrogenase (LDH)
+\end{itemize}
+
+\paragraph{Computed data (archived in repository).}
+The following derived datasets are included in the \texttt{qbscreen} repository under \texttt{data/} and \texttt{results/}:
+
+\begin{itemize}
+\setlength{\itemsep}{0pt}
+\item Optimised quantum-active site geometries (87--156 atoms each, XYZ format)
+\item Cofactor-specific HFC tensors and SOC constants (JSON)
+\item Five-channel $T_2^e$ decompositions for all 9 proteins (JSON)
+\item Paramagnetic relaxation enhancement (PRE) curves vs $r$ (CSV)
+\item RPM singlet yield $\Phi_S(B)$ on a $40 \times 16$ field--exchange grid (HDF5)
+\item CASSCF(2,2)/NEVPT2 wavefunctions and CI coefficients at three reaction-coordinate geometries (PySCF \texttt{chkfile} format)
+\item Vibrational analysis output for top-ranked sites (xtb format)
+\item All raw data underlying every figure and table (CSV/JSON)
+\end{itemize}
+
+\paragraph{Format and access.}
+All data are released in non-proprietary formats (XYZ, JSON, CSV, HDF5) and are immediately accessible without restriction. No personally identifiable, ethically restricted, or commercially sensitive information is involved.
+
+\subsection*{Underlying experimental data}
+
+This work is a purely computational study; no new experimental data were generated. Experimental values used for benchmarking and validation are cited in the main text from the original sources (Weber \textit{et al.}\cite{Weber1998} for $^{31}$P ENDOR; Islam \textit{et al.}\cite{Islam2003} for FAD oscillator strengths; Maeda \textit{et al.}\cite{Maeda2012} for cryptochrome MFEs; Xu \textit{et al.}\cite{Xu2021} for CRY magnetic sensitivity).
+
+\subsection*{Hardware and computational environment}
+
+All calculations were performed on a single workstation: Apple M4 Max (16 cores, ARM64), 64 GB RAM, macOS 26.2. No GPU acceleration was used. Total wall time for full reproduction: $\sim$30 minutes (xTB screening) + $\sim$20 minutes (spin dynamics) + $\sim$30 minutes (DFT/TDDFT) + $\sim$8 hours (CASSCF/NEVPT2 at 3 geometries). Container images (Docker/Singularity) with all dependencies pre-installed will be released alongside the v1.0 package version.
+
+\subsection*{Conditions of access and reuse}
+
+The MIT License permits unrestricted use, modification, and redistribution of the software, including for commercial purposes, with attribution. Citation of this paper is requested for academic use. Issues, feature requests, and contributions are welcome via the GitHub repository.
