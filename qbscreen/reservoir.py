@@ -54,19 +54,32 @@ ELECTRONS = (0, 1)
 NUCLEI = (2, 3, 4)
 
 
-def build_reservoir_H(B_tesla=50e-6, A_P=200.0, A_H1=20.0, A_H2=14.0,
-                      A_e2=10.0, J=0.5):
-    """Reservoir spin Hamiltonian (MHz). Hyperfine writes the input (carried by
-    e1) into the nuclear memory; e2 couples to n3; weak exchange J links e1–e2."""
+def build_reservoir_H(B_tesla=50e-6, A_e1_a=200.0, A_e1_b=20.0,
+                      A_e2_a=10.0, J=0.5):
+    """Reservoir spin Hamiltonian (MHz) for a *separated* radical pair.
+
+    Topology (each radical carries its OWN nuclei — they are not shared, which is
+    what "spatially separated pair" means):
+
+        radical 1 (e1)  --A_e1_a-->  nucleus 1 (spin index 2)
+                        --A_e1_b-->  nucleus 2 (spin index 3)
+        radical 2 (e2)  --A_e2_a-->  nucleus 3 (spin index 4)
+        e1 <--J--> e2  (exchange; J = 0 for the separated pair)
+
+    NOTE (correction): earlier versions of this function accepted a fourth
+    hyperfine argument ``A_H2`` that was never added to H — it silently had no
+    effect on any result.  It has been removed rather than silently ignored.  A
+    second coupling on e2 would require a fourth nucleus (a 6-spin model).
+    """
     n = N_SPINS
     H = np.zeros((DIM, DIM), dtype=complex)
     omega_e = G_E * MU_B * B_tesla / (HBAR * 2 * np.pi * 1e6)
     H += omega_e * (spin_op(SZ, 0, n) + spin_op(SZ, 1, n))
     with np.errstate(divide="ignore", over="ignore", invalid="ignore"):
         for op in (SX, SY, SZ):
-            H += A_P * spin_op(op, 0, n) @ spin_op(op, 2, n)   # e1–³¹P
-            H += A_H1 * spin_op(op, 0, n) @ spin_op(op, 3, n)  # e1–¹H
-            H += A_e2 * spin_op(op, 1, n) @ spin_op(op, 4, n)  # e2–¹H
+            H += A_e1_a * spin_op(op, 0, n) @ spin_op(op, 2, n)   # e1–nucleus 1
+            H += A_e1_b * spin_op(op, 0, n) @ spin_op(op, 3, n)   # e1–nucleus 2
+            H += A_e2_a * spin_op(op, 1, n) @ spin_op(op, 4, n)   # e2–nucleus 3
             if abs(J) > 1e-12:
                 H += J * spin_op(op, 0, n) @ spin_op(op, 1, n)
     return H
@@ -161,15 +174,25 @@ def run_reservoir(inputs, P, observables, nuc_deph_p=0.0, washout=100):
 # Capacity measures
 # ───────────────────────────────────────────────────────────────────
 def _capacity(X, target, ridge=1e-6):
-    """Normalised reconstruction capacity C = 1 − min_w ||target − Xw||²/Var.
-    Equivalent to the squared multiple correlation. Bounded [0,1]."""
-    Xc = X - X.mean(0)
-    y = target - target.mean()
-    G = Xc.T @ Xc + ridge * np.eye(Xc.shape[1])
-    w = np.linalg.solve(G, Xc.T @ y)
-    yh = Xc @ w
-    ss_res = np.sum((y - yh) ** 2)
-    ss_tot = np.sum(y ** 2)
+    """Held-out reconstruction capacity. Fit a ridge readout on the first half of
+    the samples and evaluate the normalised squared error (1 − NMSE) on the
+    held-out second half. This is an out-of-sample squared multiple correlation,
+    bounded [0,1]; it does not reward in-sample overfitting (unlike a fit-and-score
+    on the same data, which inflates capacity as the readout dimension grows)."""
+    n = len(X)
+    if n < 8:
+        return 0.0
+    h = n // 2
+    Xtr, Xte = X[:h], X[h:]
+    ytr, yte = target[:h], target[h:]
+    mu_x = Xtr.mean(0)
+    mu_y = ytr.mean()
+    Xtr_c = Xtr - mu_x
+    G = Xtr_c.T @ Xtr_c + ridge * np.eye(Xtr_c.shape[1])
+    w = np.linalg.solve(G, Xtr_c.T @ (ytr - mu_y))
+    pred = (Xte - mu_x) @ w
+    ss_res = np.sum(((yte - mu_y) - pred) ** 2)
+    ss_tot = np.sum((yte - yte.mean()) ** 2)
     return max(0.0, 1.0 - ss_res / ss_tot) if ss_tot > 0 else 0.0
 
 
@@ -180,17 +203,9 @@ def _legendre2(u):
 
 def memory_and_ipc(X, s, max_delay=14):
     """Return dict with linear memory capacity and degree-2 nonlinear capacity."""
-    # use centred inputs in [-1,1] for Legendre
+    # use centred inputs in [-1,1] for Legendre. Each capacity term is evaluated
+    # out-of-sample by _capacity (train on first half, score on held-out half).
     u = 2 * s - 1.0
-    Xtr, Xte = X[: len(X) // 2], X[len(X) // 2:]
-    n = min(len(Xtr), len(Xte))
-
-    def cap_target(delay_fn):
-        # build target aligned to the post-washout region
-        return delay_fn
-
-    # Align: X rows correspond to input indices [washout : washout+len(X)].
-    # We'll just use within-X delays (s already truncated to match X by caller).
     lin = []
     for d in range(0, max_delay + 1):
         if d >= len(X):
@@ -262,64 +277,86 @@ def run_reservoir_realistic(inputs, H_mhz, tau_us, T2e_ns, kinetic_times=(0.2, 0
     return np.array(feats[washout:])
 
 
-def readout_realism(L=900, seed=11):
-    """Quantify IPC recovered by physically-accessible in-vivo readout channels."""
+def readout_realism(L=900, n_seeds=10):
+    """Quantify IPC recovered by physically-accessible in-vivo readout channels,
+    averaged over n_seeds input realisations (mean +/- s.d.)."""
     import json
-    rng = np.random.default_rng(seed)
-    s = rng.uniform(0, 1, L + 80)
-    s_post = s[80:]
-    H = build_reservoir_H(B_tesla=1e-3, A_P=80, A_H1=40, A_H2=25, A_e2=15, J=2.0)
+    H = build_reservoir_H(B_tesla=1e-3, A_e1_a=80, A_e1_b=40, A_e2_a=15, J=2.0)
+    kt5 = (0.2, 0.4, 0.6, 0.8, 1.0)
+    configs = {"endpoint_only": dict(kinetic_times=(1.0,), use_cidnp=False),
+               "kinetic": dict(kinetic_times=kt5, use_cidnp=False),
+               "kinetic_plus_cidnp": dict(kinetic_times=kt5, use_cidnp=True)}
+    acc = {k: {"MC": [], "IPC_nonlinear": [], "IPC_total": [], "n_obs": 0} for k in configs}
+    for sd in range(n_seeds):
+        rng = np.random.default_rng(sd)
+        s = rng.uniform(0, 1, L + 80); s_post = s[80:]
+        for key, cfg in configs.items():
+            X = run_reservoir_realistic(s, H, 0.05, 50.0, **cfg)
+            r = memory_and_ipc(X, s_post)
+            acc[key]["MC"].append(r["MC"]); acc[key]["IPC_nonlinear"].append(r["IPC_nonlinear"])
+            acc[key]["IPC_total"].append(r["IPC_total"]); acc[key]["n_obs"] = r["n_obs"]
 
     out = {}
-    # (i) single end-point yield only (my original 'scalar' assumption)
-    X1 = run_reservoir_realistic(s, H, 0.05, 50.0, kinetic_times=(1.0,), use_cidnp=False)
-    out["endpoint_only"] = memory_and_ipc(X1, s_post)
-    # (ii) time-resolved kinetics of the one product pool (5 time points)
-    X2 = run_reservoir_realistic(s, H, 0.05, 50.0, kinetic_times=(0.2, 0.4, 0.6, 0.8, 1.0), use_cidnp=False)
-    out["kinetic"] = memory_and_ipc(X2, s_post)
-    # (iii) kinetics + CIDNP nuclear polarisation on products
-    X3 = run_reservoir_realistic(s, H, 0.05, 50.0, kinetic_times=(0.2, 0.4, 0.6, 0.8, 1.0), use_cidnp=True)
-    out["kinetic_plus_cidnp"] = memory_and_ipc(X3, s_post)
-
-    print("\nIn-vivo-plausible readout channels (NO NMR/EPR apparatus):")
-    for key, r in out.items():
-        print(f"  {key:22s}: {r['n_obs']:2d} obs  MC={r['MC']:.2f}  "
-              f"nonlin={r['IPC_nonlinear']:.2f}  total IPC={r['IPC_total']:.2f}")
+    print("\nIn-vivo-plausible readout channels (NO NMR/EPR apparatus); "
+          f"{n_seeds}-seed mean +/- s.d.:")
+    for key, a in acc.items():
+        out[key] = dict(n_obs=a["n_obs"],
+                        MC=float(np.mean(a["MC"])),
+                        IPC_nonlinear=float(np.mean(a["IPC_nonlinear"])),
+                        IPC_total=float(np.mean(a["IPC_total"])),
+                        IPC_total_sd=float(np.std(a["IPC_total"])))
+        print(f"  {key:22s}: {out[key]['n_obs']:2d} obs  MC={out[key]['MC']:.2f}  "
+              f"nonlin={out[key]['IPC_nonlinear']:.2f}  "
+              f"total IPC={out[key]['IPC_total']:.2f}+/-{out[key]['IPC_total_sd']:.2f}")
     with open("simulation_results/reservoir_readout_realism.json", "w") as f:
         json.dump(out, f, indent=2, default=float)
     return out
 
 
-def full_analysis(L=1200, seed=7):
-    """Two regimes + readout-access and throughput scans + figure + JSON."""
+def full_analysis(L=1200, n_seeds=10):
+    """Two regimes + readout-access and throughput scans + figure + JSON.
+    All quantities are averaged over n_seeds input realisations so the figure and
+    the reported headline come from the same robust (out-of-sample) basis."""
     import json
-    rng = np.random.default_rng(seed)
-    s = rng.uniform(0, 1, L + 100)
-    s_post = s[100:]
 
-    H = build_reservoir_H(B_tesla=1e-3, A_P=80, A_H1=40, A_H2=25, A_e2=15, J=2.0)
+    H = build_reservoir_H(B_tesla=1e-3, A_e1_a=80, A_e1_b=40, A_e2_a=15, J=2.0)
     P = propagator(H, tau_us=0.05, T2e_ns=50.0)
     obs_full = _observable_set("full")
-
-    # Regimes
-    X_eng = run_reservoir(s, P, obs_full, nuc_deph_p=0.0)
-    r_eng = memory_and_ipc(X_eng, s_post)
-    X_iv = run_reservoir(s, P, _observable_set("scalar"), nuc_deph_p=0.6)
-    r_iv = memory_and_ipc(X_iv, s_post)
-
-    # Scan 1: readout access — total IPC vs number of observables
+    obs_scalar = _observable_set("scalar")
     n_obs_list = [1, 2, 4, 6, 8, 10, 12]
-    ipc_vs_obs = []
-    for m in n_obs_list:
-        Xm = X_eng[:, :m]
-        ipc_vs_obs.append(memory_and_ipc(Xm, s_post)["IPC_total"])
-
-    # Scan 2: throughput — total IPC vs inter-cycle nuclear dephasing p
     p_list = [0.0, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0]
-    ipc_vs_p = []
-    for p in p_list:
-        Xp = run_reservoir(s, P, obs_full, nuc_deph_p=p)
-        ipc_vs_p.append(memory_and_ipc(Xp, s_post)["IPC_total"])
+
+    eng_mc, eng_ipc, eng_nl, kernels = [], [], [], []
+    iv_ipc, iv_kernels = [], []
+    obs_scan, p_scan = [], []
+    for sd in range(n_seeds):
+        rng = np.random.default_rng(sd)
+        s = rng.uniform(0, 1, L + 100)
+        s_post = s[100:]
+        X_eng = run_reservoir(s, P, obs_full, nuc_deph_p=0.0)
+        re = memory_and_ipc(X_eng, s_post)
+        eng_mc.append(re["MC"]); eng_ipc.append(re["IPC_total"])
+        eng_nl.append(re["IPC_nonlinear"]); kernels.append(re["lin_by_delay"])
+        X_iv = run_reservoir(s, P, obs_scalar, nuc_deph_p=0.6)
+        ri = memory_and_ipc(X_iv, s_post)
+        iv_ipc.append(ri["IPC_total"]); iv_kernels.append(ri["lin_by_delay"])
+        obs_scan.append([memory_and_ipc(X_eng[:, :m], s_post)["IPC_total"] for m in n_obs_list])
+        p_scan.append([memory_and_ipc(run_reservoir(s, P, obs_full, nuc_deph_p=p),
+                                      s_post)["IPC_total"] for p in p_list])
+
+    MC = float(np.mean(eng_mc)); IPC = float(np.mean(eng_ipc))
+    IPC_sd = float(np.std(eng_ipc)); NL = float(np.mean(eng_nl))
+    kernel = np.mean(kernels, axis=0); iv_kernel = np.mean(iv_kernels, axis=0)
+    iv = float(np.mean(iv_ipc))
+    ipc_vs_obs = list(np.mean(obs_scan, axis=0))
+    ipc_vs_p = list(np.mean(p_scan, axis=0))
+    r_eng = dict(MC=MC, IPC_total=IPC, IPC_sd=IPC_sd, IPC_nonlinear=NL,
+                 lin_by_delay=list(kernel), n_obs=len(obs_full))
+    r_iv = dict(IPC_total=iv, lin_by_delay=list(iv_kernel))
+    print(f"[full_analysis] engineered IPC={IPC:.2f}+/-{IPC_sd:.2f} MC={MC:.2f} "
+          f"nonlin={NL:.2f}; in-vivo scalar IPC={iv:.2f} ({n_seeds} seeds)")
+    print("  n_obs scan:", [round(x, 2) for x in ipc_vs_obs])
+    print("  throughput scan:", [round(x, 2) for x in ipc_vs_p])
 
     # ── Figure ──
     import matplotlib
@@ -334,8 +371,7 @@ def full_analysis(L=1200, seed=7):
     d = np.arange(len(r_eng["lin_by_delay"]))
     ax[0].plot(d, r_eng["lin_by_delay"], "o-", c="#1565c0", ms=3, lw=1.2,
                label="engineered (12 obs)")
-    X_iv_curve = memory_and_ipc(X_iv, s_post)["lin_by_delay"]
-    ax[0].plot(d, X_iv_curve, "s--", c="#c62828", ms=3, lw=1.2,
+    ax[0].plot(d, r_iv["lin_by_delay"], "s--", c="#c62828", ms=3, lw=1.2,
                label="in-vivo (scalar)")
     ax[0].set_xlabel("delay $d$ (steps)"); ax[0].set_ylabel("memory $r^2(s_{k-d})$")
     ax[0].set_title("(a) linear memory", loc="left", fontweight="bold")
@@ -375,7 +411,7 @@ if __name__ == "__main__":
     s = rng.uniform(0, 1, L + 100)  # +washout
 
     # ── Engineered regime: effective hyperfine writing, full readout ──
-    H = build_reservoir_H(B_tesla=1e-3, A_P=80, A_H1=40, A_H2=25, A_e2=15, J=2.0)
+    H = build_reservoir_H(B_tesla=1e-3, A_e1_a=80, A_e1_b=40, A_e2_a=15, J=2.0)
     P_eng = propagator(H, tau_us=0.05, T2e_ns=50.0)   # τ=50 ns, T2e=50 ns
     obs_full = _observable_set("full")
     X_eng = run_reservoir(s, P_eng, obs_full, nuc_deph_p=0.0)

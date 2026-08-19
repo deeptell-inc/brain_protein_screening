@@ -29,6 +29,19 @@ def main():
         from qbscreen.casscf_analysis import run_casscf_scan
         run_casscf_scan()
 
+    elif command == "mfe":
+        # Table 1 and Fig. 1 of the magnetosensitivity paper: exact
+        # Liouville-space MFE with electronic decoherence.
+        from qbscreen.honest_mfe import run, lifetime_t2e_sweep, make_figure
+        import json, os
+        res = run()
+        sweep = lifetime_t2e_sweep()
+        make_figure(sweep)
+        os.makedirs("simulation_results", exist_ok=True)
+        with open("simulation_results/honest_mfe_results.json", "w") as f:
+            json.dump({"enzymes": res, "sweep": sweep}, f, indent=2)
+        print("  data -> simulation_results/honest_mfe_results.json")
+
     elif command == "reaction-scan":
         from qbscreen.reaction_scan import scan_reaction_coordinate
         scan_reaction_coordinate()
@@ -51,6 +64,7 @@ def print_usage():
 Usage:
   qbscreen screen <PDB_file_or_ID> [options]    Screen quantum-active sites
   qbscreen simulate                              Run RPM spin dynamics
+  qbscreen mfe                                   Liouville-space MFE (Table 1, Fig. 1)
   qbscreen dft-validate                          DFT/TDDFT validation
   qbscreen casscf                                CASSCF/NEVPT2 mechanism analysis
   qbscreen reaction-scan                         QM/MM reaction coordinate scan
@@ -60,6 +74,7 @@ Examples:
   qbscreen screen 4I6G -o results_cry
   qbscreen screen pdb_files/pdb2bxr.ent --embedding oniom -o results_maoa
   qbscreen simulate
+  qbscreen mfe
   qbscreen dft-validate
 
 For screening options:
