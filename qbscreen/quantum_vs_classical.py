@@ -62,28 +62,31 @@ def _run(inputs, props, P_S, washout=80):
     return np.array(feats[washout:])
 
 
-def run(L=800, seed=9):
+def run(L=800, n_seeds=8):
     import json
-    rng = np.random.default_rng(seed)
-    s = rng.uniform(0, 1, L + 80)
-    s_post = s[80:]
     times = (0.02, 0.035, 0.05)
     P_S = singlet_projector(0, 1, N)
 
     gammas = [0.0, 1.0, 10.0, 50.0, 200.0, 1000.0, 5000.0]
-    print("Quantum vs classical: IPC as coherence is dephased away")
+    # precompute propagators once per gamma (gamma-only dependence), reuse across seeds
+    props_by_g = {g: _props(80, 40, 2.0, 50.0, g, times) for g in gammas}
+    print(f"Quantum vs classical: IPC as coherence is dephased away ({n_seeds} seeds)")
     print("=" * 60)
     print(f"  {'gamma (MHz)':>12} | {'MC':>5} {'nonlin':>7} {'total IPC':>10}")
     print("  " + "-" * 44)
     rows = []
     for g in gammas:
-        props = _props(80, 40, 2.0, 50.0, g, times)
-        X = _run(s, props, P_S)
-        r = memory_and_ipc(X, s_post)
-        rows.append(dict(gamma=g, **{k: r[k] for k in ("MC", "IPC_nonlinear", "IPC_total")}))
+        mc, nl, ipc = [], [], []
+        for sd in range(n_seeds):
+            rng = np.random.default_rng(sd)
+            s = rng.uniform(0, 1, L + 80); s_post = s[80:]
+            r = memory_and_ipc(_run(s, props_by_g[g], P_S), s_post)
+            mc.append(r["MC"]); nl.append(r["IPC_nonlinear"]); ipc.append(r["IPC_total"])
+        rows.append(dict(gamma=g, MC=float(np.mean(mc)),
+                         IPC_nonlinear=float(np.mean(nl)), IPC_total=float(np.mean(ipc))))
         tag = "  (coherent/quantum)" if g == 0 else ("  (classical limit)" if g >= 1000 else "")
-        print(f"  {g:>12.0f} | {r['MC']:>5.2f} {r['IPC_nonlinear']:>7.2f} "
-              f"{r['IPC_total']:>10.2f}{tag}")
+        print(f"  {g:>12.0f} | {rows[-1]['MC']:>5.2f} {rows[-1]['IPC_nonlinear']:>7.2f} "
+              f"{rows[-1]['IPC_total']:>10.2f}{tag}")
 
     ipc_q = rows[0]["IPC_total"]
     ipc_c = rows[-1]["IPC_total"]

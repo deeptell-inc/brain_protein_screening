@@ -1,0 +1,30 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{hyperref}
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+{\large\textbf{Data Availability Statement}}\\[0.3em]
+{\normalsize Ultrafast recombination and exchange coupling preclude weak-field
+magnetosensitivity of neurotransmitter-metabolising flavoenzymes}\\[0.2em]
+{\small Hikaru Wakaura and Taiki Tanimae}
+\end{center}
+
+\vspace{1em}
+
+\noindent
+The source code, parameter files, and analysis scripts supporting this article
+are openly available in the \texttt{qbscreen} Python package at
+\url{https://github.com/deeptell-inc/brain_protein_screening} under the MIT
+licence. This includes the Liouville-space master-equation solver, the per-enzyme
+magnetic-field-effect driver, and an automated test suite that pins the values of
+Table~1 to within 2\% by direct recomputation. The suite also checks the solver
+against a closed-form coherent-limit expression; that check shares the eigenbasis
+convention of the solver and therefore validates the Liouville-space inversion
+rather than the unit conventions. A versioned snapshot will be archived on Zenodo with a
+citable DOI upon acceptance.
+
+\end{document}

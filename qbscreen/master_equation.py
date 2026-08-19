@@ -120,6 +120,26 @@ def electron_dephasing_ops(n_spins, T2e_us, electron_indices=(0, 1)):
     return [(rate, spin_op(SZ, i, n_spins)) for i in electron_indices]
 
 
+def singlet_triplet_dephasing_op(P_S, P_T, gamma_ST):
+    """Singlet-triplet pure-dephasing Lindblad operator from exchange-coupling
+    (2J) fluctuations, as appropriate for a tightly bound radical pair.
+
+    The jump operator is A = P_S - P_T (Hermitian, A†A = P_S + P_T = I). The
+    dissipator gamma_ST·(A ρ A − ρ) damps coherence between the singlet and
+    triplet manifolds at rate 2·gamma_ST, without touching populations. This is
+    the decoherence channel a fluctuating exchange produces (H_fluc ∝ P_S - P_T),
+    distinct from the single-spin S_z 'random-field' channel.
+
+    Parameters
+    ----------
+    P_S, P_T : (d,d) singlet / triplet projectors on the recombining electrons.
+    gamma_ST : dephasing rate (1/μs); returns [] if non-positive.
+    """
+    if gamma_ST is None or gamma_ST <= 0 or not np.isfinite(gamma_ST):
+        return []
+    return [(gamma_ST, P_S - P_T)]
+
+
 # ───────────────────────────────────────────────────────────────────
 # Phenomenological 'exponential' dephasing in the eigenbasis
 # (fast path for large 8-spin systems where full Liouville inversion

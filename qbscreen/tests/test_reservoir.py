@@ -22,7 +22,7 @@ def driven():
     rng = np.random.default_rng(3)
     s = rng.uniform(0, 1, 500 + 60)
     s_post = s[60:]
-    H = build_reservoir_H(B_tesla=1e-3, A_P=80, A_H1=40, A_H2=25, A_e2=15, J=2.0)
+    H = build_reservoir_H(B_tesla=1e-3, A_e1_a=80, A_e1_b=40, A_e2_a=15, J=2.0)
     P = propagator(H, tau_us=0.05, T2e_ns=50.0)
     X_full = run_reservoir(s, P, _observable_set("full"), nuc_deph_p=0.0, washout=60)
     X_scalar = run_reservoir(s, P, _observable_set("scalar"), nuc_deph_p=0.6, washout=60)
