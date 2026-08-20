@@ -86,46 +86,45 @@ def _run_copy(inputs, props, P_S, washout):
     return np.array(feats[washout:])
 
 
-def run(N_copies=80, L=700, seed=5):
+def run(N_copies=80, L=700, n_seeds=5):
     import json
-    rng = np.random.default_rng(seed)
-    s = rng.uniform(0, 1, L + 80)
-    s_post = s[80:]
     times = (0.02, 0.035, 0.05)          # fixed lab readout times (µs)
     P_S = singlet_projector(0, 1, N)
-
-    # ── sample heterogeneous copies + run ──
-    params = []
-    per_copy = []
-    for _ in range(N_copies):
-        A_P = 80.0 * np.exp(0.35 * rng.standard_normal())
-        A_H = 40.0 * np.exp(0.35 * rng.standard_normal())
-        J = 2.0 * np.exp(0.6 * rng.standard_normal())
-        T2e = 50.0 * np.exp(0.3 * rng.standard_normal())
-        params.append((A_P, A_H, J, T2e))
-        per_copy.append(_run_copy(s, _props(A_P, A_H, J, T2e, times), P_S, washout=80))
-    per_copy = np.array(per_copy)        # (N_copies, T, n_times)
-    params = np.array(params)
-
-    # ── single representative copy (homogeneous reference) ──
-    ref = _run_copy(s, _props(80, 40, 2.0, 50.0, times), P_S, washout=80)
-    r_single = memory_and_ipc(ref, s_post)
-
-    # ── pooled readout (one product pool: mean over all copies) ──
-    pooled = per_copy.mean(axis=0)       # (T, n_times)
-    r_pooled = memory_and_ipc(pooled, s_post)
-
-    # ── spatially resolved: sort by J, split into G groups, concat group means ──
-    order = np.argsort(params[:, 2])     # sort by exchange J
-    sorted_copies = per_copy[order]
     Gs = [1, 2, 4, 8, 16]
-    ipc_by_G = []
-    for G in Gs:
-        groups = np.array_split(sorted_copies, G)
-        feat = np.concatenate([g.mean(axis=0) for g in groups], axis=1)  # (T, n_times*G)
-        ipc_by_G.append(memory_and_ipc(feat, s_post))
 
-    print("Ensemble / spatial-heterogeneity reservoir capacity")
+    def _metrics(r):
+        return np.array([r["MC"], r["IPC_nonlinear"], r["IPC_total"]])
+
+    single_acc, pooled_acc = [], []
+    G_acc = {G: [] for G in Gs}
+    for sd in range(n_seeds):
+        rng = np.random.default_rng(sd)
+        s = rng.uniform(0, 1, L + 80); s_post = s[80:]
+        params, per_copy = [], []
+        for _ in range(N_copies):
+            A_P = 80.0 * np.exp(0.35 * rng.standard_normal())
+            A_H = 40.0 * np.exp(0.35 * rng.standard_normal())
+            J = 2.0 * np.exp(0.6 * rng.standard_normal())
+            T2e = 50.0 * np.exp(0.3 * rng.standard_normal())
+            params.append((A_P, A_H, J, T2e))
+            per_copy.append(_run_copy(s, _props(A_P, A_H, J, T2e, times), P_S, washout=80))
+        per_copy = np.array(per_copy); params = np.array(params)
+        single_acc.append(_metrics(memory_and_ipc(
+            _run_copy(s, _props(80, 40, 2.0, 50.0, times), P_S, washout=80), s_post)))
+        pooled_acc.append(_metrics(memory_and_ipc(per_copy.mean(axis=0), s_post)))
+        sorted_copies = per_copy[np.argsort(params[:, 2])]
+        for G in Gs:
+            groups = np.array_split(sorted_copies, G)
+            feat = np.concatenate([g.mean(axis=0) for g in groups], axis=1)
+            G_acc[G].append(_metrics(memory_and_ipc(feat, s_post)))
+
+    def _avg(lst):
+        m = np.mean(lst, axis=0)
+        return dict(MC=float(m[0]), IPC_nonlinear=float(m[1]), IPC_total=float(m[2]))
+    r_single = _avg(single_acc); r_pooled = _avg(pooled_acc)
+    ipc_by_G = [_avg(G_acc[G]) for G in Gs]
+
+    print(f"Ensemble / spatial-heterogeneity reservoir capacity ({n_seeds} seeds)")
     print("=" * 64)
     print(f"  copies = {N_copies}, kinetic channels per sample = {len(times)}")
     print(f"  single homogeneous copy : IPC = {r_single['IPC_total']:.2f}  "
@@ -150,7 +149,7 @@ def run(N_copies=80, L=700, seed=5):
               color=["#1565c0", "#c62828"], width=0.6)
     ax[0].set_xticks([0, 1]); ax[0].set_xticklabels(["single\ncopy", "pooled\n(G=1)"])
     ax[0].set_ylabel("total IPC")
-    ax[0].set_title("(a) does pooling wash it out?", loc="left", fontweight="bold")
+    ax[0].set_title("(a) pooling preserves capacity", loc="left", fontweight="bold")
     ax[0].grid(True, axis="y", alpha=0.25)
 
     ch = [len(times) * G for G in Gs]
@@ -160,7 +159,7 @@ def run(N_copies=80, L=700, seed=5):
                label="nonlinear")
     ax[1].set_xlabel("readout channels (= 3 × #groups)")
     ax[1].set_ylabel("IPC")
-    ax[1].set_title("(b) spatial resolution recovers capacity", loc="left", fontweight="bold")
+    ax[1].set_title("(b) more channels raise the IPC ceiling", loc="left", fontweight="bold")
     ax[1].legend(fontsize=7); ax[1].grid(True, alpha=0.25)
     fig.tight_layout()
     fig.savefig("manuscript/figures/fig_ensemble.pdf", bbox_inches="tight")

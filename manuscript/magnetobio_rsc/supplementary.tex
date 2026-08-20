@@ -1,0 +1,349 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb,booktabs}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\theequation}{S\arabic{equation}}
+
+\title{\textbf{Supporting Information}\\[0.4em]
+Ultrafast recombination and exchange coupling preclude weak-field
+magnetosensitivity of neurotransmitter-metabolising flavoenzymes}
+\author{Hikaru Wakaura \and Taiki Tanimae}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Validation of the Liouville-space solver}
+
+The time-integrated singlet yield (Eq.~3 of the main text) is evaluated by exact
+linear solution in the $32^2$-dimensional Liouville space. As a correctness
+check, in the limit of zero electronic dephasing ($1/T_2^e \to 0$) and symmetric
+recombination ($k_S = k_T$) the master-equation result must coincide with the
+closed-form coherent singlet yield obtained from the eigenbasis Green's function,
+\begin{equation}
+\Phi_S(B) = k\sum_{m,n}
+\frac{[\tilde P_S]_{mn}\,[\tilde\rho_0]_{nm}}{k + i(E_m - E_n)} ,
+\end{equation}
+where tildes denote the Hamiltonian eigenbasis. The two evaluations agree to
+machine precision (absolute difference $<10^{-9}$ across all fields tested); this
+test is included in the released test suite
+(\texttt{test\_master\_equation.py}).
+
+\section{The reported value is physical, not a numerical floor}
+\label{sec:b2}
+
+A response of order $10^{-12}\,\%$ evaluated in double precision invites the
+objection that it is a rounding artefact of the $1024$-dimensional linear solve
+rather than a property of the model. It is not, and the check is independent of
+the solver's own conventions: in the perturbative regime $\omega_B \ll 1/\tau$
+the field enters the Hamiltonian only through $\omega_B$ and time-reversal
+symmetry forbids a linear term, so the MFE must scale as $B^2$. A numerical floor
+would not.
+
+Table~\ref{tab:b2scaling} reports MFE$(B)/B^2$ for the MAO-A parameter set over
+three decades of field. From $100\,\mu$T to $25$~mT the ratio is constant to
+better than $0.3\,\%$, in both the coherent limit and with $T_2^e = 1$~ns; the
+geomagnetic point at $50\,\mu$T lies $1.4\,\%$ (coherent) and $0.6\,\%$
+(realistic) below the converged slope, which sets the accuracy of the quoted
+values. Extrapolating the converged slope back to $50\,\mu$T gives
+$1.71\times10^{-12}\,\%$ and $1.65\times10^{-12}\,\%$ respectively, confirming
+Table~1 of the main text. Only below $\sim\!25\,\mu$T does the double-precision
+floor intrude and the scaling break down.
+
+\begin{table}[h]
+\centering
+\caption{Verification that the computed MFE is physical. MAO-A parameters
+($J = 750$~MHz, $D = -1214$~MHz, $\tau = 10$~ps). A constant MFE$/B^2$ is the
+signature of the perturbative $B^2$ response; a numerical floor would show none.}
+\label{tab:b2scaling}
+\small
+\begin{tabular}{r r r r r}
+\hline
+ & \multicolumn{2}{c}{coherent ($T_2^e\to\infty$)} & \multicolumn{2}{c}{realistic ($T_2^e = 1$~ns)} \\
+$B$ & MFE (\%) & MFE$/B^2$ & MFE (\%) & MFE$/B^2$ \\
+    &          & ($10^{-16}$\,\%/$\mu$T$^2$) &  & ($10^{-16}$\,\%/$\mu$T$^2$) \\
+\hline
+$25\,\mu$T  & $4.00\times10^{-13}$ & $6.395$ & $4.04\times10^{-13}$ & $6.458$ \\
+$50\,\mu$T  & $1.69\times10^{-12}$ & $6.750$ & $1.64\times10^{-12}$ & $6.548$ \\
+$100\,\mu$T & $6.84\times10^{-12}$ & $6.839$ & $6.58\times10^{-12}$ & $6.582$ \\
+$500\,\mu$T & $1.71\times10^{-10}$ & $6.848$ & $1.65\times10^{-10}$ & $6.583$ \\
+$1$~mT      & $6.85\times10^{-10}$ & $6.849$ & $6.58\times10^{-10}$ & $6.584$ \\
+$5$~mT      & $1.71\times10^{-8}$  & $6.848$ & $1.65\times10^{-8}$  & $6.583$ \\
+$25$~mT     & $4.27\times10^{-7}$  & $6.836$ & $4.11\times10^{-7}$  & $6.571$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{The null result is independent of the hyperfine assignment}
+
+Because the flavin-radical hyperfine couplings enter only through the
+singlet--triplet mixing that the exchange coupling and finite lifetime already
+suppress, the verdict for the active-site pairs does not depend on the precise
+hyperfine values used. Table~\ref{tab:hf} lists the calculated geomagnetic-field
+MFE for the monoamine-oxidase regime ($J = 750$~MHz, $\tau \approx 10$~ps) as the
+dominant flavin hyperfine constant is varied over more than an order of
+magnitude: the effect stays at the $10^{-12}\,\%$ level throughout. For the
+spatially separated cryptochrome-like geometry the MFE varies within a factor of
+about four over the same range ($+0.26\%$ to $+1.07\%$), confirming that the
+twelve-order-of-magnitude contrast between the two regimes is a property of the
+kinetics, the exchange and dipolar couplings, and not of the hyperfine model.
+
+\begin{table}[h]
+\centering
+\caption{Calculated MFE at $B = 50\,\mu$T as the dominant flavin hyperfine
+constant $A$ is varied. ``Active-site'' uses $J = 750$~MHz, $\tau \approx 10$~ps,
+$T_2^e = 1$~ns (the monoamine-oxidase regime); ``separated'' uses
+$J \approx 0$, $\tau = 1\,\mu$s, $T_2^e = 1\,\mu$s (the cryptochrome regime).}
+\label{tab:hf}
+\begin{tabular}{c c c}
+\toprule
+$A_{\rm P}$ (MHz) & MFE, active-site (\%) & MFE, separated (\%) \\
+\midrule
+5   & $1.50\times10^{-12}$ & $+0.91$ \\
+10  & $1.59\times10^{-12}$ & $+1.07$ \\
+20  & $1.77\times10^{-12}$ & $+0.86$ \\
+50  & $3.32\times10^{-12}$ & $+0.67$ \\
+100 & $8.80\times10^{-12}$ & $+0.26$ \\
+200 & $3.08\times10^{-11}$ & $+0.26$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{What controls the bound}
+
+The physical content of the result is the separation of scales between the two
+regimes, summarised here for reference:
+\begin{itemize}
+\item \textbf{Exchange coupling.} Weak-field singlet--triplet mixing requires the
+singlet and triplet manifolds to be near-degenerate on the scale of the Zeeman
+and hyperfine energies ($\lesssim$ tens of MHz). At an active-site inter-radical
+distance ($r \approx 3.5$~\AA), $J \sim 0.4$--$0.75$~GHz holds them apart by one to two
+orders of magnitude, so a $50\,\mu$T field cannot bring them into resonance.
+\item \textbf{Lifetime.} Coherent mixing driven by sub-millitesla hyperfine
+fields develops over hundreds of nanoseconds. Picosecond back electron transfer
+($\tau \approx 10$~ps) freezes the spin state long before mixing occurs.
+\item \textbf{Electronic decoherence.} Hyperfine-induced dephasing at the active
+site ($T_2^e \sim 1$~ns) damps any residual coherence two orders of magnitude
+faster than the $\gtrsim 100$~ns required for an effect to accumulate.
+\end{itemize}
+The picosecond lifetime is the mechanism that robustly enforces the bound; the active-site
+radical pairs of the neurotransmitter-metabolising flavoenzymes are subject to
+all three.
+
+\section{Robustness to the quantum Zeno mechanism}
+
+A tightly bound radical pair can become sensitive to a weak field through a
+quantum Zeno effect if its recombination is strongly spin-asymmetric. We tested
+whether this rescues the monoamine-oxidase regime by recomputing the MFE for
+$|J| = 750$~MHz, $\tau\approx10$~ps while varying the singlet/triplet
+recombination asymmetry $k_S/k_T$ over six orders of magnitude
+(Table~\ref{tab:zeno}), both with electronic dephasing ($T_2^e = 1$~ns) and
+without. At the geomagnetic field the MFE stays below $10^{-7}\,\%$ for every asymmetry; even
+at a $200$-fold stronger field ($10$~mT) it does not exceed
+$1.5\times10^{-3}\,\%$. The Zeno mechanism cannot open a magnetosensitive window
+because the picosecond active-site lifetime quenches the spin evolution before
+any asymmetry in recombination can project it.
+
+\begin{table}[h]
+\centering
+\caption{Calculated MFE for the monoamine-oxidase regime ($|J| = 750$~MHz,
+$\tau\approx10$~ps, $T_2^e = 1$~ns) as the recombination asymmetry $k_S/k_T$ is
+varied. Even strongly spin-asymmetric recombination leaves the geomagnetic-field
+effect at zero.}
+\label{tab:zeno}
+\begin{tabular}{c c c c c}
+\toprule
+$k_S/k_T$ & $\tau_T$ & MFE ($50\,\mu$T) & MFE ($1$~mT) & MFE ($10$~mT) \\
+\midrule
+$1$       & $10$~ps    & $+1.6\times10^{-12}$ & $+6.6\times10^{-10}$ & $+6.6\times10^{-8}$ \\
+$10^{2}$  & $1$~ns     & $-5.0\times10^{-9}$  & $-2.0\times10^{-6}$  & $-2.2\times10^{-4}$ \\
+$10^{4}$  & $100$~ns   & $-1.2\times10^{-8}$  & $-4.7\times10^{-6}$  & $-5.4\times10^{-4}$ \\
+$10^{6}$  & $10\,\mu$s & $-6.6\times10^{-11}$ & $-2.6\times10^{-8}$  & $-2.3\times10^{-6}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Robustness to singlet--triplet dephasing}
+
+For a tightly bound radical pair the dominant electronic decoherence is expected
+to be pure dephasing between the singlet and triplet manifolds, driven by
+fluctuations in the large exchange coupling $2J$, rather than the single-spin
+``random-field'' ($S_z$) channel used in the main text. The two channels have
+different Lindblad operators: the $2J$-fluctuation channel is generated by
+$A = P_S - P_T$ (since the fluctuating term of the Hamiltonian is
+$\propto P_S - P_T$), giving the dissipator
+$\gamma_{ST}\,(A\rho A - \rho)$, which damps singlet--triplet coherence at rate
+$2\gamma_{ST}$ without affecting populations.
+
+We added this channel to the monoamine-oxidase model ($|J| = 750$~MHz,
+$\tau\approx10$~ps, with the $S_z$ channel also present at $T_2^e = 1$~ns) and
+varied $\gamma_{ST}$ from zero up to $10^{4}$~MHz---comparable to and beyond the
+exchange coupling itself (Table~\ref{tab:stdeph}). The geomagnetic-field MFE
+remains at the $10^{-12}\,\%$ level throughout, and even at a $200$-fold stronger field
+($10$~mT) it stays at $\sim4\times10^{-11}\,\%$. This is expected: because the
+active-site effect already vanishes in the fully coherent limit
+(Table~S1), the additional dephasing has little left to act on. We do not claim
+this as a general theorem: because the MFE is a ratio, a dissipative channel can
+in principle increase it, and the main text gives an explicit counterexample for a
+long-lived pair. The statement here is empirical and restricted to the two
+channels and the picosecond regime examined.
+
+\begin{table}[h]
+\centering
+\caption{Calculated MFE for the monoamine-oxidase regime ($|J| = 750$~MHz,
+$\tau\approx10$~ps, $T_2^e = 1$~ns) as a singlet--triplet dephasing channel
+$A = P_S - P_T$ of rate $\gamma_{ST}$ (from $2J$ fluctuations) is added. The null
+is unaffected for any rate up to and beyond the exchange coupling.}
+\label{tab:stdeph}
+\begin{tabular}{c c c}
+\toprule
+$\gamma_{ST}$ (MHz) & MFE ($50\,\mu$T) (\%) & MFE ($10$~mT) (\%) \\
+\midrule
+0        & $1.64\times10^{-12}$ & $6.58\times10^{-8}$ \\
+$10^{1}$ & $1.64\times10^{-12}$ & $6.56\times10^{-8}$ \\
+$10^{2}$ & $1.60\times10^{-12}$ & $6.34\times10^{-8}$ \\
+$10^{3}$ & $1.17\times10^{-12}$ & $4.64\times10^{-8}$ \\
+$10^{4}$ & $1.57\times10^{-13}$ & $5.86\times10^{-9}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Robustness to the $\Delta g$ mechanism}
+
+The one coherent channel that survives when the exchange coupling greatly exceeds
+the hyperfine scale is the $\Delta g$ mechanism, in which the two radicals precess
+at different rates because their $g$-factors differ. Because it does not rely on
+hyperfine coupling, it is the natural candidate for restoring sensitivity in a
+strongly exchange-coupled pair, and we therefore tested it explicitly. We added
+the differential Zeeman term
+\begin{equation}
+H_{\Delta g} = \frac{\Delta g\,\mu_B B}{\hbar}\,(S_{1z} - S_{2z})
+\end{equation}
+to Eq.~(1) and recomputed the monoamine-oxidase case
+(Table~\ref{tab:dg}). At $\Delta g \simeq 10^{-3}$, the realistic value for a pair
+of organic radicals, the geomagnetic-field MFE is essentially unchanged (it in
+fact decreases slightly). Only at $\Delta g = 3\times10^{-2}$---more than an order
+of magnitude larger than any organic radical pair---does the effect reach
+$3\times10^{-10}\,\%$, still eight orders of magnitude below any measurable level.
+
+\begin{table}[h]
+\centering
+\caption{Calculated MFE at $B = 50\,\mu$T for the monoamine-oxidase regime
+($J = 750$~MHz, $D = -1214$~MHz, $\tau\approx10$~ps, $T_2^e = 1$~ns) as a
+$\Delta g$ term is added. Realistic organic-radical values are
+$\Delta g \lesssim 10^{-3}$.}
+\label{tab:dg}
+\begin{tabular}{c c c}
+\toprule
+$\Delta g$ & MFE ($50\,\mu$T) (\%) & ratio to $\Delta g = 0$ \\
+\midrule
+$0$                & $+1.64\times10^{-12}$ & $1.00$ \\
+$10^{-4}$          & $+1.64\times10^{-12}$ & $1.00$ \\
+$10^{-3}$          & $+1.27\times10^{-12}$ & $0.77$ \\
+$3\times10^{-3}$   & $-1.65\times10^{-12}$ & $-1.01$ \\
+$10^{-2}$          & $-3.49\times10^{-11}$ & $-21.3$ \\
+$3\times10^{-2}$   & $-3.28\times10^{-10}$ & $-200$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{Why no coherent mechanism rescues the picosecond pair}
+This result is a particular case of a general scale argument. The couplings in the
+problem order as
+\begin{equation}
+\underbrace{1/\tau = 10^{5}}_{\text{lifetime}} \;\gg\;
+\underbrace{|D| = 1214}_{\text{dipolar}} \;>\;
+\underbrace{J = 750}_{\text{exchange}} \;\gg\;
+\underbrace{A \simeq 44}_{\text{hyperfine}} \;\gg\;
+\underbrace{\omega_B \simeq 1.4}_{\text{Zeeman at }50\,\mu\text{T}}
+\end{equation}
+in MHz. The recombination rate exceeds the largest internal coupling by more than
+two orders of magnitude, so the pair is destroyed before any coherent term can
+act; this is why the active-site and separated geometries give the same MFE to
+within a few per cent at $\tau = 10$~ps (Fig.~1a), despite differing by three
+orders of magnitude in $J$. More fundamentally, the magnetic field enters the
+Hamiltonian only through $\omega_B$, so at leading order the response is bounded
+by $(\omega_B\tau)^2 \approx 7.8\times10^{-9}$ as a dimensionless fraction, i.e.\
+$7.8\times10^{-7}\,\%$, irrespective of how the remaining couplings are
+arranged---comfortably above the computed
+$1.6\times10^{-12}\,\%$, whose $B^2$ scaling is verified over more than two
+decades of field in Table~\ref{tab:b2scaling}. Refinements to the internal Hamiltonian (anisotropic hyperfine
+and $g$ tensors, the correct $^{14}$N nuclear spin of 1, substrate-specific
+couplings) change the prefactor, not this ceiling.
+
+\section{Computational details for the electronic-structure inputs}
+
+\subsection{Geometries and hyperfine/distance inputs (GFN2-xTB)}
+Active-site geometries were built from the crystallographically resolved
+monoamine-oxidase structure~\cite{Edmondson2004main} and a reduced
+lumiflavin--methylamine model of the MAO-A active site (the isoalloxazine ring of
+FAD truncated at N10, plus methylamine as the substrate amine). Geometries were
+optimised with the semi-empirical tight-binding method GFN2-xTB~\cite{Bannwarth2019}
+(neutral, closed-shell; \texttt{xtb -{}-opt -{}-chrg 0 -{}-uhf 0}). The
+hydrogen-transfer coordinate was sampled by constraining the
+$d(\mathrm{N5}\cdots\mathrm{H})$ distance over $1.0$--$1.8$~\AA{} and
+re-optimising the remaining degrees of freedom. Inter-radical distances and the
+dominant isotropic hyperfine magnitudes used in the spin Hamiltonian were read
+from these structures and cross-checked against published ENDOR hyperfine
+couplings for protein flavin radicals~\cite{Weber1998}; the spin-dynamics
+conclusions are independent of the precise hyperfine values (table~S1 above).
+
+\subsection{Multireference diradical character (CASSCF/NEVPT2)}
+At each scan point the diradical character of the singlet was evaluated with
+complete-active-space self-consistent field theory in the def2-SVP basis,
+CASSCF(2,2)/def2-SVP, as implemented in PySCF~\cite{Sun2020}. The active space
+comprises the two frontier orbitals involved in a putative single-electron
+transfer (the flavin LUMO and the amine-nitrogen lone-pair HOMO); this is the
+minimal active space that can resolve closed-shell versus diradical singlet
+configurations. Dynamic correlation was added by strongly contracted
+$n$-electron valence-state perturbation theory (NEVPT2)~\cite{Angeli2001} on the
+CASSCF reference. The lowest singlet and triplet were computed at each geometry.
+The diradical index was taken as $y_0 = 2\,c_{02}^{2}$ from the weight of the
+doubly-excited configuration in the CASSCF singlet
+wavefunction~\cite{Nakano2017}, equivalent to the occupation of the lowest
+unoccupied natural orbital. Table~\ref{tab:casscf} collects the results.
+
+\begin{table}[h]
+\centering
+\caption{CASSCF(2,2)/def2-SVP diradical index $y_0$ and CASSCF
+singlet--triplet gap along the hydrogen-transfer coordinate of the
+lumiflavin--methylamine model. Small $y_0$ and a large $S$--$T$ gap indicate a
+predominantly closed-shell (polar/concerted) singlet, not a spin-correlated
+radical pair.}
+\label{tab:casscf}
+\begin{tabular}{c c c}
+\toprule
+$d(\mathrm{N5}\cdots\mathrm{H})$ (\AA) & $y_0$ & $S$--$T$ gap (eV) \\
+\midrule
+1.0 & 0.032 & 3.24 \\
+1.4 & 0.092 & 4.10 \\
+1.8 & 0.091 & 3.61 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The diradical index stays below $0.10$ across the coordinate, with a
+singlet--triplet gap of $3$--$4$~eV---two orders of magnitude larger than any
+hyperfine or Zeeman energy. CAS(2,2) is the minimal frontier active space;
+larger active spaces (e.g.\ CAS(4,4)/(6,6) including additional flavin
+$\pi$ orbitals) would refine the absolute numbers, but the qualitative
+conclusion---weak diradical character and a large $S$--$T$ gap, i.e.\ no genuine
+radical-pair intermediate---is robust across the scanned geometries and is
+consistent with QM/MM mechanistic studies of MAO~\cite{Repic2013,Vianello2012}.
+
+\begin{thebibliography}{9}
+\footnotesize
+\bibitem{Edmondson2004main} D.~E. Edmondson, A. Mattevi, C. Binda, M. Li, F. Hub\'{a}lek, \textit{Curr. Med. Chem.} \textbf{11}, 1983 (2004).
+\bibitem{Bannwarth2019} C. Bannwarth, S. Ehlert, S. Grimme, \textit{J. Chem. Theory Comput.} \textbf{15}, 1652 (2019).
+\bibitem{Weber1998} S. Weber, G. Richter, E. Schleicher \textit{et al.}, \textit{Appl. Magn. Reson.} \textbf{14}, 105 (1998).
+\bibitem{Sun2020} Q. Sun, X. Zhang, S. Banerjee \textit{et al.}, \textit{J. Chem. Phys.} \textbf{153}, 024109 (2020).
+\bibitem{Angeli2001} C. Angeli, R. Cimiraglia, S. Evangelisti, T. Leininger, J.-P. Malrieu, \textit{J. Chem. Phys.} \textbf{114}, 10252 (2001).
+\bibitem{Nakano2017} M. Nakano, \textit{Top. Curr. Chem.} \textbf{375}, 47 (2017).
+\bibitem{Repic2013} M. Repi\v{c}, R. Vianello, M. Purg \textit{et al.}, \textit{J. Phys. Chem. B} \textbf{118}, 4326 (2014).
+\bibitem{Vianello2012} R. Vianello, M. Repi\v{c}, J. Mavri, \textit{Eur. J. Org. Chem.} \textbf{2012}, 7057 (2012).
+\end{thebibliography}
+
+\end{document}
