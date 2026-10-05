@@ -20,18 +20,20 @@ a thermally formed radical pair}
 Spin dynamics: \texttt{qbscreen} (this work) with NumPy and SciPy; coherent
 yields from the Sylvester equation
 $H_{\rm eff}X - XH_{\rm eff}^\dagger = -i\rho_0$ with
-$H_{\rm eff} = 2\pi H - \tfrac{i}{2}(k_SP_S + k_P)$ and $X = \int_0^\infty\rho\,dt$;
+$H_{\rm eff} = 2\pi H - \tfrac{i}{2}(k_SP_S + k_P)$ and $X = \int_0^\infty\rho\,dt$,
+solved by the Bartels--Stewart method;\cite{Bartels1972}
 yields with electron spin relaxation from the Liouville-space generator. The two
 agree to $10^{-8}$ without relaxation, and every yield pair sums to one.
-Electronic structure: PySCF~2.12.1 (B3LYP; def2-SVP for couplings and energies,
-def2-TZVP for hyperfine couplings; RI-J; PCM), geometries from GFN2-xTB~6.7.1.
+Electronic structure: PySCF~2.12.1\cite{Sun2020} (B3LYP\cite{Becke1993,Lee1988};
+def2-SVP for couplings and energies, def2-TZVP\cite{Weigend2005} for hyperfine
+couplings; RI-J; PCM), geometries from GFN2-xTB~6.7.1.\cite{Bannwarth2019}
 Every table below is generated from the stored results by
 \url{qbscreen/make_si_v6.py}.
 
 \section{The inequality $\Phi_P\le4k_P/k_S$ and the dead-end bound}
 Let $\mathcal L$ be the generator of eq~2 of the main text, with $\mathcal D$
 generating a positivity-preserving evolution (for example a trace-preserving
-GKSL generator) and unital, $\mathcal D(I)=0$. Then
+GKSL generator\cite{Gorini1976,Lindblad1976}) and unital, $\mathcal D(I)=0$. Then
 $-\mathcal L(I) = k_SP_S + k_PI$. For $k_P>0$ the operator
 $\mathcal R = (-\mathcal L)^{-1} = \int_0^\infty e^{\mathcal Lt}\,dt$ exists and
 is positive, because $e^{\mathcal Lt}$ is and decays at least as $e^{-k_Pt}$.
@@ -141,7 +143,7 @@ $\gamma\sum_e(S_{ez}\rho S_{ez}-\rho/4)$ is split into a decay $-(\gamma/2)\rho$
 absorbed into $K = 2\pi H - \tfrac i2[k_SP_S + (k_P+\gamma/2)I]$, and a recycling
 term $\gamma\sum_eS_{ez}\rho S_{ez}$. The integral $X=\int_0^\infty\rho\,dt$ then
 solves $KX - XK^\dagger = -i\rho_0 - i\gamma\sum_eS_{ez}XS_{ez}$, which is iterated
-by GMRES with the left side inverted by a triangular Sylvester solve in the Schur
+by GMRES\cite{Saad1986} with the left side inverted by a triangular Sylvester solve in the Schur
 basis of $K$ (\url{product_yield.yields_t2e}). On twelve random systems small
 enough for the dense solution, including anisotropic hyperfine tensors, the two
 agree to a relative $1.3\times10^{-13}$. For every cell with $k_S\ge k_P$ on the
@@ -192,7 +194,7 @@ depend on the side-chain conformation.
 
 \section{Dipolar tensor}
 The tensor is the point-dipole tensor summed over pairs of atoms weighted by
-their Löwdin spin populations (UKS B3LYP/def2-SVP on each radical at its position
+their Löwdin\cite{Lowdin1950} spin populations (UKS B3LYP/def2-SVP on each radical at its position
 in the complex), for methylamine on the flavin si face with N5--N = 3.5~\AA\
 (Table~\ref{tab:dip}).
 
@@ -204,7 +206,7 @@ in the complex), for methylamine on the flavin si face with N5--N = 3.5~\AA\
 \end{table}
 
 \section{Electronic coupling}
-Fragment-orbital couplings $t = \langle{\rm LUMO_{Fl}}|F|{\rm HOMO_{am}}\rangle$
+Fragment-orbital couplings\cite{Valeev2006} $t = \langle{\rm LUMO_{Fl}}|F|{\rm HOMO_{am}}\rangle$
 (B3LYP/def2-SVP) for methylamine and benzylamine stacked on the flavin si face
 (five orientations) or approaching its edge (three orientations), at N5--N
 distances of 3.0--6.0~\AA. Geometries with any intermolecular contact below
