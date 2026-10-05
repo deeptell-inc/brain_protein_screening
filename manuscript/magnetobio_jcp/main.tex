@@ -50,8 +50,8 @@ searched pairs able to carry $k_{\rm cat}=1$~s$^{-1}$, the largest effect found
 falls below 0.1\,\% for $\Delta\ge\ThrTenthOne$~eV, or \ThrTenthOneSens~eV when
 every searched value is multiplied by the largest factor found with richer
 nuclear models; electron spin relaxation, computed directly, lowers the values
-that set this threshold. With a nuclear-frequency ceiling
-on elementary rates, no pair above \DeltaMaxHi~eV carries that turnover. The
+that set this threshold. If no elementary rate exceeds a nuclear-frequency
+ceiling, no pair above \DeltaMaxHi~eV carries that turnover. The
 measured flavin potentials of the monoamine oxidases, combined with a
 dialkylamine potential standing in for benzylamine-type substrates, place an
 amine-to-flavin pair \DeltaMAOlo--\DeltaMAOhi~eV above the closed-shell state,
@@ -63,8 +63,8 @@ flavin couple as much as it shifts full reduction.
 
 \section{Introduction}
 
-The radical-pair mechanism (RPM) is the only experimentally supported way in
-which a magnetic field as weak as the geomagnetic field ($\sim50\,\mu$T) can alter
+The radical-pair mechanism (RPM) is the best-established way in which a
+magnetic field as weak as the geomagnetic field ($\sim50\,\mu$T) can alter
 the yield of a chemical reaction.\cite{Steiner1989,Hore2016} It underlies the
 leading model of avian magnetoreception, in which photoexcitation of the flavin
 in cryptochrome creates a spin-correlated flavin--tryptophan radical
@@ -72,15 +72,18 @@ pair.\cite{Ritz2000,Maeda2012,Xu2021} Whether the same mechanism could act in
 flavoenzymes that work in the dark, such as the monoamine oxidases that degrade
 neurotransmitters, has been raised repeatedly.\cite{Jones2009,ZadehHaghighi2022}
 
-General limits on weak-field effects are known. Electron spin relaxation caps a
-primary RPM effect in biochemistry at $10^{-3}$--$10^{-4}$ or
-less,\cite{Binhi2025} and exchange and dipolar couplings between the radicals
+General limits on weak-field effects are known. Electron spin relaxation is
+expected to limit a primary RPM effect in biochemistry to
+$10^{-3}$--$10^{-4}$ or less,\cite{Binhi2025} and exchange and dipolar couplings between the radicals
 suppress singlet--triplet interconversion unless the radicals are far
 apart.\cite{Efimova2008} Asymmetric reaction schemes, in which only the singlet
 pair recombines while both spin states react onward, relax the second limit and
-allow closely bound pairs to respond.\cite{Denton2024} These results constrain
-the spin dynamics of a pair with given lifetimes. They do not say which
-lifetimes a pair that an enzyme forms \emph{thermally} can have.
+allow closely bound pairs to respond.\cite{Denton2024} For a pair that recombines
+by non-adiabatic electron transfer, the ratio of the reactive exchange coupling
+to the recombination rate is fixed by the activation energy of the
+transfer.\cite{Fay2018} These results constrain the spin dynamics of a pair once
+its rates are given. They do not say which rates a pair can have when an enzyme
+forms it \emph{thermally} and turns over through it.
 
 Here we derive that constraint. For a pair formed from a closed-shell complex
 that must carry the catalytic flux, detailed balance bounds both of its decay
@@ -109,7 +112,11 @@ oxidation by flavoenzymes:\cite{Edmondson2007}
 Electron transfer from the closed-shell complex forms the pair in its singlet
 state; only the singlet pair returns by back electron transfer (rate $k_S$), and
 singlet and triplet pairs react onward with a spin-independent rate $k_P$, for
-example by $\alpha$-C--H deprotonation of the aminium radical. The yield of
+example by $\alpha$-C--H deprotonation of the aminium radical. Aminium radical
+cations can also deprotonate at nitrogen: dialkylaminium radicals in water have
+$pK_a = 5.3$--6.8, and the diethylaminium radical deprotonates predominantly at
+nitrogen under the conditions studied.\cite{Jonsson1996} What follows requires only that the onward step,
+whatever its chemistry, is spin independent. The yield of
 onward reaction per pair formed is $\Phi_P = k_P\int_0^\infty{\rm Tr}\,\rho\,dt$,
 and the magnetic field effect is
 $\mathrm{MFE}_P = [\Phi_P(B)-\Phi_P(0)]/\Phi_P(0)$ at $B=50\,\mu$T. The spin
@@ -128,8 +135,10 @@ generates a positivity-preserving evolution, as a trace-preserving
 Gorini--Kossakowski--Sudarshan--Lindblad (GKSL) generator does, and that it is
 unital, $\mathcal D(I)=0$, as single-electron dephasing, the reactive
 singlet--triplet dephasing of ref~\citenum{Fay2018} and any relaxation that
-drives the spins towards equal populations at high temperature are. Yields are
-obtained exactly, from the Sylvester equation for $\int\rho\,dt$ in the coherent
+drives the spins towards equal populations at high temperature are. The
+reaction terms also assume that the nuclear motion driving electron transfer is
+fast compared with the spin dynamics, the incoherent-recombination approximation
+of ref~\citenum{Fay2018}. Yields are obtained exactly, from the Sylvester equation for $\int\rho\,dt$ in the coherent
 case and in Liouville space with relaxation.
 
 \subsection{Spin Hamiltonian and conventions}
@@ -155,7 +164,9 @@ conventions are verified numerically in the code.
 \subsection{Magnetic parameters}
 
 The reference model has four nuclei: flavin N5 (523~$\mu$T) and N10
-(189~$\mu$T), each as an isotropic spin-1 nucleus,\cite{Lee2014} and the two
+(189~$\mu$T), each as an isotropic spin-1 nucleus,\cite{Lee2014} although both
+couplings are strongly anisotropic; anisotropic tensors are examined in
+Sec.~\ref{sec:sens}. The model also has the two
 largest couplings of the benzylaminium radical cation, \aBenzOne\ and
 \aBenzTwo~MHz ($\alpha$-CH$_2$ protons; B3LYP/def2-TZVP on GFN2-xTB
 geometries\cite{Bannwarth2019}). The dipolar tensor of the contact pair is the
@@ -204,8 +215,9 @@ generator is a separate question, taken up in Sec.~\ref{sec:mao}. Without
 spin dynamics the turnover is exactly
 $e^{-\Delta_S/k_BT}/(1/k_S+1/k_P)$. Eq~\ref{eq:kmin} contains no electronic
 coupling, no reorganization energy and no assumption about the chemistry of the
-onward step. If, in addition, no elementary rate exceeds the frequency of
-nuclear motion, $\nu_n\approx10^{13}$--$10^{14}$~s$^{-1}$, a pair that carries
+onward step. If, in addition, we assume that no elementary rate exceeds a
+frequency of nuclear motion, $\nu_n\approx10^{13}$--$10^{14}$~s$^{-1}$, a pair
+that carries
 $k_{\rm cat} = 1$--$10^3$~s$^{-1}$ must have
 $\Delta\le k_BT\ln(\nu_n/k_{\rm cat}) = \DeltaMaxLo$--$\DeltaMaxHi$~eV.
 
@@ -350,7 +362,17 @@ as the one-electron flavin couple. For the amine, dialkylamine radical cations
 in water have $E^\circ({\rm R_2NH^{\bullet+}/R_2NH}) = \EamExp\pm\AmineErr$~V vs
 NHE, a value its authors give as a general approximation;\cite{Jonsson1996} we
 are not aware of a measured potential for a primary alkylamine or benzylamine
-radical cation in water and use this value as a proxy. With the Coulomb
+radical cation in water and use this value as a proxy. Its uncertainty is
+probably larger than stated. The dialkylamine values come close to the practical
+limit of cyclic voltammetry in water, and follow-up reactions of the radical
+cations can shift peak potentials negative by up to about 0.2~V, so that the
+standard potentials may lie higher; a computed value of 0.80~V for
+dimethylamine, much lower than the measured ones, has also been
+reported.\cite{Jonsson1996} The direction
+of the error for primary amines is not established either: the solvation
+difference between amine and radical cation grows with the gas-phase ionization
+energy,\cite{Jonsson1996} which would partly offset the higher ionization
+energies of primary amines. With the Coulomb
 attraction of the contact pair in water (\CoulLo--\CoulHi~eV for 6--3.5~\AA)
 this places the pair at $\Delta\approx\DeltaMAOlo$--\DeltaMAOhi~eV.
 
@@ -365,13 +387,14 @@ exclude the pair from carrying turnover. It lies, however, well above the
 driving forces at which the searched field effect is appreciable ($G<0.1$\,\%
 for $\Delta\ge\ThrTenthOne$--\ThrTenthOneSens~eV): a pair at the 0.1\,\%
 threshold would require the active site to lower $\Delta$ by a further
-$\DeltaToThr$~eV beyond that shift. The kinetic evidence points away from a
-long-lived radical pair: no flavin radical is detected during the reductive
-half-reaction of MAO~B,\cite{Walker1994} and the substituent and isotope
-effects of MAO~A indicate rate-limiting $\alpha$-C--H cleavage by proton
-abstraction.\cite{Miller1999} These estimates concern substrates of the
-benzylamine type, oxidized at nitrogen. Substrates that may be oxidized at the
-ring rather than at nitrogen, such as the catechol and indole
+$\DeltaToThr$~eV beyond that shift. Kinetic studies with benzylamine
+analogues are consistent with this, though they cannot exclude a short-lived
+pair: no flavin radical is detected during the reductive half-reaction of bovine
+MAO~B,\cite{Walker1994} and the substituent and isotope effects of human MAO~A
+indicate rate-limiting $\alpha$-C--H cleavage by proton
+abstraction.\cite{Miller1999} A direct hydride transfer has also been proposed
+for MAO.\cite{Kay2007} These estimates concern substrates of the benzylamine
+type, oxidized at nitrogen. Other substrates, including the catechol and indole
 neurotransmitters, are not analysed here and would require their own
 potentials.
 
@@ -419,10 +442,10 @@ standing in for the substrates and on how substrate binding shifts the
 one-electron flavin couple.
 
 Two routes around the bound should be named. Three-radical and scavenging
-mechanisms\cite{Kattnig2017} restore sensitivity to strongly coupled pairs; they
-still require the pair to survive until the third radical acts, which
-eq~\ref{eq:kmin} limits, but their field effects would have to be computed in
-their own model. And an active site that brings $\Delta$ close to zero is not
+mechanisms\cite{Kattnig2017} restore sensitivity to strongly coupled pairs.
+Whether eq~\ref{eq:kmin} limits them depends on where the scavenging step enters
+the reaction scheme, and their field effects would have to be computed in their
+own model. And an active site that brings $\Delta$ close to zero is not
 excluded: competence then allows slow decay and field effects of a percent or
 more. The question for a particular enzyme is where its radical pair lies in
 $\Delta$, which is measurable.
