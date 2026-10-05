@@ -88,10 +88,10 @@ forms it \emph{thermally} and turns over through it.
 Here we derive that constraint. For a pair formed from a closed-shell complex
 that must carry the catalytic flux, detailed balance bounds both of its decay
 rates from below in terms of the driving force $\Delta$ and the turnover number.
-The bound is the spin-resolved form of the familiar limit on flux through a
-pre-equilibrium intermediate; what the spin dynamics adds is that it holds for
-the spin-independent onward rate as well as for the singlet return, with a
-factor of four that is sharp for any spin Hamiltonian. We then combine it with
+Without spin dynamics the bound follows from the steady-state turnover through
+a pre-equilibrium intermediate (Sec.~\ref{sec:bound}); what the spin dynamics adds is that it
+holds for the spin-independent onward rate as well as for the singlet return,
+with a factor of four that is sharp for any spin Hamiltonian. We then combine it with
 a numerical search for the largest field effect at given rates in a flavin--aminium
 spin model, state how that search depends on the model, and estimate where the
 monoamine oxidase pair lies from the measured flavin potentials of the enzyme and
@@ -120,7 +120,8 @@ whatever its chemistry, is spin independent. The yield of
 onward reaction per pair formed is $\Phi_P = k_P\int_0^\infty{\rm Tr}\,\rho\,dt$,
 and the magnetic field effect is
 $\mathrm{MFE}_P = [\Phi_P(B)-\Phi_P(0)]/\Phi_P(0)$ at $B=50\,\mu$T. The spin
-density operator of a pair born in the singlet evolves as
+density operator of a pair born in the singlet evolves under a master equation
+with Haberkorn reaction terms,\cite{Haberkorn1976,Fay2018}
 \begin{equation}
 \begin{split}
 \dot\rho = \mathcal L\rho ={}& -2\pi i[H,\rho] - \tfrac{k_S}{2}\{P_S,\rho\} - k_P\,\rho
@@ -132,14 +133,17 @@ density operator of a pair born in the singlet evolves as
 with $P_S$ the singlet projector, $N = {\rm Tr}P_S$ the nuclear-spin dimension and
 $\mathcal D$ a spin-relaxation superoperator. We assume that $\mathcal D$
 generates a positivity-preserving evolution, as a trace-preserving
-Gorini--Kossakowski--Sudarshan--Lindblad (GKSL) generator does, and that it is
+Gorini--Kossakowski--Sudarshan--Lindblad (GKSL)
+generator\cite{Gorini1976,Lindblad1976} does, and that it is
 unital, $\mathcal D(I)=0$, as single-electron dephasing, the reactive
 singlet--triplet dephasing of ref~\citenum{Fay2018} and any relaxation that
 drives the spins towards equal populations at high temperature are. The
 reaction terms also assume that the nuclear motion driving electron transfer is
 fast compared with the spin dynamics, the incoherent-recombination approximation
-of ref~\citenum{Fay2018}. Yields are obtained exactly, from the Sylvester equation for $\int\rho\,dt$ in the coherent
-case and in Liouville space with relaxation.
+of ref~\citenum{Fay2018}. Yields are obtained exactly: without relaxation from
+the Sylvester equation for $\int\rho\,dt$, solved by the Bartels--Stewart
+method,\cite{Bartels1972} and with relaxation by the same Sylvester solve inside
+a GMRES iteration\cite{Saad1986} (Supporting Information).
 
 \subsection{Spin Hamiltonian and conventions}
 
@@ -168,9 +172,11 @@ The reference model has four nuclei: flavin N5 (523~$\mu$T) and N10
 couplings are strongly anisotropic; anisotropic tensors are examined in
 Sec.~\ref{sec:sens}. The model also has the two
 largest couplings of the benzylaminium radical cation, \aBenzOne\ and
-\aBenzTwo~MHz ($\alpha$-CH$_2$ protons; B3LYP/def2-TZVP on GFN2-xTB
-geometries\cite{Bannwarth2019}). The dipolar tensor of the contact pair is the
-point-dipole tensor summed over the Löwdin spin populations of the two radicals
+\aBenzTwo~MHz ($\alpha$-CH$_2$ protons; B3LYP\cite{Becke1993,Lee1988}/def2-TZVP\cite{Weigend2005}
+in PySCF\cite{Sun2020} on GFN2-xTB geometries\cite{Bannwarth2019}). The dipolar
+tensor of the contact pair is the point-dipole tensor summed over the
+Löwdin\cite{Lowdin1950} spin populations of the two radicals, as Efimova and
+Hore did for cryptochrome,\cite{Efimova2008}
 for methylamine stacked on the flavin si face at an N5--N distance of
 3.5~\AA, with $D = \Dcontact$~MHz and $E = \Econtact$~MHz. Because the pair
 geometry is not known, the search below scales this tensor by any factor
@@ -179,6 +185,7 @@ Richer nuclear models and spin relaxation are examined in
 Sec.~\ref{sec:sens}.
 
 \section{Catalytic competence bounds both decay rates}
+\label{sec:bound}
 
 Let $\Delta$ be the free energy of the radical pair relative to E$\cdot$S, summed
 over its four spin states, so that, with spin energies negligible against
@@ -215,8 +222,9 @@ generator is a separate question, taken up in Sec.~\ref{sec:mao}. Without
 spin dynamics the turnover is exactly
 $e^{-\Delta_S/k_BT}/(1/k_S+1/k_P)$. Eq~\ref{eq:kmin} contains no electronic
 coupling, no reorganization energy and no assumption about the chemistry of the
-onward step. If, in addition, we assume that no elementary rate exceeds a
-frequency of nuclear motion, $\nu_n\approx10^{13}$--$10^{14}$~s$^{-1}$, a pair
+onward step. If, in addition, we assume that no elementary rate exceeds
+$\nu_n\approx10^{13}$--$10^{14}$~s$^{-1}$, at or above the transition-state
+prefactor $k_BT/h = 6.5\times10^{12}$~s$^{-1}$ at 310~K,\cite{Eyring1935} a pair
 that carries
 $k_{\rm cat} = 1$--$10^3$~s$^{-1}$ must have
 $\Delta\le k_BT\ln(\nu_n/k_{\rm cat}) = \DeltaMaxLo$--$\DeltaMaxHi$~eV.
@@ -247,8 +255,8 @@ The search scans $J$ on a grid that is dense near zero and extends to
 $\max(4000~{\rm MHz},\,5(k_S+k_P)/2\pi)$, for $s = 0$, 0.3, 1 and 3 and 25 field
 directions over a full hemisphere, refines each of the three largest local
 maxima in $J$, and then polishes the four best candidates by a simplex search
-in $(J,\hat n_B,s)$. Because the response has narrow resonances in $s$ where
-$sD$ is comparable with the hyperfine and Zeeman terms, a second pass scans $s$
+in $(J,\hat n_B,s)$. Because the response varies sharply with $s$ at small $s$
+(Supporting Information), a second pass scans $s$
 on a fine logarithmic grid (41 values) at a coarse $J$ grid and polishes again.
 $F$ is the larger of the two passes. The second pass raised \nSuppRaised\ of the \nCells\ cells, by up to a
 factor of \suppMaxRatio, but changed no row maximum by more than
@@ -399,12 +407,14 @@ neurotransmitters, are not analysed here and would require their own
 potentials.
 
 The electronic coupling between flavin and substrate does not enter
-eq~\ref{eq:kmin}, but it indicates the regime. Fragment-orbital couplings for
+eq~\ref{eq:kmin}, but it indicates the regime. Fragment-orbital
+couplings\cite{Valeev2006} for
 methylamine at van der Waals contact (\nScanValid\ non-clashing geometries of
 \nScan; Supporting Information) are \tContactMed~meV (median) to
 \tContactMax~meV at 3.5~\AA, large enough that back electron transfer at contact
-would be adiabatic. The reaction terms of eq~\ref{eq:me} are derived for weak,
-non-adiabatic coupling.\cite{Fay2018} Eq~\ref{eq:kmin} holds for any generator
+is likely to be adiabatic rather than non-adiabatic.\cite{Marcus1985} The reaction
+terms of eq~\ref{eq:me} are derived for weak, non-adiabatic coupling and were
+tested against exact results for diabatic couplings of up to 3~meV.\cite{Fay2018} Eq~\ref{eq:kmin} holds for any generator
 of that form with unital, positivity-preserving relaxation, including the
 reactive dephasing that appears at higher order; whether a strongly coupled
 contact pair is described by such a generator at all is not addressed here, and
@@ -412,7 +422,7 @@ $F$ is least reliable for it.
 
 \section{A light-driven pair in the same model}
 
-The flavin--tryptophan pair of cryptochrome is formed by light, so
+The flavin--tryptophan pair of cryptochrome is formed by light,\cite{Ritz2000,Maeda2012} so
 eq~\ref{eq:kmin} does not apply to it. As a check that the same equations
 produce a field response when the rates are not constrained, we evaluated it
 with the same scheme and yield observable, averaged over field orientations
