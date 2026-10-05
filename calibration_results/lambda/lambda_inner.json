@@ -1,0 +1,41 @@
+{
+  "lumiflavin": {
+    "lambda_half_eV": 0.1972915580989298,
+    "E_Ha": {
+      "state0@geom0": -871.480317223853,
+      "state0@geom1": -871.47395318189,
+      "state1@geom1": -871.5397943683965,
+      "state1@geom0": -871.5316577481663
+    }
+  },
+  "methylamine": {
+    "lambda_half_eV": 0.42968660107130324,
+    "E_Ha": {
+      "state0@geom0": -95.7804571167978,
+      "state0@geom1": -95.77148432896735,
+      "state1@geom1": -95.46171327299646,
+      "state1@geom0": -95.43910467786677
+    }
+  },
+  "benzylamine": {
+    "lambda_half_eV": 0.28281502786253054,
+    "E_Ha": {
+      "state0@geom0": -326.67364355238016,
+      "state0@geom1": -326.66315256525394,
+      "state1@geom1": -326.3747395422162,
+      "state1@geom0": -326.36444400800445
+    }
+  },
+  "alanine": {
+    "lambda_half_eV": 0.7273253533792343,
+    "E_Ha": {
+      "state0@geom0": -323.5099357868046,
+      "state0@geom1": -323.4761552286751,
+      "state1@geom1": -323.1786423975908,
+      "state1@geom0": -323.1589655277613
+    }
+  },
+  "lambda_i_lumiflavin+methylamine_eV": 0.626978159170233,
+  "lambda_i_lumiflavin+benzylamine_eV": 0.48010658596146033,
+  "lambda_i_lumiflavin+alanine_eV": 0.9246169114781642
+}

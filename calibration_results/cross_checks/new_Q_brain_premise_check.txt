@@ -1,0 +1,30 @@
+# new_Q_brain CRY-point capacity vs electron–electron coupling (run 2026-09-29, new_Q_brain HEAD 5717e6d)
+CRY point (A = 14.0, 5.0 | 40.0 MHz, tau = 1 us, T2e = 1 us), D = -11.36 MHz
+  published: J=0, D=0                IPC = 1.015 +/- 0.012
+  D only, B || dipolar axis          IPC = 5.302 +/- 0.083
+  D only, B perp dipolar axis        IPC = 5.054 +/- 0.075
+  D + J_gap=+12.6 (J0 mid), B ||     IPC = 5.054 +/- 0.103
+  D + J_gap=-12.6 (J0 mid), B ||     IPC = 5.621 +/- 0.106
+  D + J_gap=+126 (J0 high), B ||     IPC = 5.297 +/- 0.173
+  J only +12.6 MHz, D=0                    D=   0.00 MHz  IPC = 4.875 +/- 0.126
+  J only +1.26 MHz, D=0                    D=   0.00 MHz  IPC = 5.655 +/- 0.025
+  D at r=2.2 nm (ET-limited max, Efimova)  D=  -7.32 MHz  IPC = 5.758 +/- 0.095
+  D at r=2.5 nm                            D=  -4.99 MHz  IPC = 5.641 +/- 0.089
+  D at r=3.5 nm (Efimova 'weak enough')    D=  -1.82 MHz  IPC = 5.559 +/- 0.121
+  D at r=5.0 nm                            D=  -0.62 MHz  IPC = 5.523 +/- 0.249
+
+# routes table
+== D(1.90 nm), J=0
+   YS_end     published 1.017   with D 1.003 +/- 0.006
+   YS_t       published 2.008   with D 2.932 +/- 0.048
+   SandT_end  published 1.374   with D 1.480 +/- 0.029
+   SandT_t    published 2.012   with D 2.947 +/- 0.048
+   cidnp      published 4.650   with D 4.606 +/- 0.150
+== D(1.90 nm), J_gap=-12.6
+   YS_end     published 1.017   with D 1.006 +/- 0.006
+   YS_t       published 2.008   with D 2.508 +/- 0.087
+   SandT_end  published 1.374   with D 1.716 +/- 0.036
+   SandT_t    published 2.012   with D 2.590 +/- 0.087
+   cidnp      published 4.650   with D 4.643 +/- 0.239
+
+[exited with code 0]

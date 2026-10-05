@@ -1,0 +1,20 @@
+{
+  "dimethylamine": {
+    "E_dft_V": 0.7287326896320261,
+    "E_exp_V": 1.3,
+    "error_V": -0.571267310367974
+  },
+  "methylamine": {
+    "E_dft_V": 1.2606500793257824,
+    "E_exp_V": null
+  },
+  "benzylamine": {
+    "E_dft_V": 1.4485966543225786,
+    "E_exp_V": null
+  },
+  "lumiflavin": {
+    "E_dft_V": -1.1560615949227846,
+    "E_exp_V": -0.313,
+    "error_V": -0.8430615949227847
+  }
+}
