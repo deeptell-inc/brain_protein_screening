@@ -214,13 +214,13 @@ qbscreen/
 If you use this software, please cite:
 
 ```bibtex
-@article{wakaura2026magneto,
-  title={Active-site geometry, not cofactor chemistry, sets the weak-field
-         magnetosensitivity of neurotransmitter-metabolising flavoenzymes},
+@misc{wakaura2026competence,
+  title={Catalytic competence bounds the decay rates of a thermally formed
+         radical pair},
   author={Wakaura, Hikaru and Tanimae, Taiki},
-  journal={Phys. Chem. Chem. Phys.},
   year={2026},
-  note={Under review, CP-ART-07-2026-002815}
+  note={Preprint, Research Square, doi:10.21203/rs.3.rs-10050410
+        (replacement of v1 by this version requested)}
 }
 
 @article{wakaura2026reservoir,
