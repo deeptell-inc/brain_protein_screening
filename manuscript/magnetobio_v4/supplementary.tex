@@ -1,0 +1,136 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb,booktabs,longtable}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\input{numbers}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thesection}{S\arabic{section}}
+
+\title{Supporting Information:\\ A thermally formed flavin radical pair that forms
+fast enough to matter cannot sense the geomagnetic field}
+\author{Hikaru Wakaura and Taiki Tanimae}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Software and environment}
+Spin dynamics: \texttt{qbscreen} (this work), exact Liouville-space solution with
+NumPy. Electronic structure: PySCF~2.12.1 (B3LYP, def2-SVP and def2-TZVP, RI-J
+density fitting); geometries: xtb~6.7.1 (GFN2-xTB, L-BFGS optimizer, tight
+convergence). Every number in the main text and in the tables below is produced by
+the scripts \texttt{qbscreen/calibration\_run.py},
+\texttt{qbscreen/calibration\_extras.py}, \texttt{qbscreen/make\_numbers\_tex.py}
+and \texttt{qbscreen/make\_si\_tables.py} from the stored results in
+\texttt{calibration\_results/}.
+
+\section{Electronic coupling scan}
+Methylamine was placed on the si face of lumiflavin with its nitrogen on the ring
+normal through N5 at distance $r$ and its lone pair directed at N5. Twist rotates
+the amine about that axis; tilt tips the axis off the normal. Geometries whose
+closest intermolecular contact is below 2.4~\AA\ are steric clashes of the rigid
+placement and were excluded from the fits (Table~\ref{tab:scan}).
+
+\begin{table}[h]\centering\small
+\caption{Fragment-projection coupling $t$ between the flavin LUMO and the amine HOMO
+(B3LYP/def2-SVP).}\label{tab:scan}
+\input{si_tables/scan}
+\end{table}
+
+\section{Inner-sphere reorganization energy}
+Four-point energies (hartree) of each redox couple, state $s$ at the optimized
+geometry $G$ of state $s'$, and the resulting half contributions
+$\lambda_i/2 = \tfrac12\{[E_0(G_1)-E_0(G_0)] + [E_1(G_0)-E_1(G_1)]\}$
+(Table~\ref{tab:lambda}). State 0 is the closed-shell species, state 1 the radical
+ion.
+
+\begin{table}[h]\centering\small
+\caption{Four-point energies (B3LYP/def2-SVP at GFN2-xTB geometries).}\label{tab:lambda}
+\input{si_tables/lambda}
+\end{table}
+
+\section{Hyperfine couplings}
+Isotropic Fermi-contact couplings from the UKS spin density at each nucleus
+(B3LYP/def2-TZVP), six largest per radical (Table~\ref{tab:hfc}). The flavin
+anion N5 and N10 values, \aNfiveDFT\ and \aNtenDFT~$\mu$T, compare with 523 and
+189~$\mu$T of Lee et al.; the spin model uses the latter. The large aminium
+couplings come from $\alpha$-C--H protons hyperconjugated with the
+nitrogen-centred orbital and depend on conformation.
+
+\begin{table}[h]\centering\small
+\caption{DFT isotropic hyperfine couplings.}\label{tab:hfc}
+\input{si_tables/hfc}
+\end{table}
+
+\section{Catalytic-competence bound: full grid}
+\begin{longtable}{c}
+\caption{Upper bound on $\Delta$ for thermal formation at $k_{\rm cat}$, with the
+lifetime and exchange coupling at the bound.}\label{tab:competence}\\
+\input{si_tables/competence}
+\end{longtable}
+
+\section{Magnetic field effect along the coupling-locked locus}
+For the MAO contact pair ($r = 0.35$~nm, point-dipole $D = \DMAO$~MHz), the
+exchange coupling and lifetime follow from $t$ through equations~2--4 of the main
+text, with the adiabatic interpolation. MFE in \% at 50~$\mu$T, coherent and with
+$T_2^e = 1~\mu$s, field at 0 and 90$^\circ$ to the interradical axis.
+
+\begin{table}[h]\centering\footnotesize
+\caption{Inverted region, $\Delta = 1.78$, $\lambda = 0.97$~eV.}\label{tab:locinv}
+\input{si_tables/locus_inverted}
+\end{table}
+
+\begin{table}[h]\centering\footnotesize
+\caption{Activationless, $\Delta = \lambda = 1.0$~eV.}\label{tab:locact}
+\input{si_tables/locus_actless}
+\end{table}
+
+\section{Partner hyperfine coupling and field orientation}
+Coherent MFE (\%) of the MAO contact pair with $J = 0$ and long lifetimes, as a
+function of the largest partner hyperfine coupling, with the point-dipole $D$.
+This is the most favourable case the contact dipolar coupling allows; it ignores
+the competence bound. The same bound with the spin-distributed $D$ is in
+Table~\ref{tab:partnerspin}.
+
+\begin{table}[h]\centering\small
+\caption{Dependence on the partner hyperfine coupling.}\label{tab:partner}
+\input{si_tables/partner}
+\end{table}
+
+
+\section{Dipolar coupling from the spin distribution}
+At van der Waals contact the point-dipole approximation concentrates each
+radical's spin on one point. We summed the dipolar tensor over the L\"owdin atomic
+spin populations of the two radicals (UKS B3LYP/def2-SVP, vertical ions at the
+contact geometry): $T_{ab} = d\sum_{ij}\rho_i\rho_j(\delta_{ab}-3\hat r_a\hat
+r_b)/r_{ij}^3$, $d = 52.04$~MHz\,nm$^3$, and took $D = \tfrac34T_n$ from the
+principal value of largest magnitude, which reproduces $D = -77.9/r^3$~MHz for a
+single pair of unit spins (Table~\ref{tab:dipolar}). The resulting bound, with
+$J = 0$ and long lifetimes, is in Table~\ref{tab:partnerspin}.
+
+\begin{table}[h]\centering\small
+\caption{Point-dipole and spin-distributed dipolar couplings at the contact
+geometry.}\label{tab:dipolar}
+\input{si_tables/dipolar}
+\end{table}
+
+\begin{table}[h]\centering\footnotesize
+\caption{Coherent MFE (\%) with the spin-distributed $D$, $J = 0$.}\label{tab:partnerspin}
+\input{si_tables/partner_spinD}
+\end{table}
+
+\section{Cryptochrome control}
+FAD$^{\bullet-}$--W324$^{\bullet+}$ at 1.90~nm, $D = \DCRY$~MHz, lifetime and
+$T_2^e$ of 1~$\mu$s, exchange from $J(r) = J_0 e^{-\beta r}$ with
+$\beta = 14$~nm$^{-1}$ over $8\times10^{12}\le|J_0|/\mu{\rm T}\le8\times10^{14}$ and
+both signs (Efimova and Hore). Spin-$\tfrac12$: N5 and N10 as effective
+spin-$\tfrac12$ nuclei; spin-1: $^{14}$N as $I = 1$. Trp H$\beta$1 is 45~MHz in
+both. Powder: Gauss--Legendre average over the field direction.
+
+\begin{table}[h]\centering\small
+\caption{Cryptochrome MFE (\%) at 50~$\mu$T.}\label{tab:cry}
+\input{si_tables/cry}
+\end{table}
+
+\end{document}

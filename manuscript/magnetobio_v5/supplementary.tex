@@ -1,0 +1,177 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.0cm]{geometry}
+\usepackage{amsmath,amssymb,booktabs,graphicx}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\input{numbers}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\theequation}{S\arabic{equation}}
+
+\title{Supporting Information:\\ Catalytic competence bounds the magnetic field
+effect of a thermally formed radical pair}
+\author{Hikaru Wakaura and Taiki Tanimae}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Software and environment}
+Spin dynamics: \texttt{qbscreen} (this work) with NumPy and SciPy; coherent
+yields from the Sylvester equation
+$H_{\rm eff}X - XH_{\rm eff}^\dagger = -i\rho_0$ with
+$H_{\rm eff} = 2\pi H - \tfrac{i}{2}(k_SP_S + k_P)$ and $X = \int_0^\infty\rho\,dt$;
+yields with electron spin relaxation from the Liouville-space generator. The two
+agree to $10^{-8}$ in the absence of relaxation, and every yield pair sums to
+one. Electronic structure: PySCF~2.12.1 (B3LYP; def2-SVP for couplings and
+energies, def2-TZVP for hyperfine couplings; RI-J; PCM), geometries from
+GFN2-xTB~6.7.1. Every table below is generated from the stored results by
+\texttt{qbscreen/make\_si\_v5.py}.
+
+\section{Proof of the bound $\Phi_P\le4k_P/k_S$}
+Write the generator of eq~2 of the main text as
+$\mathcal L = \mathcal L_0 - k_P$, where $\mathcal L_0\rho = -2\pi i[H,\rho]
+-\tfrac{k_S}{2}\{P_S,\rho\} + \mathcal D\rho$ and $\mathcal D$ is any unital
+relaxation superoperator (for single-electron dephasing
+$\mathcal D\rho = \sum_i (2/T_2^e)(S_{iz}\rho S_{iz}-\rho/4)$). Under a constant
+source $s\,P_S/N$ into the singlet ($N = {\rm Tr}P_S$), the steady state is
+\begin{equation}
+\rho_{\rm ss}(k_P) = \int_0^\infty e^{-k_Pt}\,e^{\mathcal L_0t}\,(sP_S/N)\,dt ,
+\end{equation}
+because $k_P$ commutes with $\mathcal L_0$. The trace of $e^{\mathcal L_0t}(P_S/N)$
+is non-negative and non-increasing, so
+${\rm Tr}\rho_{\rm ss}(k_P)\le{\rm Tr}\rho_{\rm ss}(0)$. At $k_P=0$ let $\Pi$
+be the projector onto the smallest subspace that contains the range of $P_S$ and
+is invariant under $H$ and $\mathcal D$. Then $c\,\Pi$ is stationary under the
+coherent and relaxation terms (the steady state on $\Pi$ is unique, because by
+minimality $\Pi$ contains no invariant subspace orthogonal to $P_S$), and the
+balance of source and singlet decay,
+$sP_S/N = c\,k_SP_S$, fixes $c = s/(k_SN)$; hence
+${\rm Tr}\rho_{\rm ss}(0) = s\,{\rm dim}\,\Pi/(k_SN)\le 4s/k_S$, since
+${\rm dim}\,\Pi\le 4N$. With ${\rm Tr}\rho_{\rm ss}(k_P) = s\Phi_P/k_P$ this is
+$\Phi_P\le4k_P/k_S$. With $s = k_f[{\rm E\cdot S}]$ and
+$k_f = k_Se^{-\Delta_S/k_BT}$ the flux through the pair is at most
+$k_P\,e^{-\Delta/k_BT}[{\rm E\cdot S}]$. The inequality was tested on 300 random spin systems (0--3 nuclei of spin
+$\tfrac12$ or 1 with couplings of 1--300~MHz, exchange $10^{-1}$--$10^4$~MHz of
+either sign, random axial dipolar tensors, fields and rates, and in part with
+$T_2^e$ from 1~ns to 10~$\mu$s); the largest value of $\Phi_Pk_S/4k_P$ found is
+0.99995, approached when singlet--triplet mixing is complete. The self-check in
+\texttt{competence\_sensitivity} repeats the test on 40 systems.
+
+\section{Worst-case map: numerical details}
+For each $(k_S,k_P)$ the exchange coupling is scanned on 119 points with
+$\sinh$ spacing (40~MHz scale), symmetric about zero and extending to
+$\max(4000~{\rm MHz},5(k_S+k_P)/2\pi)$; the three largest maxima are refined
+three times on 21-point subgrids. The field direction runs over the pole and
+four azimuths at each of four polar angles on a hemisphere (17 directions; the
+response is inversion symmetric). A cell whose maximum lies within 5\,\% of the
+range limit is recomputed with a range sixteen times the position of the
+maximum. Tables~\ref{tab:mapc}--\ref{tab:maps} list $F$ in percent. The bound $G$ of the main text uses the cell-by-cell maximum over all three tables.
+
+\begin{table}[h]
+\caption{$F(k_S,k_P)$ (\%) with the contact dipolar tensor. Rates in
+$\mu$s$^{-1}$.}
+\label{tab:mapc}
+\centering
+\resizebox{\textwidth}{!}{\input{si_tables/map_contact}}
+\end{table}
+
+\begin{table}[h]
+\caption{$F(k_S,k_P)$ (\%) without dipolar coupling.}
+\label{tab:mapn}
+\centering
+\resizebox{\textwidth}{!}{\input{si_tables/map_none}}
+\end{table}
+
+\begin{table}[h]
+\caption{$F(k_S,k_P)$ (\%) with the contact dipolar tensor scaled by the factor
+shown, on the onward rates that set the thresholds of $G$.}
+\label{tab:maps}
+\centering
+\resizebox{\textwidth}{!}{\input{si_tables/map_scaled}}
+\end{table}
+
+\section{Dipolar tensor}
+The tensor is the point-dipole tensor summed over pairs of atoms weighted by
+their Löwdin spin populations (UKS B3LYP/def2-SVP on each radical at its position
+in the complex), for methylamine on the flavin si face with N5--N = 3.5~\AA\
+(Table~\ref{tab:dip}). Summing over the spin distributions halves $D$ relative
+to point dipoles at the spin centroids.
+
+\begin{table}[h]
+\caption{Dipolar coupling of the contact pair.}
+\label{tab:dip}
+\centering
+\input{si_tables/dipolar}
+\end{table}
+
+\section{Hyperfine couplings}
+Fermi-contact couplings (B3LYP/def2-TZVP at GFN2-xTB geometries), all nuclei
+with $|a_{\rm iso}|\ge1$~MHz (Table~\ref{tab:hfc}). For the flavin the main text
+uses the literature values for N5 and N10;\cite{Lee2014} the computed values
+are within 16\,\% and 13\,\% of them. For 3-methylindole$^{\bullet+}$ the two
+large methyl couplings stand in for the tryptophan $\beta$-protons; their
+values depend on the side-chain conformation.
+
+\begin{table}[h]
+\caption{Isotropic hyperfine couplings.}
+\label{tab:hfc}
+\centering
+\input{si_tables/hyperfine}
+\end{table}
+
+\section{Electronic coupling}
+Fragment-orbital couplings $t = \langle{\rm LUMO_{Fl}}|F|{\rm HOMO_{am}}\rangle$
+(B3LYP/def2-SVP) for methylamine and benzylamine stacked on the flavin si face
+(five orientations) or approaching its edge (three orientations), at N5--N
+distances of 3.0--6.0~\AA. Geometries with any intermolecular contact below
+2.0~\AA\ are excluded (Table~\ref{tab:t}). The edge approach of benzylamine
+clashes at every distance below 6~\AA\ and is not used.
+
+\begin{table}[h]
+\caption{Coupling scan. ``valid'': non-clashing geometries of those computed.}
+\label{tab:t}
+\centering
+\input{si_tables/coupling}
+\end{table}
+
+\section{Driving force}
+Adiabatic one-electron potentials with the protocol of the main text in water
+($\varepsilon = 78.4$, absolute SHE potential 4.44~V\cite{Jonsson1996}), compared
+with measured values\cite{Jonsson1996,Mayhew1999} (Table~\ref{tab:pot}), and
+the raw DFT driving force in low-dielectric continua with a contact
+Coulomb term $-e^2/(4\pi\varepsilon_0\varepsilon r)$ (Table~\ref{tab:ddft}).
+No zero-point or thermal corrections are included.
+
+\begin{table}[h]
+\caption{One-electron potentials in water.}
+\label{tab:pot}
+\centering
+\input{si_tables/potentials}
+\end{table}
+
+\begin{table}[h]
+\caption{Raw DFT driving force of the contact pair.}
+\label{tab:ddft}
+\centering
+\input{si_tables/delta_dft}
+\end{table}
+
+\section{Cryptochrome}
+Orientation-averaged, perpendicular and parallel response of the cryptochrome
+pair over the exchange prefactor $J_0$ (both signs of $J_{\rm EH}$;
+$J = -2J_{\rm EH}$, $J_{\rm EH} = J_0e^{-\beta r}$, $\beta = 14$~nm$^{-1}$,
+$r = 1.90$~nm\cite{Efimova2008}), $k_S = k_P = 1~\mu$s$^{-1}$, coherent
+(Table~\ref{tab:cry}).
+
+\begin{table}[h]
+\caption{Cryptochrome response (\%).}
+\label{tab:cry}
+\centering
+\input{si_tables/cry}
+\end{table}
+
+\bibliographystyle{unsrt}
+\bibliography{refs}
+
+\end{document}

@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 """Liouville-space RPM master equation with electronic decoherence.
 
-This module corrects the central methodological flaw identified in peer review:
-the original singlet-yield calculation used only a recombination rate k and
-*omitted* the electronic decoherence (T2e) that was computed elsewhere. Here we
-solve the full Haberkorn master equation including electronic dephasing, so that
-the predicted magnetic field effect (MFE) reflects realistic spin coherence.
+Solves the Haberkorn master equation with single-electron dephasing (T2e), so
+that the magnetic field effect (MFE) includes electronic spin decoherence.
 
 Master equation (Haberkorn form):
 

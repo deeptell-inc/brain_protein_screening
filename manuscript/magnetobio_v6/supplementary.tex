@@ -1,0 +1,265 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.0cm]{geometry}
+\usepackage{amsmath,amssymb,booktabs,graphicx}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\input{numbers}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\theequation}{S\arabic{equation}}
+
+\title{Supporting Information:\\ Catalytic competence bounds the decay rates of
+a thermally formed radical pair}
+\author{Hikaru Wakaura and Taiki Tanimae}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Software and environment}
+Spin dynamics: \texttt{qbscreen} (this work) with NumPy and SciPy; coherent
+yields from the Sylvester equation
+$H_{\rm eff}X - XH_{\rm eff}^\dagger = -i\rho_0$ with
+$H_{\rm eff} = 2\pi H - \tfrac{i}{2}(k_SP_S + k_P)$ and $X = \int_0^\infty\rho\,dt$;
+yields with electron spin relaxation from the Liouville-space generator. The two
+agree to $10^{-8}$ without relaxation, and every yield pair sums to one.
+Electronic structure: PySCF~2.12.1 (B3LYP; def2-SVP for couplings and energies,
+def2-TZVP for hyperfine couplings; RI-J; PCM), geometries from GFN2-xTB~6.7.1.
+Every table below is generated from the stored results by
+\url{qbscreen/make_si_v6.py}.
+
+\section{The inequality $\Phi_P\le4k_P/k_S$ and the dead-end bound}
+Let $\mathcal L$ be the generator of eq~2 of the main text, with $\mathcal D$
+generating a positivity-preserving evolution (for example a trace-preserving
+GKSL generator) and unital, $\mathcal D(I)=0$. Then
+$-\mathcal L(I) = k_SP_S + k_PI$. For $k_P>0$ the operator
+$\mathcal R = (-\mathcal L)^{-1} = \int_0^\infty e^{\mathcal Lt}\,dt$ exists and
+is positive, because $e^{\mathcal Lt}$ is and decays at least as $e^{-k_Pt}$.
+Applying $\mathcal R$ to the identity above gives
+\begin{equation}
+k_S\,\mathcal R(P_S) = I - k_P\,\mathcal R(I) \preceq I ,
+\end{equation}
+so ${\rm Tr}\,\mathcal R(P_S)\le 4N/k_S$ with $4N$ the dimension of the spin
+space, and $\Phi_P = (k_P/N)\,{\rm Tr}\,\mathcal R(P_S)\le4k_P/k_S$.
+
+For a dead-end pair ($k_P=0$) the resolvent need not exist: without nuclei and
+with $H=0$, for example, the $16\times16$ generator has rank 7, because triplet
+states that never reach the singlet are stationary. Integrating
+$\frac{d}{du}e^{\mathcal L_0u}(I) = -k_S\,e^{\mathcal L_0u}(P_S)$ instead gives
+\begin{equation}
+k_S\int_0^t e^{\mathcal L_0u}(P_S)\,du = I - e^{\mathcal L_0t}(I) \preceq I
+\end{equation}
+for all $t$, since $e^{\mathcal L_0t}(I)\succeq0$. The population built up from a
+constant singlet source $k_f[{\rm E\cdot S}]P_S/N$ is therefore at most
+$4k_f[{\rm E\cdot S}]/k_S = e^{-\Delta/k_BT}[{\rm E\cdot S}]$ at all times.
+
+\url{competence_sensitivity.random_bound_test} (seed 20261001; inputs and
+outputs in \url{calibration_results/phi_bound_test.json}) evaluates
+$\Phi_Pk_S/4k_P$ for \nBoundTest\ random spin systems: 0--3 nuclei of spin
+$\tfrac12$ or 1 with couplings of 1--300~MHz, exchange $10^{-1}$--$10^4$~MHz of
+either sign, axial dipolar tensors of $-10^{-1}$ to $-10^{3}$~MHz with random
+axes, random fields up to 0.1~T and rates, and, for about 30\,\% of the small
+systems, single-electron dephasing with $T_2^e$ from 1~ns to 10~$\mu$s. The
+largest value is \maxBoundRatio.
+
+\section{The search for $F$}
+For each $(k_S,k_P)$ on a grid of 15 by 13 rates, the exchange coupling is
+scanned on 99 points with $\sinh$ spacing (40~MHz scale), symmetric about zero
+and extending to $\max(4000~{\rm MHz},5(k_S+k_P)/2\pi)$, for dipolar scales
+$s = 0$, 0.3, 1 and 3 and 25 field directions (the pole and eight azimuths over
+$2\pi$ at polar angles of 30, 60 and 90$^\circ$; the yield is invariant under
+$B\to-B$). Each of the three largest local maxima in $J$ is refined twice on
+21-point subgrids, and the four best distinct candidates are polished by a
+Nelder--Mead search in $(J,\theta,\phi,s)$ with $s$ clipped to $[0,3]$ (160
+evaluations each). A cell whose maximum lies within 5\,\% of the range limit is
+searched again with a range of sixteen times the position of the maximum.
+Because the response has narrow resonances in the dipolar scale (at
+$k_S = 10^4$, $k_P = 10^{-2}~\mu$s$^{-1}$ and $J\approx0$ it is 0.40, 0.14, 0.68
+and 0.04\,\% at $s = 0$, 0.003, 0.01 and 0.03 at the first-pass optimum;
+\url{calibration_results/s_resonance_example.json}), every cell is then searched a
+second time: $s$ on 41 values (0 and 40 logarithmically spaced from $10^{-3}$ to
+3), $J$ on 21 points of the same $\sinh$ grid plus the first-pass optimum, all
+25 directions, followed by a polish of the four best candidates
+(\url{worst_case_map.supplement}). The cell keeps the larger value.
+The second pass raised \nSuppRaised\ cells, by up to a factor of
+\suppMaxRatio, without changing any row maximum by more than
+\rowMaxChange\,\%. Repeating it with 121 values of $s$ at the cells that
+set the thresholds changed $F$ by a factor of at most \convMaxRatio\
+(\url{calibration_results/s_convergence.json}). Table~\ref{tab:map}
+lists $F$ in percent.
+
+The bound $G$ of the main text is computed from these grid values and is not a
+bound on the continuous rate region. At $\Delta=\intDelta$~eV and
+$k_{\rm cat}=1$~s$^{-1}$, $k_{\min}$ equals the grid rate $k_P=\intKP~\mu$s$^{-1}$;
+the permitted off-grid point $k_S=\intKS~\mu$s$^{-1}$, $J=0$, $s=0$, field along
+$z$, gives \intMFE\,\%, against $G=\intG$\,\%
+(\url{calibration_results/g_interval_example.json}).
+
+\begin{table}[h]
+\caption{$F(k_S,k_P)$ (\%). Rates in $\mu$s$^{-1}$.}
+\label{tab:map}
+\centering
+\resizebox{\textwidth}{!}{\input{si_tables/map}}
+\end{table}
+
+\section{Dependence on the spin model}
+For each onward rate that sets the thresholds of $G$, the cell that gives the
+row maximum of $F$ in the reference model was searched again in richer models
+(\url{qbscreen/model_sensitivity.py}). The search starts from the reference
+optimum and a 39-point $J$ grid at its field direction and dipolar scale, and
+polishes the two best candidates. In ``aniso'' N5 and N10 carry the
+literature isotropic couplings plus the density-functional spin-dipolar tensors
+(Table~\ref{tab:tens}), rotated into the frame of the contact complex in
+which the dipolar tensor was computed (0.09~\AA\ root-mean-square deviation
+between the relaxed anion and the complex flavin). The complex was built with
+methylamine, so the benzylaminium tensors have no orientation in it: the
+aminium $\alpha$-protons are kept isotropic (their anisotropy is below 5\,\% of
+the isotropic part), and in ``+$^{14}$N'' the aminium nitrogen (spin 1), whose
+tensor is nearly axial about the singly occupied orbital, is added with its
+axis along the lone pair of the placed amine. ``+2H'' adds the two largest
+flavin methyl protons. The relaxation test uses a
+reduced pair (N5 isotropic, spin 1; aminium proton 256.9~MHz) searched with the
+full procedure, without relaxation and with single-electron dephasing
+(Table~\ref{tab:sens}); the reduced-pair relaxation test is superseded by the
+direct four-nucleus calculation of section~S5 and is shown for comparison. Only
+the reference row-maximum cell was searched again in each richer model, so another cell of the same row may give a larger value;
+the threshold shift quoted in the main text multiplies every searched value by
+the largest nuclear-model factor found and is a stress test, not a bound.
+
+\begin{table}[h]
+\caption{Searched $F$ (\%) at the threshold-setting cells in the reference and
+richer models, and in the reduced pair with and without electron dephasing.}
+\label{tab:sens}
+\centering
+\input{si_tables/sensitivity}
+\end{table}
+
+\section{Electron spin relaxation in the four-nucleus model}
+The four-nucleus spin space has dimension 144, too large for the dense
+Liouville-space solution. With $\gamma = 2/T_2^e$, single-electron dephasing
+$\gamma\sum_e(S_{ez}\rho S_{ez}-\rho/4)$ is split into a decay $-(\gamma/2)\rho$,
+absorbed into $K = 2\pi H - \tfrac i2[k_SP_S + (k_P+\gamma/2)I]$, and a recycling
+term $\gamma\sum_eS_{ez}\rho S_{ez}$. The integral $X=\int_0^\infty\rho\,dt$ then
+solves $KX - XK^\dagger = -i\rho_0 - i\gamma\sum_eS_{ez}XS_{ez}$, which is iterated
+by GMRES with the left side inverted by a triangular Sylvester solve in the Schur
+basis of $K$ (\url{product_yield.yields_t2e}). On twelve random systems small
+enough for the dense solution, including anisotropic hyperfine tensors, the two
+agree to a relative $1.3\times10^{-13}$. For every cell with $k_S\ge k_P$ on the
+threshold rows, the first-pass search of section~S3 was repeated with
+$T_2^e = 10$~ns, 100~ns and 1~$\mu$s, with the same edge rule for the $J$ range
+(Table~\ref{tab:relax}; \url{calibration_results/worst_case_v6_t2e.json}).
+Nineteen searches (14 at $T_2^e = 10$~ns, 5 at 100~ns) first peaked at the edge
+of the $J$ range and were repeated with the range widened sixteenfold; one of them
+($k_S = 10^{4.5}$, $k_P = 10~\mu$s$^{-1}$, $T_2^e = 100$~ns) still peaks at the
+edge because the response approaches a plateau as $|J|\to\infty$: it is
+constant to five figures for $|J| = 10^6$--$10^8$~MHz and equal to the stored
+value (\url{calibration_results/t2e_plateau_check.json}).
+
+\begin{table}[h]
+\caption{Searched $F$ (\%) without and with single-electron dephasing in the
+four-nucleus model. Rates in $\mu$s$^{-1}$.}
+\label{tab:relax}
+\centering
+\input{si_tables/relaxation}
+\end{table}
+
+\section{Hyperfine couplings}
+Fermi-contact couplings (B3LYP/def2-TZVP at GFN2-xTB geometries), all nuclei
+with $|a_{\rm iso}|\ge1$~MHz (Table~\ref{tab:hfc}), and the spin-dipolar tensors
+of the nitrogens and the largest protons (Table~\ref{tab:tens}), computed from
+the spin density with the operator-derivative integrals
+$\langle\mu|\partial_a\partial_b|\mathbf r-\mathbf R|^{-1}|\nu\rangle$; their
+trace reproduces $-4\pi\rho_s(\mathbf R)$. The computed flavin N5 and N10
+isotropic couplings are within 16\,\% and 13\,\% of the literature values used in
+the main text,\cite{Lee2014} and the N5 tensor is nearly axial with its large
+component normal to the ring. For 3-methylindole$^{\bullet+}$ the two large
+methyl couplings stand in for the tryptophan $\beta$-protons; their values
+depend on the side-chain conformation.
+
+\begin{table}[h]
+\caption{Isotropic hyperfine couplings.}
+\label{tab:hfc}
+\centering
+\input{si_tables/hyperfine}
+\end{table}
+
+\begin{table}[h]
+\caption{Spin-dipolar hyperfine tensors.}
+\label{tab:tens}
+\centering
+\input{si_tables/tensors}
+\end{table}
+
+\section{Dipolar tensor}
+The tensor is the point-dipole tensor summed over pairs of atoms weighted by
+their Löwdin spin populations (UKS B3LYP/def2-SVP on each radical at its position
+in the complex), for methylamine on the flavin si face with N5--N = 3.5~\AA\
+(Table~\ref{tab:dip}).
+
+\begin{table}[h]
+\caption{Dipolar coupling of the contact pair.}
+\label{tab:dip}
+\centering
+\input{si_tables/dipolar}
+\end{table}
+
+\section{Electronic coupling}
+Fragment-orbital couplings $t = \langle{\rm LUMO_{Fl}}|F|{\rm HOMO_{am}}\rangle$
+(B3LYP/def2-SVP) for methylamine and benzylamine stacked on the flavin si face
+(five orientations) or approaching its edge (three orientations), at N5--N
+distances of 3.0--6.0~\AA. Geometries with any intermolecular contact below
+2.0~\AA\ are excluded (Table~\ref{tab:t}). The edge approach of benzylamine
+clashes at every distance below 6~\AA\ and is not used.
+
+\begin{table}[h]
+\caption{Coupling scan. ``valid'': non-clashing geometries of those computed.}
+\label{tab:t}
+\centering
+\input{si_tables/coupling}
+\end{table}
+
+\section{Density-functional driving force}
+The main text uses measured potentials. For comparison, Table~\ref{tab:pot}
+gives adiabatic one-electron potentials in water ($\varepsilon = 78.4$, absolute
+SHE potential 4.44~V\cite{Jonsson1996}) from the same density-functional
+protocol, against the measured values for a dialkylamine\cite{Jonsson1996} and
+for free FMN at pH~7.\cite{Mayhew1999} The flavin comparison is between
+different species (lumiflavin anion radical versus the pH-7 FMN
+oxidized/semiquinone couple) and indicates only the order of the error.
+Table~\ref{tab:ddft} gives the raw driving force in low-dielectric continua with
+a contact Coulomb term $-e^2/(4\pi\varepsilon_0\varepsilon r)$. No zero-point or
+thermal corrections are included, and none of these values enters the main
+text.
+
+\begin{table}[h]
+\caption{One-electron potentials in water.}
+\label{tab:pot}
+\centering
+\input{si_tables/potentials}
+\end{table}
+
+\begin{table}[h]
+\caption{Raw DFT driving force of the contact pair.}
+\label{tab:ddft}
+\centering
+\input{si_tables/delta_dft}
+\end{table}
+
+\section{Cryptochrome}
+Orientation-averaged, perpendicular and parallel response of the cryptochrome
+pair over the exchange prefactor $J_0$ (both signs of $J_{\rm EH}$;
+$J = -2J_{\rm EH}$, $J_{\rm EH} = J_0e^{-\beta r}$, $\beta = 14$~nm$^{-1}$,
+$r = 1.90$~nm\cite{Efimova2008}), $k_S = k_P = 1~\mu$s$^{-1}$, coherent
+(Table~\ref{tab:cry}).
+
+\begin{table}[h]
+\caption{Cryptochrome response (\%).}
+\label{tab:cry}
+\centering
+\input{si_tables/cry}
+\end{table}
+
+\bibliographystyle{unsrt}
+\bibliography{refs}
+
+\end{document}
