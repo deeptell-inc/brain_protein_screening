@@ -22,7 +22,8 @@ def test_mao_estimate_inputs():
     from qbscreen import make_numbers_v6 as mn
     m = mn.macros()
     assert (m["DeltaMAOlo"], m["DeltaMAOhi"], m["DeltaMAOsub"]) == ("1.41", "1.44", "0.91")
-    assert (m["DeltaMAOsubLo"], m["DeltaMAOsubHi"]) == ("0.86", "0.96")
+    assert (m["DeltaMAOsubLo"], m["DeltaMAOsubHi"]) == ("0.86", "0.99")
+    assert (m["DeltaMaxHi"], m["BornRadius"], m["DeltaSiteLo"]) == ("0.82", "2.81", "0.49")
 
 
 def test_dead_end_resolvent_and_population_bound():
@@ -42,19 +43,31 @@ def test_dead_end_resolvent_and_population_bound():
         assert P / kP <= 4 / kS * (1 + 1e-6)                                       # ∫Tr ρ ≤ 4/k_S
 
 
-def test_G_is_a_grid_value_not_a_bound():
+def test_G_offgrid_check():
+    # G rounds the required rates down; off-grid permitted k_S on the threshold row stay below it
     import json
     import numpy as np
     from pathlib import Path
     from qbscreen.competence_sensitivity import G
-    from qbscreen.worst_case_map import Cell, NUCLEI
+    from qbscreen.worst_case_map import Cell, NUCLEI, directions
     from qbscreen.product_yield import build_system
-    ex = json.loads(Path("calibration_results/g_interval_example.json").read_text())
+    ex = json.loads(Path("calibration_results/g_offgrid_check.json").read_text())
     m = json.loads(Path("calibration_results/worst_case_v6.json").read_text())
-    v = Cell(build_system(NUCLEI), np.array(m["T_contact_MHz"]), ex["k_S"], ex["k_P"]).mfe(0.0, 0.0, 0.0, 0.0)
-    assert np.isclose(v, ex["mfe_percent"], rtol=1e-9)
     assert np.isclose(G(m["rows"], ex["delta_eV"], 1.0), ex["G_percent"], rtol=1e-12)
-    assert v > ex["G_percent"]                                                    # documented limitation
+    p = ex["points"][0]
+    c = Cell(build_system(NUCLEI), np.array(m["T_contact_MHz"]), p["k_S"], ex["k_P"])
+    v = max(c.mfe(J, 0.0, th, ph) for J in (0.0, 0.5, -0.5) for th, ph in directions())
+    assert np.isclose(v, p["mfe_percent"], rtol=1e-9)
+    assert ex["max_offgrid_percent"] < ex["G_percent"]
+
+
+def test_phi_bound_assumptions():
+    # the factor 4 is approached under depolarizing relaxation; without trace preservation Φ_P > 1
+    from fractions import Fraction
+    from qbscreen.competence_sensitivity import sharpness_example, trace_counterexample
+    assert max(r["ratio"] for r in sharpness_example(out="/dev/null")) > 0.9999
+    phi = trace_counterexample()
+    assert Fraction(phi).limit_denominator(1000) == Fraction(150, 101) and phi <= 4 * 1.0 / 0.01
 
 
 def test_stored_cells_reproduce():

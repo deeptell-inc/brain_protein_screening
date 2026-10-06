@@ -145,4 +145,5 @@ if __name__ == "__main__":
     OUT.mkdir(exist_ok=True)
     coupling(); hyperfine(); tensors(); dipolar(); driving_force(); cryptochrome(); sensitivity(); relaxation()
     worst_case("worst_case_v6.json", "map.tex")
+    worst_case("worst_case_v6_aniso.json", "map_aniso.tex")
     print("SI tables →", OUT)

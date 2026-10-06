@@ -43,14 +43,15 @@ def _G(ax, small=False):
             continue
         d = np.array([x["delta_eV"] for x in g])
         G = np.array([np.nan if x["G_percent"] is None else max(x["G_percent"], 1e-12) for x in g])
-        keep = d <= KT * np.log(1e13 / float(kc))
-        ax.semilogy(d[keep], G[keep], "-", color=colours[kc], lw=1,
+        ax.semilogy(d, G, "-", color=colours[kc], lw=1,
                     label=None if small else rf"$k_{{\rm cat}}={float(kc):g}$ s$^{{-1}}$")
-    lo = min(x["delta_eV"] for x in g_all["1.0"] if x["G_percent"] is not None)
-    ax.axvspan(0, lo, facecolor="none", hatch="////", edgecolor="0.6", lw=0)
-    ax.axvspan(KT * np.log(1e14), 2.0, color="0.88", lw=0)
+    ax.axvspan(KT * np.log(1e14 / 4), 2.0, color="0.88", lw=0)
+    ax.axvspan(0, float(m["GdefOne"]), facecolor="none", hatch="////", edgecolor="0.6", lw=0)
+    ax.axvspan(float(m["GdefOneHi"]), 2.0, facecolor="none", hatch="////", edgecolor="0.6", lw=0)
+    # thick: in water; thin: down to the most favourable medium correction
+    ax.plot([float(m["DeltaSiteLo"]), float(m["DeltaMAOsubLo"])], [3e-9, 3e-9], color="k", lw=1)
     ax.plot([float(m["DeltaMAOsubLo"]), float(m["DeltaMAOhi"])], [3e-9, 3e-9], color="k", lw=3, solid_capstyle="butt")
-    ax.text(float(m["DeltaMAOsubLo"]), 1.2e-8, "MAO (est.)", fontsize=7)
+    ax.text(float(m["DeltaSiteLo"]), 1.2e-8, "MAO (est.)", fontsize=7)
     ax.axhline(0.1, color="k", lw=0.4, ls=":")
     ax.set_xlim(0, 2.0)
     ax.set_ylim(1e-10, 50)

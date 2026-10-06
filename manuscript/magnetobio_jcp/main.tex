@@ -38,25 +38,29 @@ mechanism only if its catalytic cycle passes through a spin-correlated radical
 pair that lives long enough for a 50~$\mu$T field to act. For a pair that is
 formed thermally from a closed-shell enzyme--substrate complex, returns to it
 only through the singlet, and carries the catalytic flux, we show that detailed
-balance bounds both decay rates from below: the singlet back-transfer rate and
-the spin-independent onward rate must each exceed $k_{\rm cat}e^{\Delta/k_BT}$,
-where $\Delta$ is the free energy of the pair. The bound rests on an inequality
-for the onward yield, $\Phi_P\le4k_P/k_S$, that holds for any spin Hamiltonian
-and any unital, positivity-preserving spin relaxation, and it involves no
-electronic coupling or reorganization energy. We combine it with a numerical
-search for the largest field effect at given rates in a flavin--aminium spin
-model with density-functional hyperfine and dipolar couplings. Among the
-searched pairs able to carry $k_{\rm cat}=1$~s$^{-1}$, the largest effect found
-falls below 0.1\,\% for $\Delta\ge\ThrTenthOne$~eV, or \ThrTenthOneSens~eV when
-every searched value is multiplied by the largest factor found with richer
-nuclear models; electron spin relaxation, computed directly, lowers the values
-that set this threshold. If no elementary rate exceeds a nuclear-frequency
-ceiling, no pair above \DeltaMaxHi~eV carries that turnover. The
-measured flavin potentials of the monoamine oxidases, combined with a
-dialkylamine potential standing in for benzylamine-type substrates, place an
-amine-to-flavin pair \DeltaMAOlo--\DeltaMAOhi~eV above the closed-shell state,
-and $\DeltaMAOsub\pm\AmineErr$~eV if substrate binding shifted the one-electron
-flavin couple as much as it shifts full reduction.
+balance bounds both decay rates from below: the singlet back-transfer rate must
+exceed $4k_{\rm cat}e^{\Delta/k_BT}$ and the spin-independent onward rate
+$k_{\rm cat}e^{\Delta/k_BT}$, where $\Delta$ is the free energy of the pair. The
+second bound rests on an inequality for the onward yield, $\Phi_P\le4k_P/k_S$,
+that holds for any spin Hamiltonian and any trace-preserving, unital,
+positivity-preserving spin relaxation and cannot be improved over that class;
+neither bound involves an electronic coupling or reorganization energy. We
+combine them with a numerical search for the largest field effect at given
+rates in a flavin--aminium spin model with density-functional hyperfine and
+dipolar couplings. Among the searched rates that satisfy both bounds for
+$k_{\rm cat}=1$~s$^{-1}$, the largest effect found falls below 0.1\,\% at
+$\Delta=\ThrTenthOne$~eV (\ThrTenthOneAniso~eV with anisotropic hyperfine
+tensors) and stays below up to \GdefOneHi~eV, the largest driving force the
+rate grid covers; electron spin relaxation, computed directly, does not raise
+these thresholds. If no elementary rate exceeds $10^{14}$~s$^{-1}$, no pair
+above \DeltaMaxHi~eV carries that turnover. The measured flavin potentials of
+the monoamine oxidases, combined with a dialkylamine potential standing in for
+benzylamine-type substrates, place an amine-to-flavin pair
+\DeltaMAOsubLo--\DeltaMAOhi~eV above the closed-shell state in water.
+Continuum estimates for the active site shift this by $\MedOneLo$ to
+$+\MedTwoHi$~eV; the pair reaches the range of a measurable field effect only
+if the active site lowers $\Delta$ by nearly as much as the most favourable of
+them, to about \DeltaSiteLo~eV.
 \end{abstract}
 
 \maketitle
@@ -88,10 +92,12 @@ forms it \emph{thermally} and turns over through it.
 Here we derive that constraint. For a pair formed from a closed-shell complex
 that must carry the catalytic flux, detailed balance bounds both of its decay
 rates from below in terms of the driving force $\Delta$ and the turnover number.
-Without spin dynamics the bound follows from the steady-state turnover through
-a pre-equilibrium intermediate (Sec.~\ref{sec:bound}); what the spin dynamics adds is that it
-holds for the spin-independent onward rate as well as for the singlet return,
-with a factor of four that is sharp for any spin Hamiltonian. We then combine it with
+Without spin dynamics both bounds follow from the steady-state turnover through
+a pre-equilibrium intermediate (Sec.~\ref{sec:bound}). Singlet--triplet mixing
+can raise the onward yield above its spin-free value, because triplet pairs
+cannot return, and so weakens the bound on the onward rate. We show that it
+weakens it by at most a factor of four, for any spin Hamiltonian and any
+admissible relaxation, and that no smaller factor holds for that whole class. We then combine it with
 a numerical search for the largest field effect at given rates in a flavin--aminium
 spin model, state how that search depends on the model, and estimate where the
 monoamine oxidase pair lies from the measured flavin potentials of the enzyme and
@@ -132,7 +138,8 @@ with Haberkorn reaction terms,\cite{Haberkorn1976,Fay2018}
 \end{equation}
 with $P_S$ the singlet projector, $N = {\rm Tr}P_S$ the nuclear-spin dimension and
 $\mathcal D$ a spin-relaxation superoperator. We assume that $\mathcal D$
-generates a positivity-preserving evolution, as a trace-preserving
+is trace preserving, ${\rm Tr}\,\mathcal D(X)=0$, and generates a
+positivity-preserving evolution, as a trace-preserving
 Gorini--Kossakowski--Sudarshan--Lindblad (GKSL)
 generator\cite{Gorini1976,Lindblad1976} does, and that it is
 unital, $\mathcal D(I)=0$, as single-electron dephasing, the reactive
@@ -198,36 +205,45 @@ $\Phi_P\le1$. Less obviously,
 \Phi_P \le 4k_P/k_S
 \label{eq:phibound}
 \end{equation}
-for any spin Hamiltonian and any $\mathcal D$ with the properties above. Indeed,
+for any spin Hamiltonian and any $\mathcal D$ with the properties above
+(trace preserving, unital, positivity preserving). Indeed,
 for $k_P>0$ the resolvent
 $\mathcal R = (-\mathcal L)^{-1} = \int_0^\infty e^{\mathcal Lt}dt$ exists and
 maps positive operators to positive operators, and unitality gives
 $-\mathcal L(I) = k_SP_S + k_PI$; applying $\mathcal R$,
 $k_S\,\mathcal R(P_S) = I - k_P\,\mathcal R(I) \preceq I$, and taking the trace,
-$\Phi_P = (k_P/N)\,{\rm Tr}\,\mathcal R(P_S)\le 4k_P/k_S$. Over
+$\Phi_P = (k_P/N)\,{\rm Tr}\,\mathcal R(P_S)\le 4k_P/k_S$. Without spin
+dynamics $\Phi_P = k_P/(k_S+k_P)$, a quarter of the bound when $k_P\ll k_S$;
+the factor of four is approached when singlet--triplet mixing is complete, as
+under fast depolarizing relaxation, where $\Phi_Pk_S/4k_P = \sharpRatio$ even
+without hyperfine couplings (Supporting Information). It therefore cannot be
+reduced for the class as a whole, although a given system may stay well below
+it. Over
 \nBoundTest\ random spin systems with exchange, dipolar and hyperfine couplings
 and, in part, electron spin relaxation, the largest value of $\Phi_Pk_S/4k_P$ is
 \maxBoundRatio\ (Supporting Information).
 
 Requiring the turnover $k_f\Phi_P$ to be at least $k_{\rm cat}$ gives
 \begin{equation}
-k_S \ge k_{\rm cat}\,e^{\Delta/k_BT}\quad\text{and}\quad
-k_P \ge k_{\rm cat}\,e^{\Delta/k_BT} \equiv k_{\min}(\Delta).
+\begin{split}
+&k_S \ge 4k_{\min}(\Delta)\quad\text{and}\quad k_P \ge k_{\min}(\Delta),\\
+&k_{\min}(\Delta)\equiv k_{\rm cat}\,e^{\Delta/k_BT},
+\end{split}
 \label{eq:kmin}
 \end{equation}
-(The first inequality holds with an extra factor of four; we use the weaker
-form.) Eq~\ref{eq:kmin} is a statement about the generator of
+the first from $\Phi_P\le1$ and the second from eq~\ref{eq:phibound}.
+Eq~\ref{eq:kmin} is a statement about the generator of
 eq~\ref{eq:me}; whether a strongly coupled contact pair is described by such a
 generator is a separate question, taken up in Sec.~\ref{sec:mao}. Without
-spin dynamics the turnover is exactly
-$e^{-\Delta_S/k_BT}/(1/k_S+1/k_P)$. Eq~\ref{eq:kmin} contains no electronic
+spin dynamics the turnover is exactly $e^{-\Delta_S/k_BT}/(1/k_S+1/k_P)$, which
+requires $k_P\ge4k_{\min}$ as well; the spin dynamics relaxes only this
+second condition. Eq~\ref{eq:kmin} contains no electronic
 coupling, no reorganization energy and no assumption about the chemistry of the
 onward step. If, in addition, we assume that no elementary rate exceeds
 $\nu_n\approx10^{13}$--$10^{14}$~s$^{-1}$, at or above the transition-state
-prefactor $k_BT/h = 6.5\times10^{12}$~s$^{-1}$ at 310~K,\cite{Eyring1935} a pair
-that carries
-$k_{\rm cat} = 1$--$10^3$~s$^{-1}$ must have
-$\Delta\le k_BT\ln(\nu_n/k_{\rm cat}) = \DeltaMaxLo$--$\DeltaMaxHi$~eV.
+prefactor $k_BT/h = 6.5\times10^{12}$~s$^{-1}$ at 310~K,\cite{Eyring1935} the bound on $k_S$ requires a pair that carries
+$k_{\rm cat} = 1$--$10^3$~s$^{-1}$ to have
+$\Delta\le k_BT\ln(\nu_n/4k_{\rm cat}) = \DeltaMaxLo$--$\DeltaMaxHi$~eV.
 
 A radical pair on a dead-end branch, which does not lead to product, is a
 separate case. It carries no flux, so eq~\ref{eq:kmin} does not apply to it,
@@ -288,28 +304,30 @@ dynamics, $B = 50\,\mu$T.}
 
 Combining eq~\ref{eq:kmin} with the field effect defines
 \begin{equation}
-G^*(\Delta) = \sup\{\,F^*(k_S,k_P) : k_S,\,k_P \ge k_{\min}(\Delta)\,\},
+G^*(\Delta) = \sup\{\,F^*(k_S,k_P) : k_S \ge 4k_{\min}(\Delta),\ k_P \ge k_{\min}(\Delta)\,\}.
 \end{equation}
-the largest field effect of a pair that can carry the turnover. We evaluate it
-by a procedure on the rate grid and call the result $G$. It is not a bound on
-$G^*$: between grid points the effect can exceed it. At
-$\Delta = \intDelta$~eV, where $k_{\min}$ coincides with the grid rate
-$k_P = \intKP~\mu$s$^{-1}$, the permitted point $k_S = \intKS~\mu$s$^{-1}$ gives
-\intMFE\,\% against $G = \intG$\,\% (Supporting Information). In the procedure,
-$k_{\min}$ is rounded down to the nearest grid rate; above the
-largest $k_P$ the edge value is used, because $\max_{k_S}F$ decreases with $k_P$
-on the grid, and above the largest $k_S$ only the constraint on $k_P$ is
-imposed. Because the permitted region only shrinks as $\Delta$ grows, $G$ is
-finally replaced by its running maximum from larger $\Delta$, which removes
-non-monotonic steps introduced by these grid rules. Where $k_{\min}$ lies below the grid ($\Delta<\GdefOne$~eV for
-$k_{\rm cat}=1$~s$^{-1}$) the grid does not cover the permitted rates, and $G$
-is not reported; there slower pairs are permitted and give larger effects.
+The region in braces is defined by necessary conditions: it contains every pair
+that can carry the turnover, but not every pair in it can (whether it does also
+depends on $\Phi_P$ and on the occupancy of E$\cdot$S). $G^*$ is therefore an
+upper bound on the field effect of a competent pair, taken over a larger set.
+We evaluate it by a procedure on the rate grid and call the result $G$. The
+required rates are rounded down to the nearest grid rates, so that rates just
+above them are represented by the cell below; on the threshold row
+($\Delta=\offDelta$~eV, $k_P=\offKP~\mu$s$^{-1}$) the off-grid rates
+$k_S = \offKSlo$--$\offKShi~\mu$s$^{-1}$ give at most \offMax\,\% against
+$G=\offG$\,\% (Supporting Information). $G$ is still a finite-search value, not
+a proven bound. Because the permitted region only shrinks as $\Delta$ grows, $G$
+is finally replaced by its running maximum from larger $\Delta$. Where the
+required rates fall outside the computed grid, $G$ is not reported: below it
+($\Delta<\GdefOne$~eV for $k_{\rm cat}=1$~s$^{-1}$) the permitted region
+includes rates slower than any computed, and above it ($\Delta>\GdefOneHi$~eV)
+the required rates exceed the computed ones.
 
 Figure~\ref{fig:G} shows $G$ for $k_{\rm cat} = 1$--$10^3$~s$^{-1}$. Because
 $k_P$ is sampled every half decade, the thresholds below are resolved to about
-\gridStep~eV. For $k_{\rm cat}=1$~s$^{-1}$, $G$ falls below 0.1\,\% for
-$\Delta\ge\ThrTenthOne$~eV
-and below 0.01\,\% for $\Delta\ge\ThrHundredthOne$~eV; for
+\gridStep~eV. For $k_{\rm cat}=1$~s$^{-1}$, $G$ falls below 0.1\,\% at
+$\Delta=\ThrTenthOne$~eV and below 0.01\,\% at $\Delta=\ThrHundredthOne$~eV, and
+stays below up to \GdefOneHi~eV, beyond which it is not computed; for
 $k_{\rm cat}=10^3$~s$^{-1}$ the 0.1\,\% threshold is \ThrTenthThousand~eV. A pair
 near thermoneutrality is not excluded: at small $\Delta$ competence permits
 slow decay and the field effect can be several percent.
@@ -320,30 +338,34 @@ slow decay and the field effect can be several percent.
 \caption{Largest magnetic field effect found by the grid procedure among
 pairs that can carry the turnover, $G(\Delta)$, for $k_{\rm cat} = 1$, 10, 100 and $10^3$~s$^{-1}$ in the
 reference model. Hatched: $G$ not defined for $k_{\rm cat}=1$~s$^{-1}$ because
-the permitted rates extend below the computed grid. Shaded: no pair carries the turnover with
-$\nu_n = 10^{14}$~s$^{-1}$. Bar: driving force of an amine-to-flavin pair in
-monoamine oxidase estimated from measured flavin potentials and a proxy amine
-potential (Sec.~\ref{sec:mao}).}
+the required rates lie outside the computed grid. Shaded: no pair carries
+$k_{\rm cat}=1$~s$^{-1}$ if no rate exceeds $\nu_n = 10^{14}$~s$^{-1}$. Bar:
+driving force of an amine-to-flavin pair in monoamine oxidase estimated from
+measured flavin potentials and a proxy amine potential, in water (thick) and
+extended to the most favourable continuum correction for the active site (thin)
+(Sec.~\ref{sec:mao}).}
 \label{fig:G}
 \end{figure}
 
 \section{Dependence on the spin model}
 \label{sec:sens}
 
-$F$ and $G$ belong to the reference model, and they change with it. We
-re-searched the cell that sets the row maximum of $F$ for each onward rate that
-determines the thresholds ($k_P = 10$--$10^{2.5}~\mu$s$^{-1}$) in three richer
-nuclear models: anisotropic hyperfine tensors for N5 and N10 (density-functional
-spin-dipolar parts in the frame of the dipolar tensor), the same with the
-aminium $^{14}$N added, and the same with the two largest flavin methyl protons
-added. Relative to the reference model the largest factors found are
-\XanisoMax\ (anisotropic tensors), \XanisoNMax\ (with $^{14}$N) and
-\XanisoHMax\ (with the methyl protons). As a stress test we multiply every
-searched value by the largest of these, \Xsens; this shifts the 0.1\,\%
-threshold for $k_{\rm cat}=1$~s$^{-1}$ from \ThrTenthOne\ to
-\ThrTenthOneSens~eV. Only the reference row-maximum cell was searched again, so
-in a richer model another cell of the row could be larger, and the shifted
-threshold is the result of a stress test, not an upper bound over spin models.
+$F$ and $G$ belong to the reference model, and they change with it. In the
+reference model N5 and N10 are isotropic. We repeated the full search, both
+passes and the edge rule, with anisotropic tensors for both nuclei
+(density-functional spin-dipolar parts in the frame of the dipolar tensor) on
+every cell that the thresholds use on the rows $k_P = 10$--$10^{2.5}~\mu$s$^{-1}$
+with $k_S\ge k_P$ (\nAnisoCells\ cells; Supporting Information). Individual cells
+changed by factors of up to \AnisoCellMax, and the row maxima by factors of
+\AnisoRowMin--\AnisoRowMax. With each of these cells replaced by the larger of
+its two values, the 0.1\,\% threshold for $k_{\rm cat}=1$~s$^{-1}$ is
+\ThrTenthOneAniso~eV, and \ThrTenthThousandAniso~eV for
+$k_{\rm cat}=10^3$~s$^{-1}$. Rows with $k_P\ge10^3~\mu$s$^{-1}$ keep their
+reference values, which are below $\FkPthousand$\,\%. Adding the aminium
+$^{14}$N or the two largest flavin methyl protons was examined only by searching
+again around the optimum of the reference row-maximum cell (Supporting
+Information); such a local search can miss larger values elsewhere in the row,
+and we do not use it to move the thresholds.
 
 Electron spin relaxation was computed directly in the four-nucleus model. Every
 cell that the thresholds use on these rows ($k_S\ge k_P$, \nTtwoCells\ searches)
@@ -382,20 +404,38 @@ difference between amine and radical cation grows with the gas-phase ionization
 energy,\cite{Jonsson1996} which would partly offset the higher ionization
 energies of primary amines. With the Coulomb
 attraction of the contact pair in water (\CoulLo--\CoulHi~eV for 6--3.5~\AA)
-this places the pair at $\Delta\approx\DeltaMAOlo$--\DeltaMAOhi~eV.
+this places the pair at $\Delta\approx\DeltaMAOlo$--\DeltaMAOhi~eV in water.
+
+These numbers describe the pair in water. In the enzyme, $\Delta$ follows from a
+thermodynamic cycle that adds, to the potentials in water, the free energies of
+transferring the neutral and charged species from water into the active site and
+the Coulomb attraction of the pair there. Neither transfer free energy is known.
+Two continuum limits bracket their effect (Supporting Information). Moving the
+aminium alone into a medium of effective dielectric constant 4--10, with a Born
+radius of \BornRadius~\AA\ calibrated to the measured solvation-energy difference
+of dimethylamine and its radical cation,\cite{Jonsson1996} while leaving the
+flavin anion solvated, changes $\Delta$ by $\MedOneLo$ to $+\MedOneHi$~eV; moving
+both ions with the same density-functional continuum protocol changes it by
+$+\MedTwoLo$ to $+\MedTwoHi$~eV.
 
 Substrate binding changes the flavin potential: in the presence of substrates
-the midpoint potential for full reduction shifts by up to
-$+\SubShift$~V.\cite{Sablin2001} As a bounding assumption, if the one-electron
-couple shifted by the same amount, the pair would lie at
-$\Delta\approx\DeltaMAOsub$~eV, or \DeltaMAOsubLo--\DeltaMAOsubHi~eV within the
-uncertainty of the amine proxy. This range straddles the competence limit of
-\DeltaMaxHi~eV, so on this assumption the thermodynamics alone does not
-exclude the pair from carrying turnover. It lies, however, well above the
-driving forces at which the searched field effect is appreciable ($G<0.1$\,\%
-for $\Delta\ge\ThrTenthOne$--\ThrTenthOneSens~eV): a pair at the 0.1\,\%
-threshold would require the active site to lower $\Delta$ by a further
-$\DeltaToThr$~eV beyond that shift. Kinetic studies with benzylamine
+the midpoint potential for full reduction shifts by up to $+\SubShift$~V, and no
+semiquinone forms.\cite{Sablin2001} If the absence of semiquinone reflects
+equilibrium, the oxidized/semiquinone potential lies at or below the
+full-reduction midpoint, which for MAO~A ($\EflMAOA$ and $\EsqredA$~mV without
+substrate) gives at most $+\EoneCap$~V, a shift of at most $\EoneShiftCap$~V.
+We shift the one-electron couple by the full $+\SubShift$~V as an upper bound on
+this reading. The pair then lies at $\Delta\approx\DeltaMAOsubLo$--\DeltaMAOsubHi~eV
+in water, including the uncertainty of the amine proxy. This is above the
+competence limit $\Delta\le\DeltaMaxHi$~eV of Sec.~\ref{sec:bound}, so in water
+such a pair could not carry the turnover. With the most favourable of the medium
+corrections above, however, $\Delta$ could be as low as \DeltaSiteLo~eV, at the
+0.1\,\% thresholds of Sec.~\ref{sec:sens}: there $G$ is \GsiteRef\,\% in the
+reference model and \GsiteAniso\,\% with anisotropic tensors. The estimate therefore
+places the monoamine oxidase pair outside the range of a measurable field effect
+unless the active site strengthens the attraction of the pair much more than it
+desolvates the ions; settling this requires the transfer free energies, or the
+one-electron flavin potential with substrate bound. Kinetic studies with benzylamine
 analogues are consistent with this, though they cannot exclude a short-lived
 pair: no flavin radical is detected during the reductive half-reaction of bovine
 MAO~B,\cite{Walker1994} and the substituent and isotope effects of human MAO~A
@@ -443,13 +483,14 @@ The bound of eq~\ref{eq:kmin} applies to any radical pair that is formed
 thermally from a closed-shell state, returns to it only through the singlet,
 and carries the catalytic flux; a pair on a dead-end branch is limited instead
 by the population bound of the same section. Both require the reaction terms of
-eq~\ref{eq:me} and unital, positivity-preserving relaxation, but no electronic
+eq~\ref{eq:me} and trace-preserving, unital, positivity-preserving relaxation, but no electronic
 coupling, reorganization energy or particular onward chemistry. The numbers that
 follow depend on more: $F$ and $G$ are the results of a finite search in a
-specific spin model with coherent dynamics, the shifted threshold is a stress
-test, and the monoamine oxidase estimate depends on a dialkylamine potential
-standing in for the substrates and on how substrate binding shifts the
-one-electron flavin couple.
+specific spin model, richer nuclear models were searched in full only with
+anisotropic flavin tensors, and the monoamine oxidase estimate depends on a dialkylamine potential
+standing in for the substrates, on how substrate binding shifts the
+one-electron flavin couple, and on transfer free energies into the active site
+that are not known.
 
 Two routes around the bound should be named. Three-radical and scavenging
 mechanisms\cite{Kattnig2017} restore sensitivity to strongly coupled pairs.
@@ -463,18 +504,21 @@ $\Delta$, which is measurable.
 \section{Conclusions}
 
 For a radical pair that an enzyme forms thermally and through which it turns
-over, detailed balance bounds the singlet back-transfer rate and the
-spin-independent onward rate from below by $k_{\rm cat}e^{\Delta/k_BT}$, for any
-spin Hamiltonian and unital, positivity-preserving relaxation. In a
-flavin--aminium spin model with computed hyperfine and dipolar couplings, the
-largest field effect found among the searched pairs that can carry
-$k_{\rm cat}=1$~s$^{-1}$ falls below 0.1\,\% for $\Delta\ge\ThrTenthOne$~eV
-(\ThrTenthOneSens~eV in a stress test for richer nuclear models, and
-\ThrTenthOneRelax~eV with electron spin relaxation included). The measured
-flavin potentials of the monoamine oxidases, with a dialkylamine proxy for the
-potential of benzylamine-type substrates, place an amine-to-flavin pair at
-\DeltaMAOsubLo--\DeltaMAOhi~eV, depending on how substrate binding shifts the
-one-electron couple, above that range.
+over, detailed balance bounds the singlet back-transfer rate from below by
+$4k_{\rm cat}e^{\Delta/k_BT}$ and the spin-independent onward rate by
+$k_{\rm cat}e^{\Delta/k_BT}$, for any spin Hamiltonian and any trace-preserving,
+unital, positivity-preserving relaxation. In a flavin--aminium spin model with
+computed hyperfine and dipolar couplings, the largest field effect found among
+the searched rates that satisfy these bounds for $k_{\rm cat}=1$~s$^{-1}$ falls
+below 0.1\,\% at $\Delta=\ThrTenthOne$~eV (\ThrTenthOneAniso~eV with anisotropic
+hyperfine tensors, \ThrTenthOneRelax~eV with electron spin relaxation) and stays
+below up to the largest driving force computed. The measured flavin potentials
+of the monoamine oxidases, with a dialkylamine proxy for the potential of
+benzylamine-type substrates, place an amine-to-flavin pair at
+\DeltaMAOsubLo--\DeltaMAOhi~eV in water, above that range; continuum estimates
+for the active site leave it there unless the site lowers $\Delta$ to about
+\DeltaSiteLo~eV. The transfer free energies into the active site, or the
+one-electron flavin potential with substrate bound, would settle the question.
 
 \section*{Supplementary Material}
 See the supplementary material for the 300-system test of

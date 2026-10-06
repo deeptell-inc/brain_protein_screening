@@ -32,17 +32,36 @@ Every table below is generated from the stored results by
 
 \section{The inequality $\Phi_P\le4k_P/k_S$ and the dead-end bound}
 Let $\mathcal L$ be the generator of eq~2 of the main text, with $\mathcal D$
-generating a positivity-preserving evolution (for example a trace-preserving
-GKSL generator\cite{Gorini1976,Lindblad1976}) and unital, $\mathcal D(I)=0$. Then
-$-\mathcal L(I) = k_SP_S + k_PI$. For $k_P>0$ the operator
-$\mathcal R = (-\mathcal L)^{-1} = \int_0^\infty e^{\mathcal Lt}\,dt$ exists and
-is positive, because $e^{\mathcal Lt}$ is and decays at least as $e^{-k_Pt}$.
+trace preserving, generating a positivity-preserving evolution (for example a
+trace-preserving GKSL generator\cite{Gorini1976,Lindblad1976}) and unital,
+$\mathcal D(I)=0$. Then $-\mathcal L(I) = k_SP_S + k_PI$. The rest of the
+generator, $\mathcal L-\mathcal D$, generates
+$\rho\mapsto e^{-iH_{\rm eff}t}\rho\,e^{iH_{\rm eff}^\dagger t}$ with
+$H_{\rm eff} = 2\pi H - \tfrac i2(k_SP_S+k_PI)$, which is positive; by the
+Lie--Trotter product formula,
+$e^{\mathcal Lt} = \lim_{n\to\infty}(e^{\mathcal Dt/n}e^{(\mathcal L-\mathcal D)t/n})^n$
+is a limit of positive maps and hence positive. For $k_P>0$ the operator
+$\mathcal R = (-\mathcal L)^{-1} = \int_0^\infty e^{\mathcal Lt}\,dt$ therefore
+exists and is positive, because the trace of $e^{\mathcal Lt}(\rho)$ decays at
+least as $e^{-k_Pt}$ for positive $\rho$.
 Applying $\mathcal R$ to the identity above gives
 \begin{equation}
 k_S\,\mathcal R(P_S) = I - k_P\,\mathcal R(I) \preceq I ,
 \end{equation}
 so ${\rm Tr}\,\mathcal R(P_S)\le 4N/k_S$ with $4N$ the dimension of the spin
 space, and $\Phi_P = (k_P/N)\,{\rm Tr}\,\mathcal R(P_S)\le4k_P/k_S$.
+
+The factor of four cannot be reduced for the class. With $H=0$, no nuclei,
+$k_S = 1$ and $k_P = 10^{-6}~\mu$s$^{-1}$, the fully depolarizing generator
+$\mathcal D(\rho) = \gamma({\rm Tr}\rho\,I/4-\rho)$, which is trace preserving
+and unital, gives $\Phi_Pk_S/4k_P = 0.25$ at $\gamma=0$ and \sharpRatio\ for
+$\gamma\ge10^2~\mu$s$^{-1}$ (\url{competence_sensitivity.sharpness_example};
+\url{calibration_results/phi_bound_sharpness.json}). Trace preservation is not
+needed for $\Phi_P\le4k_P/k_S$ but is needed for $\Phi_P\le1$: the unital,
+completely positive but population-creating generator
+$\mathcal D(\rho) = \gamma(V\rho V^\dagger-\tfrac12\{VV^\dagger,\rho\})$ with
+$V = |T_0\rangle\langle S|$ gives $\Phi_P = 150/101$ at $k_S = 0.01$,
+$k_P = \gamma = 1~\mu$s$^{-1}$ (\url{competence_sensitivity.trace_counterexample}).
 
 For a dead-end pair ($k_P=0$) the resolvent need not exist: without nuclei and
 with $H=0$, for example, the $16\times16$ generator has rank 7, because triplet
@@ -55,8 +74,8 @@ for all $t$, since $e^{\mathcal L_0t}(I)\succeq0$. The population built up from 
 constant singlet source $k_f[{\rm E\cdot S}]P_S/N$ is therefore at most
 $4k_f[{\rm E\cdot S}]/k_S = e^{-\Delta/k_BT}[{\rm E\cdot S}]$ at all times.
 
-\url{competence_sensitivity.random_bound_test} (seed 20261001; inputs and
-outputs in \url{calibration_results/phi_bound_test.json}) evaluates
+The function \url{random_bound_test} of \url{qbscreen/competence_sensitivity.py}
+(seed 20261001; inputs and outputs in \url{calibration_results/phi_bound_test.json}) evaluates
 $\Phi_Pk_S/4k_P$ for \nBoundTest\ random spin systems: 0--3 nuclei of spin
 $\tfrac12$ or 1 with couplings of 1--300~MHz, exchange $10^{-1}$--$10^4$~MHz of
 either sign, axial dipolar tensors of $-10^{-1}$ to $-10^{3}$~MHz with random
@@ -90,12 +109,15 @@ set the thresholds changed $F$ by a factor of at most \convMaxRatio\
 (\url{calibration_results/s_convergence.json}). Table~\ref{tab:map}
 lists $F$ in percent.
 
-The bound $G$ of the main text is computed from these grid values and is not a
-bound on the continuous rate region. At $\Delta=\intDelta$~eV and
-$k_{\rm cat}=1$~s$^{-1}$, $k_{\min}$ equals the grid rate $k_P=\intKP~\mu$s$^{-1}$;
-the permitted off-grid point $k_S=\intKS~\mu$s$^{-1}$, $J=0$, $s=0$, field along
-$z$, gives \intMFE\,\%, against $G=\intG$\,\%
-(\url{calibration_results/g_interval_example.json}).
+The value $G$ of the main text is computed from these grid values, with the
+required rates rounded down to grid rates, and is not a bound on the continuous
+rate region. At $\Delta=\offDelta$~eV and $k_{\rm cat}=1$~s$^{-1}$, $k_{\min}$
+equals the grid rate $k_P=\offKP~\mu$s$^{-1}$. Nine permitted off-grid values
+$k_S=\offKSlo$--$\offKShi~\mu$s$^{-1}$, with $J = 0$ and $\pm0.5$~MHz, $s=0$ and
+all 25 field directions, give at most \offMax\,\%, against $G=\offG$\,\%
+(\url{competence_sensitivity.offgrid_check};
+\url{calibration_results/g_offgrid_check.json}). This is a restricted search at
+off-grid points, not a full one.
 
 \begin{table}[h]
 \caption{$F(k_S,k_P)$ (\%). Rates in $\mu$s$^{-1}$.}
@@ -105,10 +127,19 @@ $z$, gives \intMFE\,\%, against $G=\intG$\,\%
 \end{table}
 
 \section{Dependence on the spin model}
-For each onward rate that sets the thresholds of $G$, the cell that gives the
-row maximum of $F$ in the reference model was searched again in richer models
-(\url{qbscreen/model_sensitivity.py}). The search starts from the reference
-optimum and a 39-point $J$ grid at its field direction and dipolar scale, and
+In the anisotropic model ``aniso'' described below, the full search of
+section~S3 (first pass, edge rule and fine-$s$ pass) was repeated on every cell
+with $k_P = 10$--$10^{2.5}~\mu$s$^{-1}$ and $k_S\ge k_P$
+(\url{model_sensitivity.run_aniso_full};
+\url{calibration_results/worst_case_v6_aniso.json}); Table~\ref{tab:aniso}
+lists the values, \nAnisoEdge\ of which lie at the edge of the $J$ range. The
+thresholds in the main text replace each of these cells by the larger of its
+reference and anisotropic values.
+
+The other models were examined only locally: for each onward rate that sets the
+thresholds of $G$, the cell that gives the row maximum of $F$ in the reference
+model was searched again (\url{qbscreen/model_sensitivity.py}), starting from
+the reference optimum and a 39-point $J$ grid at its field direction and dipolar scale, and
 polishes the two best candidates. In ``aniso'' N5 and N10 carry the
 literature isotropic couplings plus the density-functional spin-dipolar tensors
 (Table~\ref{tab:tens}), rotated into the frame of the contact complex in
@@ -123,10 +154,18 @@ flavin methyl protons. The relaxation test uses a
 reduced pair (N5 isotropic, spin 1; aminium proton 256.9~MHz) searched with the
 full procedure, without relaxation and with single-electron dephasing
 (Table~\ref{tab:sens}); the reduced-pair relaxation test is superseded by the
-direct four-nucleus calculation of section~S5 and is shown for comparison. Only
-the reference row-maximum cell was searched again in each richer model, so another cell of the same row may give a larger value;
-the threshold shift quoted in the main text multiplies every searched value by
-the largest nuclear-model factor found and is a stress test, not a bound.
+direct four-nucleus calculation of section~S5 and is shown for comparison.
+Because only the reference row-maximum cell was searched, and only near its
+optimum, another cell of the same row may give a larger value; for the
+anisotropic model the full search above supersedes these entries.
+
+\begin{table}[h]
+\caption{$F(k_S,k_P)$ (\%) in the anisotropic model from the full search.
+Rates in $\mu$s$^{-1}$.}
+\label{tab:aniso}
+\centering
+\resizebox{\textwidth}{!}{\input{si_tables/map_aniso}}
+\end{table}
 
 \begin{table}[h]
 \caption{Searched $F$ (\%) at the threshold-setting cells in the reference and
@@ -246,6 +285,42 @@ text.
 \centering
 \input{si_tables/delta_dft}
 \end{table}
+
+\section{The driving force in the active site}
+The main text places the pair in water at
+$\Delta_w = E^\circ_{\rm amine} - E_{\rm fl} - e^2/(4\pi\varepsilon_0\cdot78.4\,r)$,
+$r = 3.5$--6~\AA. Moving the pair into a medium of effective dielectric constant
+$\varepsilon$ changes the Coulomb term by
+$-e^2/(4\pi\varepsilon_0r)\,(1/\varepsilon-1/78.4)$ and the solvation of the ions,
+which is not known. Two continuum limits are evaluated for $\varepsilon = 4$ and 10.
+
+\emph{One-sided.} Only the aminium radical cation is desolvated, with a Born
+term $e^2/(8\pi\varepsilon_0a)\,(1/\varepsilon-1/78.4)$; the flavin anion keeps its
+aqueous solvation. The radius $a = \BornRadius$~\AA\ reproduces, by the Born
+formula in water, the solvation-energy difference of 244~kJ\,mol$^{-1}$ between
+dimethylamine and its radical cation.\cite{Jonsson1996} The change of $\Delta$
+is $\MedOneLo$ to $+\MedOneHi$~eV over $\varepsilon$ and $r$; it is negative
+because the stronger attraction of the pair outweighs the desolvation of one ion,
+and it is the most favourable case for a small $\Delta$ that the continuum
+picture allows.
+
+\emph{Two-ion.} Both ions are moved with the density-functional continuum
+protocol of the previous section, using the separated-ion energies at
+$\varepsilon = 4$ and 10 (Table~\ref{tab:ddft}) against those at
+$\varepsilon = 78.4$ (Table~\ref{tab:pot}), for methylamine and benzylamine with
+lumiflavin. The change of $\Delta$, including the Coulomb term, is $+\MedTwoLo$ to
+$+\MedTwoHi$~eV.
+
+\emph{Substrate-induced shift.} Without substrate the oxidized/semiquinone and
+semiquinone/reduced midpoints of the MAO~A flavin are $\EflMAOA$ and
+$\EsqredA$~mV,\cite{Sablin2001} so the two-electron midpoint is $\EmFreeA$~mV.
+With substrate the full-reduction midpoint shifts by up to $+\SubShift$~V and no
+semiquinone is observed.\cite{Sablin2001} If the absence of semiquinone reflects
+equilibrium, the first one-electron potential lies at or below the two-electron
+midpoint, at most $\EmFreeA+500$~mV${}=+\EoneCap$~V, a shift of the one-electron
+couple of at most $\EoneShiftCap$~V. The main text uses the full
+$+\SubShift$~V, which lowers $\Delta$ more than this reading allows. All three
+estimates are computed in \url{qbscreen/make_numbers_v6.py}.
 
 \section{Cryptochrome}
 Orientation-averaged, perpendicular and parallel response of the cryptochrome
