@@ -23,15 +23,14 @@ k_P enters.
 With the searched map F(k_S, k_P) (worst_case_map; the largest |MFE| FOUND by a
 finite search in one spin model, not a proven supremum),
 
-    G(Δ) = max { F(k_S, k_P) : k_S ≥ k_min(Δ), k_P ≥ k_min(Δ) }
+    G(Δ) = max { F(k_S, k_P) : k_S ≥ 4 k_min(Δ), k_P ≥ k_min(Δ) }
 
-is evaluated by a procedure on the rate grid; it is not a bound on the
-continuous region (interval_example stores a permitted point above it).
-k_min is rounded down to the rate grid in both directions; above the largest
-k_P the edge value is used because max_kS F decreases with k_P on the grid;
-above the largest k_S only the k_P constraint is imposed. Where k_min lies
-below the grid (slow pairs) G is undefined (None): the grid does not cover
-the permitted region there.
+over a region set by necessary conditions (it contains every competent pair,
+not only those). G is evaluated on the rate grid with the required rates
+rounded down to grid rates; it is not a bound on the continuous region
+(offgrid_check compares off-grid points on the threshold row). Where the
+required rates lie below or above the computed grid, G is undefined (None):
+no extrapolation.
 """
 
 import json
@@ -48,19 +47,25 @@ def k_min_per_us(delta, k_cat, T=310.0):
 
 
 def G(rows, delta, k_cat, T=310.0, factor=None):
-    """Largest F on the rate grid with k_S, k_P ≥ k_min(Δ); None below the grid.
+    """Largest F on the rate grid over the necessary-condition region
+    k_S ≥ 4 k_min(Δ), k_P ≥ k_min(Δ) (Φ_P ≤ 1 gives the factor 4 for k_S; Φ_P ≤ 4k_P/k_S
+    gives k_P ≥ k_min). This region contains every pair that can carry k_cat, so G is
+    an outer-set value, not the field effect of a competent pair. The required rates are
+    rounded down to the grid; where they fall below or above the computed grid, G is
+    undefined (None) rather than extrapolated.
     factor: optional {k_P: X} multiplying F row by row (model-sensitivity estimates)."""
     km = k_min_per_us(delta, k_cat, T)
     kS_grid = sorted({r["k_S"] for r in rows})
     kP_grid = sorted({r["k_P"] for r in rows})
-    if km < min(kS_grid[0], kP_grid[0]) * (1 - 1e-9):
-        return None
-    down = lambda grid: max(g for g in grid if g <= km * (1 + 1e-9))
-    # F is not shown to decrease with k_S, so beyond the k_S grid only the k_P constraint is used
-    kS0 = down(kS_grid) if km <= kS_grid[-1] * (1 + 1e-9) else kS_grid[0]
-    kP0 = down(kP_grid)
+    tol = 1 + 1e-9
+    if km * tol < kP_grid[0] or 4 * km * tol < kS_grid[0]:
+        return None                                     # permitted rates extend below the grid
+    if km > kP_grid[-1] * tol or 4 * km > kS_grid[-1] * tol:
+        return None                                     # required rates beyond the computed grid
+    down = lambda grid, x: max(g for g in grid if g <= x * tol)
+    kS0, kP0 = down(kS_grid, 4 * km), down(kP_grid, km)
     f = (lambda r: r["max_mfe"] * factor.get(r["k_P"], 1.0)) if factor else (lambda r: r["max_mfe"])
-    return max(f(r) for r in rows if r["k_S"] >= kS0 * (1 - 1e-9) and r["k_P"] >= kP0 * (1 - 1e-9))
+    return max(f(r) for r in rows if r["k_S"] >= kS0 / tol and r["k_P"] >= kP0 / tol)
 
 
 def non_increasing(g):
@@ -89,8 +94,8 @@ def monotone_in_kP(rows):
 
 
 def with_relaxation(rows, t2e_rows):
-    """Coherent map with every cell replaced by the largest value found with or
-    without single-electron dephasing (cells searched with dephasing only)."""
+    """Coherent map with every cell replaced by the largest of its value and the
+    values of another search of the same cell (dephasing, or another nuclear model)."""
     best = {}
     for r in t2e_rows:
         key = (round(np.log10(r["k_S"]), 3), round(np.log10(r["k_P"]), 3))
@@ -112,6 +117,11 @@ def main(maps=("worst_case_v6.json",), k_cats=(1.0, 10.0, 100.0, 1000.0)):
             relaxed = with_relaxation(rows, json.loads(t2e.read_text())["rows"])
             out["with_relaxation"] = {str(kc): non_increasing([dict(delta_eV=float(d), G_percent=G(relaxed, d, kc))
                                                                for d in deltas]) for kc in k_cats}
+        aniso = Path("calibration_results/worst_case_v6_aniso.json")
+        if name == "worst_case_v6.json" and aniso.exists():
+            merged = with_relaxation(rows, json.loads(aniso.read_text())["rows"])
+            out["with_aniso"] = {str(kc): non_increasing([dict(delta_eV=float(d), G_percent=G(merged, d, kc))
+                                                          for d in deltas]) for kc in k_cats}
         mono, env = monotone_in_kP(rows)
         out[name] = dict(monotone_in_kP=mono, envelope_by_kP=env, k_cat={
             str(kc): non_increasing([dict(delta_eV=float(d), k_min_per_us=float(k_min_per_us(d, kc)),
@@ -125,17 +135,64 @@ def main(maps=("worst_case_v6.json",), k_cats=(1.0, 10.0, 100.0, 1000.0)):
     Path("calibration_results/competence_sensitivity.json").write_text(json.dumps(out, indent=2))
 
 
-def interval_example(out="calibration_results/g_interval_example.json"):
-    """A permitted off-grid point whose field effect exceeds the gridded G: G is the
-    value of a procedure on the rate grid, not a bound on the continuous region."""
-    from qbscreen.worst_case_map import Cell, NUCLEI
+def sharpness_example(out="calibration_results/phi_bound_sharpness.json"):
+    """The factor 4 cannot be improved over the class: H = 0, no nuclei, k_S = 1,
+    k_P = 1e-6 /µs and the fully depolarizing GKSL generator D(ρ) = γ(Tr ρ I/4 − ρ),
+    which is trace preserving and unital. Φ_P k_S/(4 k_P) → 1 as γ grows; without
+    relaxation the same pair gives k_S/(4(k_S + k_P)) ≈ 1/4."""
+    from qbscreen.product_yield import build_system
+    sd = build_system([])
+    P = sd["P_S"]
+    d = sd["dim"]
+    I = np.eye(d)
+    kS, kP = 1.0, 1e-6
+    rows = []
+    for gam in (0.0, 1.0, 1e2, 1e4):
+        # column-stacked superoperators: vec(AρB) = (Bᵀ ⊗ A) vec(ρ)
+        L = -0.5 * kS * (np.kron(I, P) + np.kron(P.T, I)) - kP * np.eye(d * d)
+        L = L + gam * (np.outer(I.reshape(-1, order="F"), I.reshape(-1, order="F")) / d - np.eye(d * d))
+        x = np.linalg.solve(-L, (P / np.trace(P)).reshape(-1, order="F"))
+        X = x.reshape(d, d, order="F")
+        phi = float(np.real(kP * np.trace(X)))
+        rows.append(dict(gamma_per_us=gam, Phi_P=phi, ratio=phi * kS / (4 * kP)))
+    Path(out).write_text(json.dumps(dict(k_S=kS, k_P=kP, rows=rows), indent=2))
+    return rows
+
+
+def trace_counterexample(kS=0.01, kP=1.0, gam=1.0):
+    """Why trace preservation is assumed: D(ρ) = γ(VρV† − ½{VV†, ρ}) with V = |T0⟩⟨S|
+    is unital and generates a positive (completely positive) evolution but creates
+    population, and gives Φ_P = 150/101 > 1 at the default rates (1/µs). The bound
+    Φ_P ≤ 4k_P/k_S still holds; Φ_P ≤ 1, used for k_S ≥ 4k_min, does not."""
+    from qbscreen.product_yield import build_system
+    P = build_system([])["P_S"]
+    w, v = np.linalg.eigh(P)
+    V = np.outer(v[:, w < 0.5][:, 0], v[:, w > 0.5][:, 0].conj())
+    W, I = V @ V.conj().T, np.eye(4)
+    K = lambda A, B: np.kron(B.T, A)                     # vec(AρB), column stacking
+    L = (-0.5 * kS * (K(P, I) + K(I, P)) - kP * np.eye(16)
+         + gam * (K(V, V.conj().T) - 0.5 * (K(W, I) + K(I, W))))
+    X = np.linalg.solve(-L, (P / np.trace(P)).reshape(-1, order="F")).reshape(4, 4, order="F")
+    return float(np.real(kP * np.trace(X)))
+
+
+def offgrid_check(out="calibration_results/g_offgrid_check.json"):
+    """Off-grid check of G on the threshold row: at the Δ where k_min equals the grid
+    rate k_P = 10^1.5 /µs, scan permitted k_S ≥ 4 k_min between grid points (J near 0,
+    s = 0, all 25 directions) and compare with G."""
+    from qbscreen.worst_case_map import Cell, NUCLEI, directions
     from qbscreen.product_yield import build_system
     m = json.loads(Path("calibration_results/worst_case_v6.json").read_text())
-    kP, kS = 10 ** 1.5, 76.4499169285051
-    delta = KB_EV * 310.0 * np.log(kP * 1e6)                    # k_min = k_P exactly, k_cat = 1 s⁻¹
-    v = Cell(build_system(NUCLEI), np.array(m["T_contact_MHz"]), kS, kP).mfe(0.0, 0.0, 0.0, 0.0)
-    res = dict(delta_eV=delta, k_cat=1.0, k_S=kS, k_P=kP, J_MHz=0.0, s=0.0, direction="z",
-               mfe_percent=v, G_percent=G(m["rows"], delta, 1.0))
+    kP = 10 ** 1.5
+    delta = KB_EV * 310.0 * np.log(kP * 1e6)
+    sysd, T = build_system(NUCLEI), np.array(m["T_contact_MHz"])
+    pts = []
+    for kS in np.geomspace(4 * kP, 12 * kP, 9):
+        c = Cell(sysd, T, kS, kP)
+        pts.append(dict(k_S=float(kS), mfe_percent=max(c.mfe(J, 0.0, th, ph) for J in (0.0, 0.5, -0.5)
+                                                        for th, ph in directions())))
+    res = dict(delta_eV=float(delta), k_cat=1.0, k_P=kP, G_percent=G(m["rows"], delta, 1.0),
+               max_offgrid_percent=max(p["mfe_percent"] for p in pts), points=pts)
     Path(out).write_text(json.dumps(res, indent=2))
     return res
 
@@ -184,12 +241,13 @@ def _selfcheck():
         P = yields_liouville(s, H, kS, kP, T2e_ns=10 ** rng.uniform(0, 4))[0] if rng.random() < 0.5 \
             else yields_hilbert(s, H, kS, kP)[0]
         assert P <= 4 * kP / kS * (1 + 1e-9), (P, kS, kP)
-    rows =[dict(k_S=s, k_P=p, max_mfe=1.0 / p) for s in (1.0, 10.0) for p in (1.0, 10.0)]
-    assert G(rows, 0.0, 1e6) == 1.0 and G(rows, 0.0, 1e7) == 0.1   # k_min = 1 and 10 /µs
-    assert G(rows, 0.0, 5e6) == 1.0                                 # off grid: rounded down
-    assert G(rows, 1.0, 1e6) == 0.1                                 # beyond the grid: edge value
+    rows = [dict(k_S=s, k_P=p, max_mfe=1.0 / p + 1.0 / s) for s in (1.0, 10.0, 100.0) for p in (1.0, 10.0)]
+    assert G(rows, 0.0, 1e6) == 2.0                                 # k_min = 1: k_S ≥ 4 → rounded to 1
+    assert np.isclose(G(rows, 0.0, 1e7), 0.2)                       # k_min = 10: k_S ≥ 40 → 10, k_P ≥ 10
+    assert np.isclose(G(rows, 0.0, 5e6), 1.1)                       # k_S ≥ 20 → 10, k_P ≥ 5 → 1
+    assert G(rows, 1.0, 1e6) is None                                # beyond the grid: undefined
     assert G(rows, 0.0, 1e5) is None                                # below the grid: undefined
-    assert np.isclose(G(rows, 0.0, 1e7, factor={10.0: 3.0}), 0.3)   # row factor
+    assert np.isclose(G(rows, 0.0, 1e7, factor={10.0: 3.0}), 0.6)   # row factor
     g = non_increasing([dict(delta_eV=d, G_percent=v) for d, v in ((0, None), (1, 0.1), (2, 0.5), (3, 0.2))])
     assert [x["G_percent"] for x in g] == [None, 0.5, 0.5, 0.2]   # running maximum from the right
     print("competence_sensitivity self-checks passed")

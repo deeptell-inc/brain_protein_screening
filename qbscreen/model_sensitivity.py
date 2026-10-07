@@ -123,5 +123,36 @@ def main(procs=4):
                 base={str(c["k_P"]): c for c in cells}, models=res), indent=2))
 
 
+def _aniso_cell(args):
+    from qbscreen.worst_case_map import supplement
+    kS, kP, T = args
+    sysd = build_system(_tensors()["aniso"])
+    r = search(sysd, np.array(T), kS, kP)
+    if r["at_grid_edge"]:
+        r = search(sysd, np.array(T), kS, kP, span=16 * abs(r["J_at_max"]))
+    row = dict(k_S=float(kS), k_P=float(kP), **r)
+    return supplement(sysd, np.array(T), row)
+
+
+def run_aniso_full(procs=6, out="calibration_results/worst_case_v6_aniso.json"):
+    """Full search (first pass, edge rule and fine-s pass) of the anisotropic model
+    on the threshold rows, k_S ≥ k_P: replaces the local re-search for this model."""
+    from multiprocessing import Pool
+    T = json.loads((R / "worst_case_v6.json").read_text())["T_contact_MHz"]
+    out = Path(out)
+    rows = json.loads(out.read_text())["rows"] if out.exists() else []
+    done = {(round(np.log10(r["k_S"]), 3), round(np.log10(r["k_P"]), 3)) for r in rows}
+    jobs = [(kS, kP, T) for kP in THRESHOLD_ROWS for kS in np.logspace(-2, 5, 15)
+            if kS >= kP * (1 - 1e-9) and (round(np.log10(kS), 3), round(np.log10(kP), 3)) not in done]
+    with Pool(int(procs)) as pool:
+        for r in pool.imap_unordered(_aniso_cell, jobs):
+            rows.append(r)
+            print(f"aniso k_P={r['k_P']:8.1e} k_S={r['k_S']:8.1e}/us  F={r['max_mfe']:.3e} %", flush=True)
+            out.write_text(json.dumps(dict(model="aniso", rows=rows), indent=2))
+
+
 if __name__ == "__main__":
-    main(*sys.argv[1:])
+    if sys.argv[1:2] == ["aniso_full"]:
+        run_aniso_full(*sys.argv[2:])
+    else:
+        main(*sys.argv[1:])
