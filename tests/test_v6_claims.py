@@ -102,7 +102,10 @@ def test_bound_test_stored():
 def test_numbers_match_results():
     from pathlib import Path
     from qbscreen import make_numbers_v6 as mn
+    p = Path("manuscript/magnetobio_jcp/numbers.tex")
+    if not p.exists():
+        pytest.skip("LaTeX sources are not distributed; run qbscreen.make_numbers_v6 to generate numbers.tex")
     m = mn.macros()
-    text = Path("manuscript/magnetobio_jcp/numbers.tex").read_text()
+    text = p.read_text()
     for k, v in m.items():
         assert f"\\newcommand{{\\{k}}}{{{v}}}" in text, k
