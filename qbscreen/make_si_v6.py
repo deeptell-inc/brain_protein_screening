@@ -109,13 +109,12 @@ def sensitivity():
     rows = []
     for kp, b in sorted(d["base"].items(), key=lambda kv: float(kv[0])):
         r = [f"{np.log10(float(kp)):.1f}", f"{np.log10(b['k_S']):.1f}", g2(b["max_mfe"])]
-        for name in ("aniso", "aniso+N", "aniso+H8", "T2e:coherent", "T2e:10.0", "T2e:100.0", "T2e:1000.0", "T2e:10000.0"):
+        for name in ("aniso", "aniso+N", "aniso+H8"):
             v = d["models"].get(name, {}).get(kp)
             r.append(g2(v) if v is not None else "--")
         rows.append(r)
-    _tab("sensitivity.tex", "rrrrrrrrrrr",
-         r"$\log k_P$ & $\log k_S$ & reference & aniso & +$^{14}$N & +2H & red.\ coh. & 10 ns & 100 ns & 1 $\mu$s & 10 $\mu$s",
-         rows, r"\scriptsize\setlength{\tabcolsep}{3pt}")
+    _tab("sensitivity.tex", "rrrrrr",
+         r"$\log k_P$ & $\log k_S$ & reference & aniso & +$^{14}$N & +2H", rows, r"\small")
 
 
 def relaxation():
@@ -134,6 +133,29 @@ def relaxation():
          r"$\log k_P$ & $\log k_S$ & coherent & " + " & ".join(f"{t:g} ns" for t in t2s), rows, r"\small")
 
 
+def constrained():
+    cm, cg = _j("constrained_map.json"), _j("constrained_G.json")
+    if not (cm and cg):
+        return
+    rows = cm["rows"]
+    kS = sorted({r["k_S"] for r in rows})
+    kP = sorted({r["k_P"] for r in rows})
+    val = {(r["k_S"], r["k_P"]): max(r["F"]) for r in rows}
+    body = [[f"{np.log10(p):.1f}"] + [g2(val[(s_, p)]) if (s_, p) in val else "" for s_ in kS] for p in kP]
+    _tab("cmap.tex", "r" + "r" * len(kS), r"$\log k_P \backslash \log k_S$ & " + " & ".join(f"{np.log10(x):.1f}" for x in kS),
+         body, r"\scriptsize\setlength{\tabcolsep}{2pt}")
+    names = [("wide", r"0.2--2.0~eV"), ("0.5", "0.5~eV"), ("1.0", "1.0~eV"), ("1.5", "1.5~eV"), ("free", r"$J$ free")]
+    lab = lambda kc: (rf"{cg['k_red'][kc]:.3g}~s$^{{-1}}$ ({kc}, 298~K)" if kc in cg["k_red"] else rf"{float(kc):g}~s$^{{-1}}$")
+    fmt = lambda x: "--" if x is None else f"{x:.2f}"
+    out = []
+    for kc in cg["G"]["wide"]:
+        out.append([lab(kc)] + [f"{fmt(cg['G'][n][kc]['thr_0p1'])} / {fmt(cg['G'][n][kc]['thr_0p01'])}" for n, _ in names])
+    _tab("cthr.tex", "l" + "c" * len(names), r"rate carried & " + " & ".join(h for _, h in names), out, r"\scriptsize")
+    sp = _j("constrained_s_profile.json")
+    if sp:
+        _tab("sprof.tex", "rr", r"$s$ & $F_{\rm free}$ (\%)", [[f"{r['s']:g}", g2(r["F"])] for r in sp["rows"]], r"\small")
+
+
 def cryptochrome():
     c = _j("cry_control.json")
     rows = [[f"{r['J0_uT']:.2e}".replace("e+", r"\text{e}"), f"{r['J_gap_MHz']:+.2f}",
@@ -145,5 +167,6 @@ if __name__ == "__main__":
     OUT.mkdir(exist_ok=True)
     coupling(); hyperfine(); tensors(); dipolar(); driving_force(); cryptochrome(); sensitivity(); relaxation()
     worst_case("worst_case_v6.json", "map.tex")
+    constrained()
     worst_case("worst_case_v6_aniso.json", "map_aniso.tex")
     print("SI tables →", OUT)

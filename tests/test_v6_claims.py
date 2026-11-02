@@ -102,10 +102,29 @@ def test_bound_test_stored():
 def test_numbers_match_results():
     from pathlib import Path
     from qbscreen import make_numbers_v6 as mn
-    p = Path("manuscript/magnetobio_jcp/numbers.tex")
-    if not p.exists():
-        pytest.skip("LaTeX sources are not distributed; run qbscreen.make_numbers_v6 to generate numbers.tex")
     m = mn.macros()
-    text = p.read_text()
+    text = Path("manuscript/magnetobio_jcp/numbers.tex").read_text()
     for k, v in m.items():
         assert f"\\newcommand{{\\{k}}}{{{v}}}" in text, k
+
+
+def test_constrained_claims():
+    """Statements of Secs. V and VII about the J-constrained search."""
+    import json, re
+    from pathlib import Path
+    from qbscreen.competence_sensitivity import threshold
+    n = dict(re.findall(r"\\newcommand\{\\(\w+)\}\{([^}]*)\}", Path("manuscript/magnetobio_jcp/numbers.tex").read_text()))
+    num = lambda k: float(n[k])
+    G = json.loads(Path("calibration_results/constrained_G.json").read_text())["G"]
+    thr = lambda lam, kc: G[lam][kc]["thr_0p1"]
+    assert thr("wide", "1") == thr("free", "1")                          # "the same value"
+    assert all(G[l][k]["n_raised"] == 0 for l in ("wide", "free") for k in G[l])   # envelope changes no point
+    assert thr("wide", "1") > thr("wide", "10") > thr("wide", "100") > thr("wide", "1000")
+    # the envelope never moves a threshold: recompute from the raw values where available
+    for l in G:
+        for k, v in G[l].items():
+            assert threshold(v["G"], 0.1) == v["thr_0p1"]
+    # scenarios (a), (b) above the Φ_P ≤ 1 limit for both rates; (c) depends on ε
+    assert num("DeltaMAOsubLo") > num("DmaxBzHi") > num("DmaxPEAHi") and num("DeltaMAOlo") > num("DmaxBzHi")
+    assert num("DeltaCepsTwo") < num("DeltaCepsThree") < num("ThrBz") < num("DeltaCepsFour") < num("DeltaCepsTen")
+    assert 3 < num("epsStarBz") < 4 and num("epsStarPEA") < num("epsStarBz")
