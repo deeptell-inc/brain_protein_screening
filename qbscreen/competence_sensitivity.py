@@ -6,28 +6,30 @@ Scheme: ES → ¹RP (k_f, singlet only), ¹RP → ES (k_S), RP → EP (k_P, any 
 energies negligible against k_BT) the singlet lies Δ_S = Δ + k_BT ln 4 above ES and detailed balance reads
 k_f = k_S e^{−Δ_S/k_BT}. The turnover through the pair is k_f Φ_P, and
 
-  * Φ_P ≤ 1                  ⇒  k_S ≥ k_cat e^{Δ_S/k_BT} ≥ k_cat e^{Δ/k_BT};
-  * Φ_P ≤ 4 k_P / k_S        ⇒  k_P ≥ k_cat e^{Δ/k_BT}.
+  * Φ_P ≤ 4 k_P / (k_S + 4 k_P)   ⇒   k_min (4/k_S + 1/k_P) ≤ 1,  k_min = k_cat e^{Δ/k_BT}.
 
-The second inequality holds for any spin Hamiltonian and any unital,
-positivity-preserving relaxation: with R = (−L)⁻¹ (k_P > 0), −L(I) = k_S P_S + k_P I
-gives k_S R(P_S) = I − k_P R(I) ⪯ I. A dead-end pair (k_P = 0) is bounded instead
-through k_S ∫ e^{L₀u}(P_S) du = I − e^{L₀t}(I) ⪯ I; the rate bound does not apply
-to it. Without spin dynamics the
-turnover is exactly e^{−Δ_S/k_BT}/(1/k_S + 1/k_P).
+The bound holds for any spin Hamiltonian and any unital, trace-preserving,
+completely positive relaxation (k_P > 0). With R = (−L)⁻¹ and ⟨A,B⟩ = Tr[A R(B)]:
+unitality gives k_S R(P_S) + k_P R(I) = I, trace preservation gives
+⟨P_S,I⟩ = ⟨I,P_S⟩ = c, and −L is Hilbert–Schmidt dissipative (Kadison), so the
+symmetric part of ⟨·,·⟩ is positive semidefinite and Cauchy–Schwarz yields
+c ≤ 4N/(k_S + 4k_P). Equality holds under full depolarization. A singlet-born pair
+therefore spends at least a quarter of its lifetime in the singlet. A dead-end
+pair (k_P = 0) is bounded instead through k_S ∫ e^{L₀u}(P_S) du = I − e^{L₀t}(I) ⪯ I.
+Without spin dynamics the turnover is e^{−Δ_S/k_BT}/(1/k_S + 1/k_P), i.e.
+k_min (4/k_S + 4/k_P) ≤ 1: the factor four counts spin states and the spin
+dynamics can remove it only from the onward term.
 
-Competence (turnover ≥ k_cat) therefore requires BOTH k_S and k_P ≥
-k_min = k_cat e^{Δ/k_BT}. No coupling, reorganisation energy or mechanism for
-k_P enters.
+No coupling, reorganisation energy or mechanism for k_P enters.
 
 With the searched map F(k_S, k_P) (worst_case_map; the largest |MFE| FOUND by a
 finite search in one spin model, not a proven supremum),
 
-    G(Δ) = max { F(k_S, k_P) : k_S ≥ 4 k_min(Δ), k_P ≥ k_min(Δ) }
+    G(Δ) = max { F(k_S, k_P) : k_min(Δ) (4/k_S + 1/k_P) ≤ 1 }   (G_joint)
 
 over a region set by necessary conditions (it contains every competent pair,
-not only those). G is evaluated on the rate grid with the required rates
-rounded down to grid rates; it is not a bound on the continuous region
+not only those). G is evaluated on the rate grid, a cell being included when its
+upper corner satisfies the condition; it is not a bound on the continuous region
 (offgrid_check compares off-grid points on the threshold row). Where the
 required rates lie below or above the computed grid, G is undefined (None):
 no extrapolation.
@@ -66,6 +68,31 @@ def G(rows, delta, k_cat, T=310.0, factor=None):
     kS0, kP0 = down(kS_grid, 4 * km), down(kP_grid, km)
     f = (lambda r: r["max_mfe"] * factor.get(r["k_P"], 1.0)) if factor else (lambda r: r["max_mfe"])
     return max(f(r) for r in rows if r["k_S"] >= kS0 / tol and r["k_P"] >= kP0 / tol)
+
+
+def G_joint(rows, delta, k_cat, value=None, T=310.0, arg=False):
+    """Largest value on the rate grid over the region k_min(4/k_S + 1/k_P) ≤ 1, which
+    follows from Φ_P ≤ 4k_P/(k_S + 4k_P) and contains every pair that can carry k_cat.
+    A grid cell stands for the rates up to the next grid rate, so it is included when
+    its upper corner lies in the region (the top row and column extend to infinity).
+    None where permitted rates lie below the grid or the required rates above it.
+    value: row → number or None (None: cell has no admissible value and is skipped)."""
+    km = k_min_per_us(delta, k_cat, T)
+    value = value or (lambda r: r["max_mfe"])
+    kS_grid = sorted({r["k_S"] for r in rows})
+    kP_grid = sorted({r["k_P"] for r in rows})
+    tol = 1 + 1e-9
+    if km * tol < kP_grid[0] or 4 * km * tol < kS_grid[0]:
+        return None
+    if km > kP_grid[-1] * tol or 4 * km > kS_grid[-1] * tol:
+        return None
+    nxt = lambda grid, x: next((g for g in grid if g > x * tol), np.inf)
+    ok = lambda r: km * (4 / nxt(kS_grid, r["k_S"]) + 1 / nxt(kP_grid, r["k_P"])) <= tol
+    vals = [(v, r) for r in rows if ok(r) for v in [value(r)] if v is not None]
+    if not vals:
+        return (None, None) if arg else None
+    best = max(vals, key=lambda t: t[0])
+    return best if arg else best[0]
 
 
 def non_increasing(g):
@@ -159,6 +186,37 @@ def sharpness_example(out="calibration_results/phi_bound_sharpness.json"):
     return rows
 
 
+def general_H_check(n=60, seed=3, out="calibration_results/phi_bound_generalH.json"):
+    """Maximize Φ_P (k_S + 4k_P)/(4k_P) over general Hermitian H (not only spin
+    Hamiltonians) on the two-electron space (dim 4) and with one spin-½ nucleus
+    (dim 8), and over k_S, k_P, by Nelder–Mead from n random starts each."""
+    from scipy.optimize import minimize
+    from scipy.linalg import solve_sylvester
+    v = np.array([0, 1, -1, 0]) / np.sqrt(2)
+
+    def ratio(x, dim):
+        P = np.kron(np.outer(v, v), np.eye(dim // 4))
+        A = x[:dim * dim].reshape(dim, dim) + 1j * x[dim * dim:2 * dim * dim].reshape(dim, dim)
+        kS, kP = np.exp(x[-2]), np.exp(x[-1])
+        K = (A + A.conj().T) / 2 - 0.5j * (kS * P + kP * np.eye(dim))
+        X = solve_sylvester(K, -K.conj().T, -1j * P / np.trace(P))
+        return float(np.real(kP * np.trace(X))) * (kS + 4 * kP) / (4 * kP)
+
+    rng = np.random.default_rng(seed)
+    res = {}
+    for dim in (4, 8):
+        best = 0.0
+        for _ in range(n):
+            x0 = np.concatenate([rng.normal(size=2 * dim * dim) * 10 ** rng.uniform(-1, 2),
+                                 [rng.uniform(-3, 5), rng.uniform(-5, 3)]])
+            r = minimize(lambda x: -ratio(x, dim), x0, method="Nelder-Mead",
+                         options=dict(maxfev=3000, xatol=1e-8, fatol=1e-12))
+            best = max(best, -r.fun)
+        res[str(dim)] = best
+    Path(out).write_text(json.dumps(dict(seed=seed, starts_per_dim=n, max_ratio=res), indent=2))
+    return res
+
+
 def trace_counterexample(kS=0.01, kP=1.0, gam=1.0):
     """Why trace preservation is assumed: D(ρ) = γ(VρV† − ½{VV†, ρ}) with V = |T0⟩⟨S|
     is unital and generates a positive (completely positive) evolution but creates
@@ -241,7 +299,31 @@ def _selfcheck():
         P = yields_liouville(s, H, kS, kP, T2e_ns=10 ** rng.uniform(0, 4))[0] if rng.random() < 0.5 \
             else yields_hilbert(s, H, kS, kP)[0]
         assert P <= 4 * kP / kS * (1 + 1e-9), (P, kS, kP)
+    # Φ_P ≤ 4k_P/(k_S + 4k_P): −L is Hilbert–Schmidt dissipative, so G(A,B) = Tr A R(B) has a
+    # positive-semidefinite symmetric part, and G(P_S, I) = G(I, P_S); Cauchy–Schwarz then gives the bound
+    from qbscreen.master_equation import build_liouvillian
+    for _ in range(20):
+        nuc = [(int(rng.integers(0, 2)), 0.5, float(10 ** rng.uniform(0, 2))) for _ in range(rng.integers(0, 2))]
+        s = build_system(nuc)
+        d = s["dim"]
+        b = rng.normal(size=3)
+        H = hamiltonian(s, 10 ** rng.uniform(-6, -2), b / np.linalg.norm(b), rng.choice([-1, 1]) * 10 ** rng.uniform(-1, 3),
+                        axial_tensor(-10 ** rng.uniform(-1, 2), rng.normal(size=3)))
+        kS, kP = 10 ** rng.uniform(-2, 3), 10 ** rng.uniform(-3, 2)
+        deph = [(10 ** rng.uniform(-1, 2), s["ops"][e][2]) for e in (0, 1)] if rng.random() < 0.5 else []
+        L = build_liouvillian(2 * np.pi * H, s["P_S"], np.eye(d) - s["P_S"], kS + kP, kP, deph)
+        vec = lambda A: A.reshape(-1, order="F")
+        Rm = np.linalg.inv(-L)
+        Gf = lambda A, B: np.real(np.vdot(vec(A), Rm @ vec(B)))           # Tr A R(B), A Hermitian
+        I, P = np.eye(d), s["P_S"]
+        assert np.isclose(Gf(P, I), Gf(I, P), rtol=1e-8)
+        assert np.linalg.eigvalsh((-L - L.conj().T) / 2).min() > -1e-9    # Hilbert–Schmidt dissipative
+        phi = kP * Gf(I, P) / np.trace(P)
+        assert phi <= 4 * kP / (kS + 4 * kP) * (1 + 1e-9), (phi, kS, kP)
     rows = [dict(k_S=s, k_P=p, max_mfe=1.0 / p + 1.0 / s) for s in (1.0, 10.0, 100.0) for p in (1.0, 10.0)]
+    # k_min = 1: cells whose upper corner satisfies 4/k_S + 1/k_P ≤ 1 → (10,10),(100,10) [corners (100,∞),(∞,∞)],
+    # (100,1)? corner (∞,10): 1/10 ≤ 1 → included; (10,1): corner (100,10): 0.04 + 0.1 ≤ 1 → included
+    assert G_joint(rows, 0.0, 1e6) == 2.0 and G_joint(rows, 0.0, 1e5) is None
     assert G(rows, 0.0, 1e6) == 2.0                                 # k_min = 1: k_S ≥ 4 → rounded to 1
     assert np.isclose(G(rows, 0.0, 1e7), 0.2)                       # k_min = 10: k_S ≥ 40 → 10, k_P ≥ 10
     assert np.isclose(G(rows, 0.0, 5e6), 1.1)                       # k_S ≥ 20 → 10, k_P ≥ 5 → 1

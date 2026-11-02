@@ -15,7 +15,8 @@ from qbscreen.competence_sensitivity import G, non_increasing, threshold
 
 R = Path("calibration_results")
 OUT = Path("manuscript/magnetobio_jcp/numbers.tex")
-KT = 8.617333262e-5 * 310.0
+KB = 8.617333262e-5
+KT = KB * 310.0
 COULOMB_EV_A = 14.399645
 # measured one-electron potentials, V vs NHE
 E_AMINE = 1.30            # dialkylamine radical cations, water (Jonsson et al. 1996)
@@ -31,12 +32,17 @@ def _j(name):
 
 
 def f(x, d=2):
-    return f"{x:.{d}f}"
+    return r"\textbf{??}" if x is None else f"{x:.{d}f}"
 
 
 def sci(x, d=1):
     m, e = f"{x:.{d}e}".split("e")
     return f"{m}\\times10^{{{int(e)}}}"
+
+
+def floor(x, d):
+    """Truncate, so that a ratio just below a bound is never printed as reaching it."""
+    return f"{np.floor(x * 10 ** d) / 10 ** d:.{d}f}"
 
 
 def pct(x):
@@ -71,7 +77,8 @@ def medium_correction():
 
 
 def macros():
-    m = dict(DeltaMaxLo=f(KT * np.log(1e13 / (4 * 1e3))), DeltaMaxHi=f(KT * np.log(1e14 / 4.0)),
+    # k_min(4/k_S + 1/k_P) ≤ 1 with k_S, k_P ≤ ν_n  ⇒  k_min ≤ ν_n/5
+    m = dict(DeltaMaxLo=f(KT * np.log(1e13 / (5 * 1e3))), DeltaMaxHi=f(KT * np.log(1e14 / 5.0)), sLo="0.2",
              DeltaMaxPLo=f(KT * np.log(1e13 / 1e3)), DeltaMaxPHi=f(KT * np.log(1e14 / 1.0)), kTln=f(KT * np.log(4), 3),
              sMax="3", EamExp=f(E_AMINE), EflMAOA=f"{1000 * E_MAO['A']:.0f}", EflMAOB=f"{1000 * E_MAO['B']:.0f}",
              SubShift=f(SUB_SHIFT, 1))
@@ -102,11 +109,16 @@ def macros():
 
     sh = _j("phi_bound_sharpness.json")
     if sh:
-        m["sharpRatio"] = f"{max(r['ratio'] for r in sh['rows']):.6f}"
+        m["sharpRatio"] = floor(max(r['Phi_P'] * (sh['k_S'] + 4 * sh['k_P']) / (4 * sh['k_P']) for r in sh['rows']), 6)
+
+    gh = _j("phi_bound_generalH.json")
+    if gh:
+        m["genHexcess"] = sci(max(1e-16, max(gh["max_ratio"].values()) - 1), 0)
 
     bt = _j("phi_bound_test.json")
     if bt:
-        m.update(nBoundTest=str(bt["n"]), maxBoundRatio=f"{bt['max_ratio']:.4f}")
+        m.update(nBoundTest=str(bt["n"]),
+                 maxBoundRatio=floor(max(r['Phi_P'] * (r['k_S'] + 4 * r['k_P']) / (4 * r['k_P']) for r in bt['rows']), 6))
 
     wc = _j("worst_case_v6.json")
     if wc:
@@ -147,9 +159,6 @@ def macros():
             akp = sorted({r["k_P"] for r in an["rows"]})
             arow = [rr([((r["k_S"], r["k_P"]), r["max_mfe"]) for r in an["rows"]], kp) / rr(ref.items(), kp) for kp in akp]
             at = lambda g, d: next(x["G_percent"] for x in g if np.isclose(x["delta_eV"], d))
-            if "DeltaSiteLo" in m:
-                m.update(GsiteRef=f"{at(cs['worst_case_v6.json']['k_cat']['1.0'], float(m['DeltaSiteLo'])):.2f}",
-                         GsiteAniso=f"{at(ga['1.0'], float(m['DeltaSiteLo'])):.2f}")
             m.update(ThrTenthOneAniso=f(threshold(ga["1.0"], 0.1)), ThrTenthThousandAniso=f(threshold(ga["1000.0"], 0.1)),
                      nAnisoCells=str(len(an["rows"])),
                      AnisoCellMax=f"{max(r['max_mfe'] / ref[key(r)] for r in an['rows']):.1f}",
@@ -186,6 +195,60 @@ def macros():
             if "ThrTenthOneSens" in m and "DeltaMAOsub" in m:
                 m["DeltaToThr"] = f(float(m["DeltaMAOsub"]) - float(m["ThrTenthOneSens"]))
 
+    cm, cg = _j("constrained_map.json"), _j("constrained_G.json")
+    if cm and cg:
+        rows_c = cm["rows"]
+        kps = sorted({r["k_P"] for r in rows_c})
+        env = lambda kp: max(max(r["F"]) for r in rows_c if np.isclose(r["k_P"], kp))
+        near = lambda x: min(kps, key=lambda k: abs(np.log10(k) - x))
+        m.update(FcKPlow=pct(env(near(-2))), FcKPhundred=pct(env(near(2))), FcKPtop=pct(env(near(4))))
+        Gc = cg["G"]
+        kred = {k: f"{v:g}" for k, v in cg["k_red"].items()}
+        w1 = Gc["wide"]["1"]
+        lam_thr = [t for l in ("0.5", "1.0", "1.5") for t in [Gc[l]["1"]["thr_0p1"]] if t is not None]
+        m.update(GcDefLo=f(w1["defined"][0]), GcDefHi=f(w1["defined"][1]), GcThrOne=f(w1["thr_0p1"]),
+                 GcThrOneH=f(w1["thr_0p01"]), GcThrThousand=f(Gc["wide"]["1000"]["thr_0p1"]),
+                 GcThrFree=f(Gc["free"]["1"]["thr_0p1"]),
+                 GcThrLamLo=f(min(lam_thr, default=None)), GcThrLamHi=f(max(lam_thr, default=None)))
+        m.update(nCellsC=str(len(rows_c)), nInvalidC=str(cg["n_invalid_at_0p5eV"]))
+        a1 = cg["at_threshold"].get("1")
+        if a1:
+            m.update(GcKSThr=sci(a1["k_S"], 0) if a1["k_S"] >= 1e3 else f"{a1['k_S']:.3g}",
+                     GcKPThr=f"{a1['k_P']:.3g}")
+            m.update(GcPhiThr=f"{a1['Phi_P0']:.2f}", GcAbsThr=f"${sci(a1['abs_change'], 0)}$")
+        # measured rates (25 °C): Φ_P ≤ 1 and a formation prefactor ≤ ν_n give Δ ≤ k_BT ln(ν_n/4k_red),
+        # without eq 2; eq 6 lowers this by k_BT ln(5/4)
+        kTr = KB * cg["T_red"]
+        m["kTlnFiveFour"] = f"{1000 * kTr * np.log(5 / 4):.0f}"
+        for name, key in (("benzylamine", "Bz"), ("phenylethylamine", "PEA")):
+            k = cg["k_red"][name]
+            m[f"Dmax{key}Lo"] = f(kTr * np.log(1e13 / (4 * k)))
+            m[f"Dmax{key}Hi"] = f(kTr * np.log(1e14 / (4 * k)))
+            m[f"Thr{key}"] = f(Gc["wide"][name]["thr_0p1"])
+        # scenario (c) as a function of the effective dielectric constant (contact, r = 3.5 Å)
+        a_am = medium_correction()[0]
+        dc = lambda eps: float(m["DeltaMAOsubLo"]) + COULOMB_EV_A * (1 / eps - 1 / 78.4) * (1 / (2 * a_am) - 1 / 3.5)
+        gat = lambda name, d: next((x["G_percent"] for x in Gc["wide"][name]["G"] if np.isclose(x["delta_eV"], round(d, 2))), None)
+        for eps, key in ((10, "Ten"), (4, "Four"), (3, "Three"), (2, "Two")):
+            m[f"DeltaCeps{key}"] = f(dc(eps))
+            for name, kk in (("benzylamine", "Bz"), ("phenylethylamine", "PEA")):
+                g = gat(name, dc(eps))
+                m[f"G{kk}Eps{key}"] = "--" if g is None else f"${pct(g)}$"
+        # ε below which Δ(c) falls under the 0.1 % threshold of each rate
+        inv = lambda d: 1 / ((d - float(m["DeltaMAOsubLo"])) / (COULOMB_EV_A * (1 / (2 * a_am) - 1 / 3.5)) + 1 / 78.4)
+        m.update(epsStarBz=f"{inv(Gc['wide']['benzylamine']['thr_0p1']):.1f}",
+                 epsStarPEA=f"{inv(Gc['wide']['phenylethylamine']['thr_0p1']):.1f}")
+    ic = _j("constrained_interp_check.json")
+    if ic:
+        m.update(nInterp=str(ic["n"]), interpLo=f"${sci(ic['ratio_min'], 0)}$", interpHi=f"{ic['ratio_max']:.2f}",
+                 interpShift=f(ic.get("max_threshold_shift_eV")))
+    sp = _j("constrained_s_profile.json")
+    if sp:
+        F = {r["s"]: r["F"] for r in sp["rows"]}
+        sbest = max(F, key=F.get)
+        m.update(sProfLo=pct(F[0.2]), sProfMax=pct(F[sbest]), sProfArg=f"{sbest:g}", sProfZero=pct(F[0.0]),
+                 sProfOne=pct(F[1.0]))
+
     dsd = _j("dipolar_spin_density_v5.json")
     if dsd:
         d = dsd["methylamine_face_3.50"]
@@ -208,7 +271,7 @@ def macros():
     return m
 
 
-EXPECTED = ("GsiteRef GsiteAniso GdefOne GdefOneHi sharpRatio ThrTenthOneAniso ThrTenthThousandAniso nAnisoCells AnisoCellMax AnisoRowMin AnisoRowMax nAnisoEdge ThrTenthOne ThrHundredthOne ThrTenthThousand ThrTenthOneSens DeltaToThr XanisoMax XanisoNMax "
+EXPECTED = ("genHexcess kTlnFiveFour ThrBz ThrPEA DeltaCepsFour DeltaCepsThree DeltaCepsTwo GBzEpsFour GBzEpsThree GPEAEpsThree epsStarBz epsStarPEA nInterp interpLo interpHi interpShift sProfLo sProfMax sProfArg nCellsC nInvalidC GcKSThr GcKPThr FcKPlow FcKPhundred FcKPtop GcDefLo GcDefHi GcThrOne GcThrOneH GcThrThousand GcThrFree GcThrLamLo GcThrLamHi GcPhiThr GcAbsThr DmaxBzLo DmaxBzHi DmaxPEALo DmaxPEAHi GdefOne GdefOneHi sharpRatio ThrTenthOneAniso ThrTenthThousandAniso nAnisoCells AnisoCellMax AnisoRowMin AnisoRowMax nAnisoEdge ThrTenthOne ThrHundredthOne ThrTenthThousand ThrTenthOneSens DeltaToThr XanisoMax XanisoNMax "
             "XanisoHMax XTtwoMin XTtwoMax Xsens FkPlow FkPhundred FkPtop FkPthousand nCells nEdge polishGain nBoundTest "
             "nSuppRaised suppMaxRatio rowMaxChange convMaxRatio ThrTenthOneRelax ThrHundredthOneRelax "
             "ThrTenthThousandRelax nTtwoCells TtwoCellMax TtwoCellMin TtwoRowMax TtwoRowMin "
