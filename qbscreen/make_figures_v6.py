@@ -83,8 +83,46 @@ def fig_G():
     fig.savefig(OUT / "fig_toc.pdf")
 
 
+def fig_highlight():
+    """Highlight (table-of-contents) image for J. Chem. Phys.: the searched field effect
+    over the rate plane with the competence boundary k_min(4/k_S + 1/k_P) = 1 for
+    k_cat = 1 s⁻¹ at several Δ. 8.0139 × 6.2739 in at 300 dpi, TIFF and JPEG."""
+    rows = json.loads((R / "constrained_map.json").read_text())["rows"]
+    kS = sorted({r["k_S"] for r in rows})
+    kP = sorted({r["k_P"] for r in rows})
+    Z = np.full((len(kP), len(kS)), np.nan)
+    for r in rows:
+        Z[kP.index(r["k_P"]), kS.index(r["k_S"])] = np.log10(max(max(r["F"]), 1e-14))
+    x, y = np.log10(kS), np.log10(kP)
+    with plt.rc_context({"font.size": 17, "axes.linewidth": 1.2}):
+        fig, ax = plt.subplots(figsize=(8.0139, 6.2739), constrained_layout=True)
+        im = ax.imshow(Z, origin="lower", extent=(x[0] - 0.25, x[-1] + 0.25, y[0] - 0.25, y[-1] + 0.25),
+                       aspect="auto", cmap="magma", vmin=-8, vmax=1, interpolation="bicubic")
+        xs = np.linspace(x[0] - 0.25, x[-1] + 0.25, 400)
+        for d in (0.30, 0.40, 0.47, 0.55):
+            km = np.exp(d / KT) * 1e-6                       # k_min for k_cat = 1 s⁻¹, μs⁻¹
+            ks = 10 ** xs
+            ok = ks > 4 * km * 1.0001
+            kp = 1 / (1 / km - 4 / ks[ok])
+            # the boundary rises vertically at k_S = 4 k_min
+            ax.plot(np.r_[np.log10(4 * km), xs[ok]], np.r_[y[-1] + 0.25, np.log10(kp)], color="w", lw=2.2)
+            i = np.searchsorted(xs[ok], x[-1] - 0.6)
+            ax.text(xs[ok][i], np.log10(kp[i]) + 0.12, f"Δ = {d:.2f} eV", color="w", fontsize=15, ha="center", va="bottom")
+        ax.set_xlim(x[0] - 0.25, x[-1] + 0.25)
+        ax.set_ylim(y[0] - 0.25, y[-1] + 0.25)
+        ax.set_xlabel(r"singlet back transfer  $\log_{10}k_S$ ($\mu$s$^{-1}$)")
+        ax.set_ylabel(r"onward reaction  $\log_{10}k_P$ ($\mu$s$^{-1}$)")
+        ax.text(x[0], y[0] - 0.1, "pairs that can carry $k_{\\rm cat}=1$ s$^{-1}$\nlie above and right of each line", color="k", fontsize=15, va="bottom")
+        fig.colorbar(im, ax=ax, label=r"largest field effect $\log_{10}F$ (%)")
+        fig.savefig(OUT / "highlight.jpg", dpi=300, pil_kwargs={"quality": 95})
+    plt.close(fig)
+    from PIL import Image                                    # RGB TIFF (no alpha channel)
+    Image.open(OUT / "highlight.jpg").save(OUT / "highlight.tif", dpi=(300, 300), compression="tiff_lzw")
+
+
 if __name__ == "__main__":
     if (R / "constrained_map.json").exists():
         fig_map()
+        fig_highlight()
     if (R / "constrained_G.json").exists():
         fig_G()
