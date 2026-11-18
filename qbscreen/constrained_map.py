@@ -170,10 +170,10 @@ def interp_check(n=40, procs=8, out="calibration_results/constrained_interp_chec
     return min(ratios), max(ratios)
 
 
-def polish_rows(kPs=(10 ** 1.0, 10 ** 1.5, 10 ** 2.0), n_top=4, procs=12,
+def polish_rows(kPs=(10 ** 1.0, 10 ** 1.5, 10 ** 2.0), n_top=3, procs=12,
                 out="calibration_results/constrained_row_polish.json"):
-    """Nelder–Mead in field direction and s ∈ [S_LO, 1] at the stored J of the n_top
-    largest local maxima of F(J), for every cell on the given rows. J is kept fixed so
+    """Nelder–Mead in field direction and s ∈ [S_LO, 1] at the stored J of the n_top (≤ 3,
+    the most _local_maxima returns) largest local maxima of F(J), for every cell on the given rows. J is kept fixed so
     that the admitted set is unchanged; analyze() takes the larger of stored and polished F."""
     from multiprocessing import Pool
     rows = json.loads((R / "constrained_map.json").read_text())["rows"]
@@ -201,19 +201,38 @@ def _polish_one(args):
     x0 = np.array([th0, ph0, s0])
     simplex = np.vstack([x0] + [x0 + np.eye(3)[i] * st for i, st in enumerate((0.15, 0.3, 0.1))])
     r = minimize(f, x0, method="Nelder-Mead", options=dict(initial_simplex=simplex, maxfev=160, xatol=1e-4, fatol=1e-9))
-    return dict(k_S=kS, k_P=kP, J=J, F_old=F0, F_new=max(F0, -r.fun), s=float(np.clip(r.x[2], S_LO, 1.0)),
-                dir=[float(r.x[0]), float(r.x[1])])
+    s = float(np.clip(r.x[2], S_LO, 1.0))
+    return dict(k_S=kS, k_P=kP, J=J, F_old=F0, F_new=max(F0, -r.fun), s=s,
+                dir=[float(r.x[0]), float(r.x[1])], Phi_P0=float(cell.p0(J, s)))
+
+
+def add_phi0(path="calibration_results/constrained_row_polish.json"):
+    """Zero-field onward yield at each polished optimum (for files written before
+    _polish_one stored it): one yield evaluation per point."""
+    from qbscreen.model_sensitivity import _tensors
+    from qbscreen.product_yield import build_system
+    d = json.loads(Path(path).read_text())
+    T = json.loads((R / "worst_case_v6.json").read_text())["T_contact_MHz"]
+    sysd = build_system(_tensors()["aniso"])
+    for p in d["points"]:
+        if "Phi_P0" not in p:
+            p["Phi_P0"] = float(Cell(sysd, np.array(T), p["k_S"], p["k_P"]).p0(p["J"], p["s"]))
+    Path(path).write_text(json.dumps(d, indent=1))
 
 
 def _load_rows(path):
-    """Stored search with the row polish (if present) applied: F at a polished J is the
-    larger of the stored and polished values."""
+    """Stored search with the row polish (if present) applied: where the polished F at a
+    stored J exceeds the stored one, F, s, field direction and zero-field yield all take
+    the polished optimum."""
     rows = json.loads(Path(path).read_text())["rows"]
     pol = R / "constrained_row_polish.json"
     if pol.exists():
-        best = {(p["k_S"], p["k_P"], p["J"]): p["F_new"] for p in json.loads(pol.read_text())["points"]}
+        best = {(p["k_S"], p["k_P"], p["J"]): p for p in json.loads(pol.read_text())["points"]}
         for r in rows:
-            r["F"] = [max(f, best.get((r["k_S"], r["k_P"], j), f)) for j, f in zip(r["J"], r["F"])]
+            for i, j in enumerate(r["J"]):
+                p = best.get((r["k_S"], r["k_P"], j))
+                if p and p["F_new"] > r["F"][i]:
+                    r["F"][i], r["s"][i], r["dir"][i], r["Phi_P0"][i] = p["F_new"], p["s"], p["dir"], p["Phi_P0"]
     return rows
 
 
@@ -300,6 +319,8 @@ if __name__ == "__main__":
         print(s_profile())
     elif sys.argv[1:2] == ["polish_rows"]:
         print(polish_rows())
+    elif sys.argv[1:2] == ["add_phi0"]:
+        add_phi0()
     elif sys.argv[1:2] == ["time"]:
         import time
         from qbscreen.model_sensitivity import _tensors

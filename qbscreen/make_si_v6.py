@@ -137,7 +137,8 @@ def constrained():
     cm, cg = _j("constrained_map.json"), _j("constrained_G.json")
     if not (cm and cg):
         return
-    rows = cm["rows"]
+    from qbscreen.constrained_map import _load_rows
+    rows = _load_rows(R / "constrained_map.json")                # row polish applied
     kS = sorted({r["k_S"] for r in rows})
     kP = sorted({r["k_P"] for r in rows})
     val = {(r["k_S"], r["k_P"]): max(r["F"]) for r in rows}

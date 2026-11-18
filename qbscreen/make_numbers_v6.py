@@ -51,19 +51,20 @@ def pct(x):
 
 def medium_correction():
     """Change of Δ when the contact pair moves from water to a medium of effective
-    dielectric ε (4 or 10), at r = 3.5 or 6 Å.
+    dielectric ε, at separation r.
 
     one-sided: Born desolvation of the aminium only, radius from the measured
     solvation-energy difference of dimethylamine (244 kJ/mol, Jonsson et al. 1996,
     p. 17541), plus the stronger Coulomb attraction; the flavin anion is left solvated,
     so this lowers Δ as much as the continuum picture allows.
     two-ion: both ions moved with the same DFT/PCM protocol (driving_force.json at
-    ε = 4, 10; aqueous_potentials.json at ε = 78.4), plus the Coulomb change."""
+    ε = 4, 10; aqueous_potentials.json at ε = 78.4), plus the Coulomb change.
+    one-sided values for ε = 2–10 and r = 3.5–7.7 Å; two-ion values for ε = 4, 10."""
     ddg = 244e3 / 96485.33212                                       # eV
     a_am = COULOMB_EV_A * (1 - 1 / 78.4) / (2 * ddg)                 # Å
     coul = lambda eps, r: -COULOMB_EV_A / r * (1 / eps - 1 / 78.4)
     one = {(eps, r): COULOMB_EV_A / (2 * a_am) * (1 / eps - 1 / 78.4) + coul(eps, r)
-           for eps in (4.0, 10.0) for r in (3.5, 6.0)}
+           for eps in (2.0, 3.0, 4.0, 10.0) for r in (3.5, 6.0, 7.7)}
     two = {}
     df, aq = _j("driving_force.json"), _j("aqueous_potentials.json")
     if df and aq:
@@ -205,7 +206,8 @@ def macros():
 
     cm, cg = _j("constrained_map.json"), _j("constrained_G.json")
     if cm and cg:
-        rows_c = cm["rows"]
+        from qbscreen.constrained_map import _load_rows
+        rows_c = _load_rows(R / "constrained_map.json")         # row polish applied
         kps = sorted({r["k_P"] for r in rows_c})
         env = lambda kp: max(max(r["F"]) for r in rows_c if np.isclose(r["k_P"], kp))
         near = lambda x: min(kps, key=lambda k: abs(np.log10(k) - x))
@@ -248,9 +250,39 @@ def macros():
                  MarginPEA=f(float(m["DeltaMAOsubLo"]) - float(m["DmaxPEAHi"])))
         m.update(epsStarBz=f"{inv(Gc['wide']['benzylamine']['thr_0p1']):.1f}",
                  epsStarPEA=f"{inv(Gc['wide']['phenylethylamine']['thr_0p1']):.1f}")
+        # scenario (c) cells that put G above 0.1 % (ε = 3 benzylamine, ε = 2 PEA): dipolar scale s of
+        # the stored optimum that sets G, its point-dipole separation, and the continuum correction
+        # of Δ at that separation instead of contact (sign change at r = 2a)
+        from qbscreen.constrained_map import _load_rows, allowed_J, LAMBDA_SETS, F_constrained
+        from qbscreen.competence_sensitivity import G_joint
+        rows_p = _load_rows(R / "constrained_map.json")
+        Dc = abs(_j("dipolar_spin_density_v5.json")["methylamine_face_3.50"]["D_MHz"])
+        med = lambda eps, r: COULOMB_EV_A * (1 / eps - 1 / 78.4) * (1 / (2 * a_am) - 1 / r)
+        lam, Tr = LAMBDA_SETS["wide"], 298.15
+        for name, kk, eps in (("benzylamine", "Bz", 3), ("phenylethylamine", "PEA", 2)):
+            d = round(dc(eps), 2)
+            val = lambda r: (F_constrained(r, d, lam, Tr) or (None,))[0]
+            _, r = G_joint(rows_p, d, cg["k_red"][name], T=Tr, value=val, arg=True)
+            J, F = np.array(r["J"]), np.array(r["F"])
+            lo, hi = np.clip(allowed_J(r["k_S"], d, lam, Tr), J[0], J[-1])
+            i_lo, i_hi = np.searchsorted(J, lo), np.searchsorted(J, hi)
+            cand = range(max(i_lo - 1, 0), min(i_hi + 1, len(J)))
+            sG = r["s"][max(cand, key=lambda i: F[i])]
+            dist = 10 * (77.9 / (sG * Dc)) ** (1 / 3)
+            m.update({f"sCell{kk}": f"{sG:.2f}", f"rCell{kk}": f"{dist:.1f}", f"MedCell{kk}": f(med(eps, dist))})
+        Tc = np.array(_j("worst_case_v6.json")["T_contact_MHz"])            # dephasing axis z vs dipolar axis
+        w_, v_ = np.linalg.eigh(Tc)
+        m["dephAxisAngle"] = f"{np.degrees(np.arccos(abs(v_[2, np.argmax(abs(w_))]))):.1f}"
+        m.update(MedCross=f"{2 * a_am:.1f}", MedSixEpsLo=f(med(3, 6.0)), MedSixEpsHi=f(med(2, 6.0)))
+        w3 = {r: -COULOMB_EV_A / (78.4 * r) for r in (3.5, 6.0)}      # signed contact Coulomb term in water
+        m.update(wLo=f(w3[3.5]), wHi=f(w3[6.0]))
     tc = _j("phi_bound_triplet.json")
     if tc:
         m.update(nTriplet=str(tc["n"]), tripletMax=floor(tc["max_ratio"], 6))
+    ic = _j("phi_bound_initial_state.json")
+    if ic:
+        m.update(nInitState=str(ic["n"]), polSingletMax=f"{ic['max_singlet_polarized']:.2f}",
+                 tZeroMax=f"{ic['max_triplet_T0']:.2f}")
     rp = _j("constrained_row_polish.json")
     if rp:
         # largest rise of a cell maximum on the polished rows
@@ -295,7 +327,7 @@ def macros():
     return m
 
 
-EXPECTED = ("genHexcess sLoDist MedSixLo MedSixHi EdftDMA EdftErrDMA EdftMAoff EdftBnoff MarginBz MarginPEA nTriplet tripletMax kTlnFiveFour ThrBz ThrPEA DeltaCepsFour DeltaCepsThree DeltaCepsTwo GBzEpsFour GBzEpsThree GPEAEpsThree epsStarBz epsStarPEA nInterp interpLo interpHi interpShift sProfLo sProfMax sProfArg nCellsC nInvalidC GcKSThr GcKPThr FcKPlow FcKPhundred FcKPtop GcDefLo GcDefHi GcThrOne GcThrOneH GcThrThousand GcThrFree GcThrLamLo GcThrLamHi GcPhiThr GcAbsThr DmaxBzLo DmaxBzHi DmaxPEALo DmaxPEAHi GdefOne GdefOneHi sharpRatio ThrTenthOneAniso ThrTenthThousandAniso nAnisoCells AnisoCellMax AnisoRowMin AnisoRowMax nAnisoEdge ThrTenthOne ThrHundredthOne ThrTenthThousand ThrTenthOneSens DeltaToThr XanisoMax XanisoNMax "
+EXPECTED = ("dephAxisAngle nInitState polSingletMax tZeroMax sCellBz rCellBz MedCellBz sCellPEA rCellPEA MedCellPEA MedCross MedSixEpsLo MedSixEpsHi wLo wHi genHexcess sLoDist MedSixLo MedSixHi EdftDMA EdftErrDMA EdftMAoff EdftBnoff MarginBz MarginPEA nTriplet tripletMax kTlnFiveFour ThrBz ThrPEA DeltaCepsFour DeltaCepsThree DeltaCepsTwo GBzEpsFour GBzEpsThree GPEAEpsThree epsStarBz epsStarPEA nInterp interpLo interpHi interpShift sProfLo sProfMax sProfArg nCellsC nInvalidC GcKSThr GcKPThr FcKPlow FcKPhundred FcKPtop GcDefLo GcDefHi GcThrOne GcThrOneH GcThrThousand GcThrFree GcThrLamLo GcThrLamHi GcPhiThr GcAbsThr DmaxBzLo DmaxBzHi DmaxPEALo DmaxPEAHi GdefOne GdefOneHi sharpRatio ThrTenthOneAniso ThrTenthThousandAniso nAnisoCells AnisoCellMax AnisoRowMin AnisoRowMax nAnisoEdge ThrTenthOne ThrHundredthOne ThrTenthThousand ThrTenthOneSens DeltaToThr XanisoMax XanisoNMax "
             "XanisoHMax XTtwoMin XTtwoMax Xsens FkPlow FkPhundred FkPtop FkPthousand nCells nEdge polishGain nBoundTest "
             "nSuppRaised suppMaxRatio rowMaxChange convMaxRatio ThrTenthOneRelax ThrHundredthOneRelax "
             "ThrTenthThousandRelax nTtwoCells TtwoCellMax TtwoCellMin TtwoRowTenLo TtwoRowTenHi TtwoRowHundredLo TtwoRowHundredHi TtwoRowThousandLo TtwoRowThousandHi "

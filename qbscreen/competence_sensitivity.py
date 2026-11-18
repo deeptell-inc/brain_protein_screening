@@ -320,6 +320,45 @@ def triplet_check(n=200, seed=7, out="calibration_results/phi_bound_triplet.json
     return res
 
 
+def initial_state_check(n=200, seed=11, out="calibration_results/phi_bound_initial_state.json"):
+    """The yield bounds use equal-weight initial states (P_S/N, P_T/3N). Over random spin
+    systems with at least one nucleus, the ratios Φ_P(k_S + 4k_P)/4k_P for a singlet pair
+    born with fully polarized nuclei (P_S Π_up, Π_up the projector on the largest m of
+    every nucleus) and Φ_P(3k_T + 4k_P)/4k_P for a pair born in T0 with unpolarized nuclei."""
+    from qbscreen.master_equation import build_liouvillian
+    from qbscreen.product_yield import build_system, hamiltonian, axial_tensor
+    rng = np.random.default_rng(seed)
+
+    def phi(s, H, k_sing, k_trip, kP, deph, rho0):
+        d = s["dim"]
+        L = build_liouvillian(2 * np.pi * H, s["P_S"], np.eye(d) - s["P_S"], k_sing, k_trip, deph)
+        X = np.linalg.solve(-L, (rho0 / np.trace(rho0)).reshape(-1, order="F"))
+        return float(np.real(kP * np.trace(X.reshape(d, d, order="F"))))
+
+    rows = []
+    for _ in range(n):
+        nuc = [(int(rng.integers(0, 2)), float(rng.choice([0.5, 1.0])), float(10 ** rng.uniform(0, 2.5)))
+               for _ in range(rng.integers(1, 3))]
+        s = build_system(nuc)
+        b = rng.normal(size=3)
+        H = hamiltonian(s, 10 ** rng.uniform(-6, -1), b / np.linalg.norm(b), rng.choice([-1, 1]) * 10 ** rng.uniform(-1, 4),
+                        axial_tensor(-10 ** rng.uniform(-1, 3), rng.normal(size=3)))
+        kS, kP = 10 ** rng.uniform(-2, 4), 10 ** rng.uniform(-3, 3)
+        deph = [(2.0 / (10 ** rng.uniform(-3, 1)), s["ops"][e][2]) for e in (0, 1)] if rng.random() < 0.4 else []
+        z = [np.real(np.diag(s["ops"][k][2])) for k in range(len(s["ops"]))]
+        up = np.diag(np.all([np.isclose(zk, zk.max()) for zk in z[2:]], axis=0).astype(float))
+        tpm = np.diag((np.isclose(z[0], z[1])).astype(float))           # |↑↑⟩, |↓↓⟩
+        P_T = np.eye(s["dim"]) - s["P_S"]
+        rows.append(dict(k_S=kS, k_P=kP,
+                         singlet_polarized=phi(s, H, kS + kP, kP, kP, deph, s["P_S"] @ up) * (kS + 4 * kP) / (4 * kP),
+                         triplet_T0=phi(s, H, kP, kS + kP, kP, deph, P_T - tpm) * (3 * kS + 4 * kP) / (4 * kP)))
+    res = dict(n=n, max_singlet_polarized=max(r["singlet_polarized"] for r in rows),
+               max_triplet_T0=max(r["triplet_T0"] for r in rows), rows=rows)
+    if out:
+        Path(out).write_text(json.dumps(res, indent=1))
+    return res
+
+
 def _selfcheck():
     # the flux identity against the explicit steady state of ES ⇄ RP → EP (ES held at 1)
     rng = np.random.default_rng(1)

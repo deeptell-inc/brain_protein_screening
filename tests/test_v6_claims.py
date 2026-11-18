@@ -2,6 +2,8 @@
 
 import runpy
 
+import numpy as np
+
 import pytest
 
 
@@ -23,7 +25,7 @@ def test_mao_estimate_inputs():
     m = mn.macros()
     assert (m["DeltaMAOlo"], m["DeltaMAOhi"], m["DeltaMAOsub"]) == ("1.41", "1.44", "0.91")
     assert (m["DeltaMAOsubLo"], m["DeltaMAOsubHi"]) == ("0.86", "0.99")
-    assert (m["DeltaMaxHi"], m["BornRadius"], m["DeltaSiteLo"]) == ("0.82", "2.81", "0.49")
+    assert (m["DeltaMaxHi"], m["BornRadius"], m["DeltaSiteLo"]) == ("0.82", "2.81", "0.10")
 
 
 def test_dead_end_resolvent_and_population_bound():
@@ -139,3 +141,17 @@ def test_triplet_bound_and_polish():
     assert t["max_ratio"] <= 1 + 1e-9 and t["depolarized"][0]["ratio"] < t["depolarized"][-1]["ratio"]
     p = json.loads(Path("calibration_results/constrained_row_polish.json").read_text())["points"]
     assert all(x["F_new"] >= x["F_old"] for x in p)
+    # the loaded rows carry the polished optimum (s and zero-field yield), not only F
+    from qbscreen.constrained_map import _load_rows
+    r = next(r for r in _load_rows("calibration_results/constrained_map.json")
+             if abs(r["k_S"] - 1e5) < 1 and abs(r["k_P"] - 10 ** 1.5) < 1e-6)
+    i = int(np.argmax(r["F"]))
+    assert abs(r["s"][i] - 0.2626) < 1e-3 and abs(r["Phi_P0"][i] - 4.883e-4) < 1e-6
+    # both bounds need equal-weight initial states: polarized nuclei / pure T0 exceed them
+    ic = json.loads(Path("calibration_results/phi_bound_initial_state.json").read_text())
+    assert ic["max_singlet_polarized"] > 1.1 and ic["max_triplet_T0"] > 1.1
+    # exact turnover change MFE/(1 + k_f Φ_B/k_P): same sign, never larger in magnitude
+    for kf, kP, p0, pB in ((1, 1, 0.5, 0.4), (1, 1, 0.4, 0.5), (3, 0.2, 0.1, 0.12)):
+        v = lambda ph: kf * ph / (1 + kf * ph / kP)
+        m, dv = pB / p0 - 1, v(pB) / v(p0) - 1
+        assert np.isclose(dv, m / (1 + kf * pB / kP)) and abs(dv) <= abs(m) and dv * m > 0

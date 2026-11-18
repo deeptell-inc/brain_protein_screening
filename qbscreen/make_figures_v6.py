@@ -18,8 +18,9 @@ plt.rcParams.update({"font.size": 8, "axes.linewidth": 0.6, "pdf.fonttype": 42})
 
 
 def fig_map():
-    """F_free of the constrained-model search (J unconstrained, s ∈ [0.2, 1])."""
-    rows = json.loads((R / "constrained_map.json").read_text())["rows"]
+    """F_free of the constrained-model search (J unconstrained, s ∈ [0.2, 1]), row polish applied."""
+    from qbscreen.constrained_map import _load_rows
+    rows = _load_rows(R / "constrained_map.json")
     kS = sorted({r["k_S"] for r in rows})
     kP = sorted({r["k_P"] for r in rows})
     Z = np.full((len(kP), len(kS)), np.nan)
