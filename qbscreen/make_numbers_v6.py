@@ -96,7 +96,13 @@ def macros():
              EoneShiftCap=f(e1_cap - E_MAO["A"]), EsqredA=f"{1000 * E_MAO_SQRED['A']:.0f}",
              EsqredB=f"{1000 * E_MAO_SQRED['B']:.0f}")
     a_am, one, two = medium_correction()
-    m.update(BornRadius=f(a_am), MedOneLo=f(min(one.values())), MedOneHi=f(max(one.values())))
+    m.update(BornRadius=f(a_am), MedOneLo=f(min(one.values())), MedOneHi=f(max(one.values())),
+             MedSixLo=f(min(v for (e, r), v in one.items() if r == 6.0)), MedSixHi=f(max(v for (e, r), v in one.items() if r == 6.0)))
+    ap = _j("aqueous_potentials.json")
+    if ap:
+        e = {k: ap[k]["E_dft_V"] for k in ("dimethylamine", "methylamine", "benzylamine")}
+        m.update(EdftDMA=f(e["dimethylamine"]), EdftErrDMA=f(E_AMINE - e["dimethylamine"]),
+                 EdftMAoff=f(e["methylamine"] - e["dimethylamine"]), EdftBnoff=f(e["benzylamine"] - e["dimethylamine"]))
     if two:
         m.update(MedTwoLo=f(min(two.values())), MedTwoHi=f(max(two.values())),
                  DeltaSiteLo=f(sub_lo - AMINE_ERR + min(one.values())),
@@ -169,10 +175,12 @@ def macros():
             coh = {(r["k_S"], r["k_P"]): r["max_mfe"] for r in rows}
             ratios = [r["max_mfe"] / coh[(r["k_S"], r["k_P"])] for r in t2["rows"]]
             rowmax = lambda rr, kp: max(r["max_mfe"] for r in rr if np.isclose(r["k_P"], kp))
-            rowratio = [max(rowmax([r for r in t2["rows"] if r["T2e_ns"] == t], kp) for t in {r["T2e_ns"] for r in t2["rows"]})
-                        / rowmax(rows, kp) for kp in sorted({r["k_P"] for r in t2["rows"]})]
-            m.update(nTtwoCells=str(len(t2["rows"])), TtwoCellMax=f"{max(ratios):.2f}", TtwoCellMin=f"{min(ratios):.2f}",
-                     TtwoRowMax=f"{max(rowratio):.2f}", TtwoRowMin=f"{min(rowratio):.2f}")
+            m.update(nTtwoCells=str(len(t2["rows"])), TtwoCellMax=f"{max(ratios):.2f}", TtwoCellMin=f"{min(ratios):.2f}")
+            # row maxima, dephased / coherent, separately for each T2e
+            for t, key in ((10.0, "Ten"), (100.0, "Hundred"), (1000.0, "Thousand")):
+                rr = [rowmax([r for r in t2["rows"] if r["T2e_ns"] == t], kp) / rowmax(rows, kp)
+                      for kp in sorted({r["k_P"] for r in t2["rows"]})]
+                m.update({f"TtwoRow{key}Lo": f"{min(rr):.2f}", f"TtwoRow{key}Hi": f"{max(rr):.2f}"})
         ms = _j("model_sensitivity.json")
         if ms:
             base = {float(k): v["max_mfe"] for k, v in ms["base"].items()}
@@ -236,8 +244,22 @@ def macros():
                 m[f"G{kk}Eps{key}"] = "--" if g is None else f"${pct(g)}$"
         # ε below which Δ(c) falls under the 0.1 % threshold of each rate
         inv = lambda d: 1 / ((d - float(m["DeltaMAOsubLo"])) / (COULOMB_EV_A * (1 / (2 * a_am) - 1 / 3.5)) + 1 / 78.4)
+        m.update(MarginBz=f(float(m["DeltaMAOsubLo"]) - float(m["DmaxBzHi"])),
+                 MarginPEA=f(float(m["DeltaMAOsubLo"]) - float(m["DmaxPEAHi"])))
         m.update(epsStarBz=f"{inv(Gc['wide']['benzylamine']['thr_0p1']):.1f}",
                  epsStarPEA=f"{inv(Gc['wide']['phenylethylamine']['thr_0p1']):.1f}")
+    tc = _j("phi_bound_triplet.json")
+    if tc:
+        m.update(nTriplet=str(tc["n"]), tripletMax=floor(tc["max_ratio"], 6))
+    rp = _j("constrained_row_polish.json")
+    if rp:
+        # largest rise of a cell maximum on the polished rows
+        cm0 = {(r["k_S"], r["k_P"]): max(r["F"]) for r in _j("constrained_map.json")["rows"]}
+        best = {}
+        for x in rp["points"]:
+            best[(x["k_S"], x["k_P"])] = max(best.get((x["k_S"], x["k_P"]), 0.0), x["F_new"])
+        m["rowPolishGain"] = f"{max(max(v, cm0[k]) / cm0[k] for k, v in best.items()):.2f}"
+        m["nRowPolish"] = str(len(rp["points"]))
     ic = _j("constrained_interp_check.json")
     if ic:
         m.update(nInterp=str(ic["n"]), interpLo=f"${sci(ic['ratio_min'], 0)}$", interpHi=f"{ic['ratio_max']:.2f}",
@@ -253,6 +275,8 @@ def macros():
     if dsd:
         d = dsd["methylamine_face_3.50"]
         m.update(Dcontact=f"{d['D_MHz']:.0f}", Econtact=f"{d['E_MHz']:.0f}")
+        # separation at which point dipoles (D = -77.9 MHz at 1 nm) give s_lo times the contact D
+        m["sLoDist"] = f"{10 * (77.9 / (float(m['sLo']) * abs(d['D_MHz']))) ** (1 / 3):.1f}"
     scan = _j("ct_coupling_scan_v5.json")
     if scan:
         t35 = [abs(r["t_meV"]) for r in scan if r["amine"] == "methylamine" and r["approach"] == "face"
@@ -271,10 +295,10 @@ def macros():
     return m
 
 
-EXPECTED = ("genHexcess kTlnFiveFour ThrBz ThrPEA DeltaCepsFour DeltaCepsThree DeltaCepsTwo GBzEpsFour GBzEpsThree GPEAEpsThree epsStarBz epsStarPEA nInterp interpLo interpHi interpShift sProfLo sProfMax sProfArg nCellsC nInvalidC GcKSThr GcKPThr FcKPlow FcKPhundred FcKPtop GcDefLo GcDefHi GcThrOne GcThrOneH GcThrThousand GcThrFree GcThrLamLo GcThrLamHi GcPhiThr GcAbsThr DmaxBzLo DmaxBzHi DmaxPEALo DmaxPEAHi GdefOne GdefOneHi sharpRatio ThrTenthOneAniso ThrTenthThousandAniso nAnisoCells AnisoCellMax AnisoRowMin AnisoRowMax nAnisoEdge ThrTenthOne ThrHundredthOne ThrTenthThousand ThrTenthOneSens DeltaToThr XanisoMax XanisoNMax "
+EXPECTED = ("genHexcess sLoDist MedSixLo MedSixHi EdftDMA EdftErrDMA EdftMAoff EdftBnoff MarginBz MarginPEA nTriplet tripletMax kTlnFiveFour ThrBz ThrPEA DeltaCepsFour DeltaCepsThree DeltaCepsTwo GBzEpsFour GBzEpsThree GPEAEpsThree epsStarBz epsStarPEA nInterp interpLo interpHi interpShift sProfLo sProfMax sProfArg nCellsC nInvalidC GcKSThr GcKPThr FcKPlow FcKPhundred FcKPtop GcDefLo GcDefHi GcThrOne GcThrOneH GcThrThousand GcThrFree GcThrLamLo GcThrLamHi GcPhiThr GcAbsThr DmaxBzLo DmaxBzHi DmaxPEALo DmaxPEAHi GdefOne GdefOneHi sharpRatio ThrTenthOneAniso ThrTenthThousandAniso nAnisoCells AnisoCellMax AnisoRowMin AnisoRowMax nAnisoEdge ThrTenthOne ThrHundredthOne ThrTenthThousand ThrTenthOneSens DeltaToThr XanisoMax XanisoNMax "
             "XanisoHMax XTtwoMin XTtwoMax Xsens FkPlow FkPhundred FkPtop FkPthousand nCells nEdge polishGain nBoundTest "
             "nSuppRaised suppMaxRatio rowMaxChange convMaxRatio ThrTenthOneRelax ThrHundredthOneRelax "
-            "ThrTenthThousandRelax nTtwoCells TtwoCellMax TtwoCellMin TtwoRowMax TtwoRowMin "
+            "ThrTenthThousandRelax nTtwoCells TtwoCellMax TtwoCellMin TtwoRowTenLo TtwoRowTenHi TtwoRowHundredLo TtwoRowHundredHi TtwoRowThousandLo TtwoRowThousandHi "
             "maxBoundRatio").split()
 
 
