@@ -128,3 +128,14 @@ def test_constrained_claims():
     assert num("DeltaMAOsubLo") > num("DmaxBzHi") > num("DmaxPEAHi") and num("DeltaMAOlo") > num("DmaxBzHi")
     assert num("DeltaCepsTwo") < num("DeltaCepsThree") < num("ThrBz") < num("DeltaCepsFour") < num("DeltaCepsTen")
     assert 3 < num("epsStarBz") < 4 and num("epsStarPEA") < num("epsStarBz")
+
+
+def test_triplet_bound_and_polish():
+    """Triplet-born analogue Φ_P ≤ 4k_P/(3k_T + 4k_P) on the stored random systems, and the
+    row polish only raises stored values."""
+    import json
+    from pathlib import Path
+    t = json.loads(Path("calibration_results/phi_bound_triplet.json").read_text())
+    assert t["max_ratio"] <= 1 + 1e-9 and t["depolarized"][0]["ratio"] < t["depolarized"][-1]["ratio"]
+    p = json.loads(Path("calibration_results/constrained_row_polish.json").read_text())["points"]
+    assert all(x["F_new"] >= x["F_old"] for x in p)

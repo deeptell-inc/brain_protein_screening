@@ -278,6 +278,48 @@ def random_bound_test(n=300, seed=20261001, out="calibration_results/phi_bound_t
     return max(r["ratio"] for r in rows)
 
 
+def triplet_check(n=200, seed=7, out="calibration_results/phi_bound_triplet.json"):
+    """A pair born in the triplet, returning only through the triplet (k_T) and leaving by a
+    spin-independent step (k_P): the same resolvent argument with P_T (trace 3N) gives
+    Φ_P ≤ 4k_P/(3k_T + 4k_P). Ratio Φ_P(3k_T + 4k_P)/(4k_P) over random spin systems,
+    with and without single-electron dephasing, and its approach to one under full
+    depolarization γ(Tr ρ I/4 − ρ)."""
+    from qbscreen.master_equation import build_liouvillian
+    from qbscreen.product_yield import build_system, hamiltonian, axial_tensor
+    rng = np.random.default_rng(seed)
+
+    def phi(s, H, kT, kP, deph, extra=None):
+        d = s["dim"]
+        P_T = np.eye(d) - s["P_S"]
+        L = build_liouvillian(2 * np.pi * H, s["P_S"], P_T, kP, kT + kP, deph)
+        if extra is not None:
+            L = L + extra
+        X = np.linalg.solve(-L, (P_T / np.trace(P_T)).reshape(-1, order="F"))
+        return float(np.real(kP * np.trace(X.reshape(d, d, order="F"))))
+
+    rows = []
+    for _ in range(n):
+        nuc = [(int(rng.integers(0, 2)), float(rng.choice([0.5, 1.0])), float(10 ** rng.uniform(0, 2.5)))
+               for _ in range(rng.integers(0, 3))]
+        s = build_system(nuc)
+        b = rng.normal(size=3)
+        H = hamiltonian(s, 10 ** rng.uniform(-6, -1), b / np.linalg.norm(b), rng.choice([-1, 1]) * 10 ** rng.uniform(-1, 4),
+                        axial_tensor(-10 ** rng.uniform(-1, 3), rng.normal(size=3)))
+        kT, kP = 10 ** rng.uniform(-2, 4), 10 ** rng.uniform(-3, 3)
+        deph = [(2.0 / (10 ** rng.uniform(-3, 1)), s["ops"][e][2]) for e in (0, 1)] if rng.random() < 0.4 else []
+        rows.append(dict(k_T=kT, k_P=kP, ratio=phi(s, H, kT, kP, deph) * (3 * kT + 4 * kP) / (4 * kP)))
+    # full depolarization on the bare two-electron space: ratio → 1 from below as γ grows
+    s0 = build_system([])
+    I4 = np.eye(4)
+    dep = lambda g: g * (np.outer(I4.reshape(-1, order="F"), I4.reshape(-1, order="F")) / 4 - np.eye(16))
+    sharp = [dict(gamma=g, ratio=phi(s0, np.zeros((4, 4)), 1.0, 1e-3, [], dep(g)) * (3 + 4e-3) / 4e-3)
+             for g in (0.0, 1.0, 1e2, 1e4)]
+    res = dict(n=n, max_ratio=max(r["ratio"] for r in rows), rows=rows, depolarized=sharp)
+    if out:
+        Path(out).write_text(json.dumps(res, indent=1))
+    return res
+
+
 def _selfcheck():
     # the flux identity against the explicit steady state of ES ⇄ RP → EP (ES held at 1)
     rng = np.random.default_rng(1)

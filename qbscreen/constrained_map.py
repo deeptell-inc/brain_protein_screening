@@ -108,7 +108,7 @@ def analyze(path="calibration_results/constrained_map.json", out="calibration_re
     G is reported as the running maximum from larger Δ (an envelope); n_raised counts
     the Δ points it raises above the value found at that Δ."""
     from qbscreen.competence_sensitivity import G_joint, non_increasing, threshold
-    rows = json.loads(Path(path).read_text())["rows"]
+    rows = _load_rows(path)
     deltas = np.round(np.arange(0.0, 1.2001, 0.01), 2)
 
     def best_point(r, delta, lams, t):
@@ -168,6 +168,53 @@ def interp_check(n=40, procs=8, out="calibration_results/constrained_interp_chec
     ratios = [x["F_direct"] / x["F_interp"] for x in res if x["F_interp"] > 0]
     Path(out).write_text(json.dumps(dict(n=len(res), ratio_min=min(ratios), ratio_max=max(ratios), points=res), indent=1))
     return min(ratios), max(ratios)
+
+
+def polish_rows(kPs=(10 ** 1.0, 10 ** 1.5, 10 ** 2.0), n_top=4, procs=12,
+                out="calibration_results/constrained_row_polish.json"):
+    """Nelder–Mead in field direction and s ∈ [S_LO, 1] at the stored J of the n_top
+    largest local maxima of F(J), for every cell on the given rows. J is kept fixed so
+    that the admitted set is unchanged; analyze() takes the larger of stored and polished F."""
+    from multiprocessing import Pool
+    rows = json.loads((R / "constrained_map.json").read_text())["rows"]
+    T = json.loads((R / "worst_case_v6.json").read_text())["T_contact_MHz"]
+    jobs = []
+    for r in rows:
+        if any(np.isclose(r["k_P"], kp) for kp in kPs):
+            F = np.array(r["F"])
+            peaks = [i for i in _local_maxima(list(F))] or [int(np.argmax(F))]
+            for i in sorted(peaks, key=lambda i: -F[i])[:n_top]:
+                jobs.append((r["k_S"], r["k_P"], T, r["J"][i], r["s"][i], tuple(r["dir"][i]), r["F"][i]))
+    with Pool(int(procs)) as pool:
+        res = pool.map(_polish_one, jobs)
+    Path(out).write_text(json.dumps(dict(rows_kP=list(kPs), points=res), indent=1))
+    return max(x["F_new"] / x["F_old"] for x in res)
+
+
+def _polish_one(args):
+    from scipy.optimize import minimize
+    from qbscreen.model_sensitivity import _tensors
+    from qbscreen.product_yield import build_system
+    kS, kP, T, J, s0, (th0, ph0), F0 = args
+    cell = Cell(build_system(_tensors()["aniso"]), np.array(T), kS, kP)
+    f = lambda x: -cell.mfe(J, float(np.clip(x[2], S_LO, 1.0)), x[0], x[1])
+    x0 = np.array([th0, ph0, s0])
+    simplex = np.vstack([x0] + [x0 + np.eye(3)[i] * st for i, st in enumerate((0.15, 0.3, 0.1))])
+    r = minimize(f, x0, method="Nelder-Mead", options=dict(initial_simplex=simplex, maxfev=160, xatol=1e-4, fatol=1e-9))
+    return dict(k_S=kS, k_P=kP, J=J, F_old=F0, F_new=max(F0, -r.fun), s=float(np.clip(r.x[2], S_LO, 1.0)),
+                dir=[float(r.x[0]), float(r.x[1])])
+
+
+def _load_rows(path):
+    """Stored search with the row polish (if present) applied: F at a polished J is the
+    larger of the stored and polished values."""
+    rows = json.loads(Path(path).read_text())["rows"]
+    pol = R / "constrained_row_polish.json"
+    if pol.exists():
+        best = {(p["k_S"], p["k_P"], p["J"]): p["F_new"] for p in json.loads(pol.read_text())["points"]}
+        for r in rows:
+            r["F"] = [max(f, best.get((r["k_S"], r["k_P"], j), f)) for j, f in zip(r["J"], r["F"])]
+    return rows
 
 
 def interp_shift(path="calibration_results/constrained_interp_check.json"):
@@ -251,6 +298,8 @@ if __name__ == "__main__":
         print(interp_check(), interp_shift())
     elif sys.argv[1:2] == ["s_profile"]:
         print(s_profile())
+    elif sys.argv[1:2] == ["polish_rows"]:
+        print(polish_rows())
     elif sys.argv[1:2] == ["time"]:
         import time
         from qbscreen.model_sensitivity import _tensors
